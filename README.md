@@ -14,11 +14,13 @@ mkdir build & cd build
 cmake -G "Unix Makefiles" -DLLVM_ENABLE_PROJECTS="lld;clang" -DCMAKE_INSTALL_PREFIX=<install dir> -DLLVM_EXPERIMENTAL_TARGETS_TO_BUILD=P2 -DLLVM_TARGETS_TO_BUILD="" ../llvm
 ```
 Make `install dir` something like `/opt/p2llvm`
-4. One configured, run 
+
+4. Once configured, run 
 ```
 make -j8
 ``` 
 (replace 8 with how many cores you want to use). Make a sandwich, initial build took around 30 minutes on my 4-core i7 Macbook.
+
 5. Install, if desired 
 ```
 make install
