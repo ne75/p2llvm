@@ -4,10 +4,22 @@ Contains Propeller 2 Library, C Standard Library, examples, and documentation fo
 # Getting Started
 (eventually I'll make a docker image that has all dependnecies set up so building is a simple one step process)
 
-1. Initialize the llvm submodule in this repo.
-1. Create a build folder in p2llvm: ```mkdir build & cd build```
-1. Configure the project for building. This gives the basic configuration and creates Makefiles. See (insert link) for details on this command
-``` cmake -G "Unix Makefiles" -DLLVM_ENABLE_PROJECTS="lld;clang" -DCMAKE_INSTALL_PREFIX=<install dir> -DLLVM_EXPERIMENTAL_TARGETS_TO_BUILD=P2 -DLLVM_TARGETS_TO_BUILD="" ../llvm ```
+1. Initialize the llvm-project submodule in this repo.
+1. Create a build folder in llvm-project and change to it: 
+```
+mkdir build & cd build
+```
+1. Configure the project for building. This gives the basic configuration and creates Makefiles. See https://llvm.org/docs/GettingStarted.html for details on this command
+``` 
+cmake -G "Unix Makefiles" -DLLVM_ENABLE_PROJECTS="lld;clang" -DCMAKE_INSTALL_PREFIX=<install dir> -DLLVM_EXPERIMENTAL_TARGETS_TO_BUILD=P2 -DLLVM_TARGETS_TO_BUILD="" ../llvm
+```
 Make `install dir` something like `/opt/p2llvm`
-1. One configured, run ```make -j4``` (replace 4 with how many cores you want to use). Make a sandwich, initial build can take around 30 minutes or so on a 4-core machine
-1. Run ```make install```, if desired.
+1. One configured, run 
+```
+make -j8
+``` 
+(replace 8 with how many cores you want to use). Make a sandwich, initial build took around 30 minutes on my 4-core i7 Macbook.
+1. Install, if desired 
+```
+make install
+```
