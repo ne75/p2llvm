@@ -6,6 +6,10 @@ Contains Propeller 2 Library, C Standard Library, examples, and documentation fo
 
 0. Make sure you have the reuqired dependancies listed here https://llvm.org/docs/GettingStarted.html#software
 1. Initialize the llvm-project submodule in this repo.
+```
+git submodule init
+git submodule update
+```
 2. Create a build folder in llvm-project and change to it: 
 ```
 mkdir build & cd build
