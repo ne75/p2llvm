@@ -34,7 +34,7 @@ unsigned uart_init(unsigned rx, unsigned tx, unsigned baud) {
 
 void uart_putc(char c) {
     wypin(c, _uart_tx_pin);
-    waitx(_uart_clock_per_bit*10); // eventually should be a wait
+    waitx(_uart_clock_per_bit*10); // eventually should be a wait based on the buffer
 }
 
 void clkset(unsigned clkmode, unsigned clkfreq) {
