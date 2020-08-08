@@ -18,6 +18,20 @@
 #define _clkmode (*((int*)0x18))
 #define _baudrate (*((int*)0x1c))
 
+register int DIRA asm ("dira");
+register int DIRB asm ("dirb");
+register int OUTA asm ("outa");
+register int OUTB asm ("outb");
+register int INA asm ("ina");
+register int INB asm ("inb");
+
+register int IJMP3 asm ("ijmp3");
+register int IRET3 asm ("iret3");
+register int IJMP2 asm ("ijmp2");
+register int IRET2 asm ("iret2");
+register int IJMP1 asm ("ijmp1");
+register int IRET1 asm ("iret1");
+
 #ifdef __cplusplus
 extern "C" {
 #endif

@@ -10,11 +10,8 @@
 #include "sys/p2es_clock.h"
 #include "printf.h"
 
-typedef __builtin_va_list va_list;
-#define va_start(v, l) __builtin_va_start(v,l)
-#define va_end(v)      __builtin_va_end(v)
-#define va_arg(v, l)   __builtin_va_arg(v, l)
-#define va_copy(d,s)   __builtin_va_copy(d, s)
+#include <sys/va_list.h>
+#include <stdarg.h>
 
 #define RX_PIN 63
 #define TX_PIN 62
@@ -48,12 +45,12 @@ void Blinker::start() {
 void Blinker::blink(void *par) {
     Blinker *led = (Blinker*)par;
 
-    dirh(led->pin);
+    int pin = led->pin;
+
+    DIRB |= 1 << (led->pin-32);
 
     while(1) {
-        outl(led->pin);
-        waitx(led->delay);
-        outh(led->pin);
+        OUTB ^= 1 << (led->pin-32);
         waitx(led->delay);
     }
 }

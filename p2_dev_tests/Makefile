@@ -5,7 +5,7 @@ LOAD = loadp2
 LIBP2 = ../libp2
 LIBC = ../libc
 
-TARGET = simplespi
+TARGET = test14
 OBJDIR = build
 
 CFLAGS = -Os -ffunction-sections -fdata-sections -fno-jump-tables --target=p2 -I$(LIBP2) -I$(LIBC)/include -D__propeller2__ -DLLVM
@@ -24,10 +24,10 @@ $(OBJDIR)/$(TARGET).elf: $(OBJDIR)/$(TARGET).o $(OBJDIR)/propeller2.o $(OBJDIR)/
 		$(LD) -n -N $(LFLAGS) -o $@ $^ #-mllvm -debug
 
 $(OBJDIR)/$(TARGET).o: $(TARGET).cpp $(LIBP2)/propeller2.h
-		$(CC) $(CFLAGS) -o $@ -c $< #-mllvm --debug-only=p2-asm-backend,mccodeemitter
+		$(CC) $(CFLAGS) -o $@ -c $< #-mllvm -debug #--debug-only=p2-isel-lowering
 
 $(OBJDIR)/propeller2.o: $(LIBP2)/propeller2.c $(LIBP2)/propeller2.h
-		$(CC) $(CFLAGS) -o $@ -c $<
+		$(CC) $(CFLAGS) -o $@ -c $< #-mllvm -debug #--debug-only=p2-isel-lowering
 
 $(OBJDIR)/printf.o: $(LIBP2)/printf.c $(LIBP2)/printf.h
 		$(CC) $(CFLAGS) -o $@ -c $<
