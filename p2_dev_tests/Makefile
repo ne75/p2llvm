@@ -5,11 +5,11 @@ LOAD = loadp2
 LIBP2 = ../libp2
 LIBC = ../libc
 
-TARGET = test14
+TARGET = test15
 OBJDIR = build
 
-CFLAGS = -Os -ffunction-sections -fdata-sections -fno-jump-tables --target=p2 -I$(LIBP2) -I$(LIBC)/include -D__propeller2__ -DLLVM
-LFLAGS = -Tp2.ld -L$(LIBP2) -L$(LIBC)/build -lc
+CFLAGS = -Os -ffunction-sections -fdata-sections -fno-jump-tables --target=p2 -I$(LIBP2)/include -I$(LIBC)/include
+LFLAGS = -Tp2.ld -L$(LIBP2) -L$(LIBP2)/build -lp2 -L$(LIBC)/build -lc
 LOADFLAGS = -v -ZERO -b 230400 -t
 
 .PHONY: all setup clean load
@@ -20,20 +20,11 @@ setup:
 	$(shell pkill loadp2)
 	mkdir -p $(OBJDIR)
 
-$(OBJDIR)/$(TARGET).elf: $(OBJDIR)/$(TARGET).o $(OBJDIR)/propeller2.o $(OBJDIR)/crt0.o $(OBJDIR)/printf.o
+$(OBJDIR)/$(TARGET).elf: $(OBJDIR)/$(TARGET).o
 		$(LD) -n -N $(LFLAGS) -o $@ $^ #-mllvm -debug
 
-$(OBJDIR)/$(TARGET).o: $(TARGET).cpp $(LIBP2)/propeller2.h
+$(OBJDIR)/$(TARGET).o: $(TARGET).cpp
 		$(CC) $(CFLAGS) -o $@ -c $< #-mllvm -debug #--debug-only=p2-isel-lowering
-
-$(OBJDIR)/propeller2.o: $(LIBP2)/propeller2.c $(LIBP2)/propeller2.h
-		$(CC) $(CFLAGS) -o $@ -c $< #-mllvm -debug #--debug-only=p2-isel-lowering
-
-$(OBJDIR)/printf.o: $(LIBP2)/printf.c $(LIBP2)/printf.h
-		$(CC) $(CFLAGS) -o $@ -c $<
-
-$(OBJDIR)/crt0.o: $(LIBP2)/crt0.c
-		$(CC) $(CFLAGS) -o $@ -c $< #-mllvm -debug --debug-only=p2-frame-lower
 
 load:
 	$(LOAD) $(LOADFLAGS) $(OBJDIR)/$(TARGET).elf
