@@ -22,9 +22,9 @@ int main() {
 
     volatile int i = 0x7fffffff-10;
     while(1) {
-        printf("i as an int = %d, ", i);
-        printf("i as an uint = %u, ", i);
-        printf("i as a hex = %x\n", i);
+        printf("i as an int = %d, \0", i);
+        printf("i as an uint = %u, \0", i);
+        printf("i as a hex = %x\n\0", i);
         waitx(_CLOCKFREQ/10);
         i++;
     }
