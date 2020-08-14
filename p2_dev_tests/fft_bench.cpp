@@ -253,7 +253,7 @@ void fft_bench()
 	 //  printf("clock frequency = %d\n\0", _clockfreq());
            waitx(_CLOCKFREQ/10);
     //printf ("1024 point bit-reversal and butterfly run time = %u us\n\0", endTime - startTime);
-    printf ("time = %d us\n\0", endTime - startTime);
+    printf ("time = %d us\n", endTime - startTime);
            waitx(_CLOCKFREQ/10);
            waitx(_CLOCKFREQ/10);
 
