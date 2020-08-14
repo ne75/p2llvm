@@ -41,8 +41,8 @@ led_mb_t modify_led_mb(led_mb_t l) {
         l.pin = 58;
     }
 
-    if (l.delay == 200000000) {
-        l.delay = 100000000;
+    if (l.delay == _CLOCKFREQ) {
+        l.delay = _CLOCKFREQ/2;
     }
 
     return l;
@@ -57,7 +57,7 @@ int main() {
     led_mb_t led2;
 
     led1.pin = 56;
-    led1.delay = 200000000;
+    led1.delay = _CLOCKFREQ;
     led2 = modify_led_mb(led1);
 
     cognew(blink, (int)&led1, (unsigned int*)blink1_stack);

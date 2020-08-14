@@ -10,11 +10,11 @@
  */
 
 #include <stdarg.h>
-#include <compiler.h>
+//#include <compiler.h>
 
 #include "propeller2.h"
 
-#define putchar uart_putc
+#define putchar _uart_putc
 
 int isdigit(int c) {
   if (c >= '0' && c <= '9')
