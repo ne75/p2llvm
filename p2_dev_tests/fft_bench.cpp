@@ -29,7 +29,6 @@
 //
 // 2011-02-27    v1.0  Initial version.
 // 2012-10-02    Adapted for Catalina and PropGCC by Eric Smith
-// 2020-08-13    
 //
 //----------------------------------------------------------------------------------------------------------------------
 //
@@ -42,61 +41,25 @@
 #define PROPELLER
 #endif
 
-#define __P2__
-//#include <stdio.h>
-#include <printf.h>
+#if defined(LLVM)
 
-#ifdef __P2__
-#define PROPELLER
-//#include <propeller2.h>
 #define P2_TARGET_MHZ   180
+#define _clockfreq()  (P2_TARGET_MHZ*1000000)
 #include "propeller2.h"
 #include "sys/p2es_clock.h"
-
+#include "printf.h"
+// don't try to include stdio.h for LLVM
 #define RX_PIN 63
 #define TX_PIN 62
-volatile int uart_clock_per_bits;
+// LLVM doesn't have pinl/pinh yet, but it does have dirh/outh/outl
+#define setoutput(pin) __asm__ volatile ("dirh %0" : : "r" (pin) : )
+#define sethi(pin)     __asm__ volatile ("outh %0" : : "r" (pin) : )
+#define setlo(pin)     __asm__ volatile ("outl %0" : : "r" (pin) : )
 
 
-#define storecnt()      __asm__ volatile (".long 0xfd63ec1a ;  .long 0xfc67ec10" : : : )
-static unsigned long hackct()
-{
-    storecnt();
-    return *(unsigned long *)0x10;
-}
-
-#define getcnt(x)       (x = hackct())
-
-unsigned int _cnt() {
-    // write this partially as a normal C function for now, optimize with assembly later
-    // full assembly optimization will require adding conditional statement parsing.
-    // the alternative until we get there is to pre-compile asm functions with fast spin
-    // and link the binary. Otherwise, we are using up cycles pushing and popping registers
-    // to and from the stack
-    unsigned int result;
-
-    // faster than using absolute function
-    //asm("getct %0" : "=r"(result) );
-//    getcnt(result);
-
-    return hackct();
-}
-/*
-unsigned int _rev(unsigned int in) {
-    // write this partially as a normal C function for now, optimize with assembly later
-    // full assembly optimization will require adding conditional statement parsing.
-    // the alternative until we get there is to pre-compile asm functions with fast spin
-    // and link the binary. Otherwise, we are using up cycles pushing and popping registers
-    // to and from the stack
-    unsigned int result;
-
-    // faster than using absolute function
-    asm("rev %0, %1" : "=r"(result) : "r"(in));
-
-    return result;
-}*/
-
-
+/* LLVM has no libraries yet, really... */
+// int light_printf(const char *fmt, ...);
+// #define printf light_printf
 /*
  * @memset.c
  * Implementation of string library functions
@@ -146,9 +109,17 @@ memset(void *dest_p, int c, size_t n)
 }
 
 
+
+#else
+#include <stdio.h>
+#endif
+
+#ifdef __P2__
+#define PROPELLER
+#include <propeller2.h>
 #else
 #ifdef PROPELLER
-//#include <propeller.h>
+#include <propeller.h>
 #ifndef _cnt
 #define _cnt() CNT
 #endif
@@ -180,8 +151,7 @@ static void printSpectrum();
 
 #ifndef _clockfreq
 #ifdef __P2__
-//#define _clockfreq() (*(unsigned int *)0x14)
-#define _clockfreq() _CLOCKFREQ
+#define _clockfreq() (*(unsigned int *)0x14)
 #else
 #define _clockfreq() _CLKFREQ
 #endif
@@ -191,8 +161,7 @@ static void printSpectrum();
 unsigned long time_us()
 {
     unsigned long mhz = _clockfreq() / 1000000;
-//   return _cnt();
-   return _cnt() / mhz;
+    return _cnt() / mhz;
 }
 
 #else
@@ -222,8 +191,7 @@ void fft_bench()
 {
 #ifdef PROPELLER
     unsigned long startTime, endTime;
-	   printf("clock frequency = %d\n\0", _clockfreq());
-    printf ("fft_bench v1.0 for PROPELLER\n\0");
+    printf ("fft_bench v1.0 for PROPELLER\n");
 #else
     long long startTime, endTime;
     printf ("fft_bench v1.0\n");
@@ -246,19 +214,13 @@ void fft_bench()
     endTime = time_us();
 
     // Print resulting spectrum
-    //printSpectrum();
+    printSpectrum();
 
 #ifdef PROPELLER
-           //waitx(_CLOCKFREQ/10);
-	 //  printf("clock frequency = %d\n\0", _clockfreq());
-           waitx(_CLOCKFREQ/10);
-    //printf ("1024 point bit-reversal and butterfly run time = %u us\n\0", endTime - startTime);
-    printf ("time = %d us\n", endTime - startTime);
-           waitx(_CLOCKFREQ/10);
-           waitx(_CLOCKFREQ/10);
-
+    printf ("1024 point bit-reversal and butterfly run time = %u us\n", endTime - startTime);
+    printf("clock frequency = %u\n", _clockfreq());
 #else
-    printf ("1024 point bit-reversal and butterfly run time = %lld us\n\0", endTime - startTime);
+    printf ("1024 point bit-reversal and butterfly run time = %lld us\n", endTime - startTime);
 #endif
 }
 //----------------------------------------------------------------------------------------------------------------------
@@ -292,7 +254,7 @@ static void printSpectrum()
     int32_t f, real, imag,  magnitude;
 
     // Spectrum is available in first half of the buffers after FFT.
-    printf("Freq.    Magnitude\n\0");
+    printf("Freq.    Magnitude\n");
     for (f = 0; f <= FFT_SIZE / 2; f++)
     {
         // Frequency magnitde is square root of cos part sqaured plus sin part squared
@@ -301,7 +263,7 @@ static void printSpectrum()
         magnitude = sqrti ((real * real) + (imag * imag));
         if (magnitude > 0)
         {
-            printf ("%08x %08x\n\0", f, magnitude);
+            printf ("%08x %08x\n", f, magnitude);
         }
     }
 }
@@ -341,11 +303,11 @@ static void fillInput()
 
 //----------------------------------------------------------------------------------------------------------------------
 
-#if 0 && defined(__propeller__) && defined(__GNUC__)
+#if defined(__propeller__) && defined(__GNUC__)
 
 #define bitReverse(x, length) __builtin_propeller_rev((x), 32-(length))
 
-//#elif defined(__propeller2__)
+#elif defined(__propeller2__) && !defined(LLVM)   //P2
 
 #define bitReverse(x, length) (_rev((unsigned int)x) >> (32-length))
 
@@ -503,8 +465,8 @@ static void butterflies()
 //----------------------------------------------------------------------------------------------------------------------
 int main(int argc, char* argv[])
 {
-	    clkset(_SETFREQ, _CLOCKFREQ);
-    uart_clock_per_bits = uart_init(RX_PIN, TX_PIN, 230400);
+    _clkset(_SETFREQ, _CLOCKFREQ);
+    _uart_init(RX_PIN, TX_PIN, 230400);
     fft_bench();
     for(;;) {
         /* hang here rather than allow reset */
