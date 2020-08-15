@@ -5,11 +5,11 @@ LOAD = loadp2
 LIBP2 = ../libp2
 LIBC = ../libc
 
-TARGET = test15
+TARGET = fft_bench
 OBJDIR = build
 
 CFLAGS = -Os -ffunction-sections -fdata-sections -fno-jump-tables --target=p2
-LFLAGS = --target=p2 #-fuse-ld=lld
+LFLAGS = --target=p2
 LOADFLAGS = -v -ZERO -b 230400 -t
 
 .PHONY: all setup clean load
