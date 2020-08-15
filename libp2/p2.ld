@@ -5,18 +5,18 @@ STACK_SIZE = 0x2000;
 SECTIONS {
     . = 0x00000;
     .text : {
-        *(.text._entry);
+        KEEP(*(.text._entry));
     }
 
     . = 0x00100;
     .cog : {
-        _start
-        *(COG);
+        KEEP(_start())
+        KEEP(*(COG))
     }
 
     . = 0x00400;
     .text : {
-        *(.text.main);
+        KEEP(*(.text.main))
         *(.text*);
     }
 
@@ -32,7 +32,11 @@ SECTIONS {
         *(.bss*);
     }
 
-    /* end of usable memory is 0xFC000 */
+    /* end of usable memory is 0xFC000
+     *
+     * eventually should make this all dynamic so just changing the stack size will adjust
+     * the location to start the stack at and make the startup code use a relocation
+     */
     . = 0xFA000;
     .stack (NOLOAD) : {
         . = ALIGN(4);

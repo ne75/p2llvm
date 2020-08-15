@@ -42,6 +42,11 @@ void _cognew(void (*f)(void *), int par, unsigned *stack) {
     _coginit(0x10, f, par, stack);
 }
 
+unsigned int _rev(unsigned int x) {
+    asm("rev %0" : : "r"(x));
+    return x;
+}
+
 unsigned _uart_init(unsigned rx, unsigned tx, unsigned baud) {
     _uart_rx_pin = rx;
     _uart_tx_pin = tx;

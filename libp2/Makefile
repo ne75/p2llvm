@@ -1,4 +1,4 @@
-LLVM = ../build
+LLVM = /opt/p2llvm
 CC = $(LLVM)/bin/clang
 LD = $(LLVM)/bin/ld.lld
 AR = $(LLVM)/bin/llvm-ar

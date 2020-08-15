@@ -9,7 +9,7 @@ TARGET = fft_bench
 OBJDIR = build
 
 CFLAGS = -Os -ffunction-sections -fdata-sections -fno-jump-tables --target=p2
-LFLAGS = --target=p2
+LFLAGS = --target=p2 -Wl,--gc-sections -Wl,--print-gc-sections
 LOADFLAGS = -v -ZERO -b 230400 -t
 
 .PHONY: all setup clean load
