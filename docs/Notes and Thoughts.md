@@ -44,8 +44,9 @@ Aside: This entire wiki is mostly stream of consciousness writing, so there migh
     - ~~change spilling/restoring callee saved regs using pusha/popa instead of rdlong/wrlong. would convert 3 instructions/register save into 1.~ implemented using special immediates into wrlong for PTRA (since pusha/popa is just an alias for wrlong/rdlong with an immediate)
     - ~~change frame pointer elimination to instead of subtracting an offset to use the special form of rdlong/wrlong on ptra (page 60 of datasheet)~ this implementation is what actually does the above functionality.
     - ~~implement "libcalls" for signed division, multiplication, etc and functions that can live in cog memory for speed.~ the implementation is a little fragile, since it relies on lib calls being a different type of symbol than normal function calls. Need to test if `extern` functions will have the same behavior and accidentally get relocated as lib functions. If that happens, will need to create a custom MCSymbol for cog based symbols.
-    - ~~clean up all the build warnings and get rid of a lot of extra commented code that's currently there.
+    - ~~clean up all the build warnings and get rid of a lot of extra commented code that's currently there.~~
     - allow changing the cog 0 stack location on startup if a large stack for cog 0 is needed.
+    - try to save registers using setq for block transfers instead of one at a time
 
 The high level of how this will work:
 1. use clang to compile c/c++ source into LLVM's IR language. Eventually any LLVM front end should work
@@ -129,6 +130,17 @@ The linker script (p2.ld) does 2 things:
 1. place .text at 0x00400, the first hub execution mode address.
 
 The resulting elf can use Eric Smith's loadp2 (which supports elf binaries) and can be loaded onto the P2 Eval Board.
+
+### Clang
+
+`clang` will be front end of choice since it's already built around llvm. For P2, the following defines will be available:
+- `__propeller2__`
+- `__p2llvm__`
+
+
+Some clang specific changes that I'm making:
+- in `clang/lib/Basic/Targets/` I've created a new target that defines some things clang needs to know. the most important one is the list of regsiters. this allows us to access these regsiters in the C via inline assembly. It also is where the defines above are creted.
+- in `clang/lib/Driver/ToolChains/` I've created a new toolchain for P2 that defines how to run a full build from clang. currently not implemented, which means clang can't actually link anything. Eventually, when I create the P2 library (below), I'll be able to fill this out to automatically link the C standard library and the Propeller standard library directly so programs can be created in one line, and those libraries don't need to be manually included/linked.
 
 ### Libraries
 

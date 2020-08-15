@@ -1,13 +1,14 @@
 /*
-  test C++ classes
+  test libp2
 
   compilation:
     make
 */
 
 #define P2_TARGET_MHZ   200
-#include "propeller2.h"
+#include "propeller.h"
 #include "sys/p2es_clock.h"
+
 #include "printf.h"
 
 #include <sys/va_list.h>
@@ -15,8 +16,6 @@
 
 #define RX_PIN 63
 #define TX_PIN 62
-
-volatile int uart_clock_per_bits;
 
 class Blinker {
 
@@ -39,7 +38,7 @@ Blinker::Blinker(char pin, int delay) {
 }
 
 void Blinker::start() {
-    cognew(blink, (int)this, (unsigned int *)stack);
+    _cognew(blink, (int)this, (unsigned int *)stack);
 }
 
 void Blinker::blink(void *par) {
@@ -51,7 +50,7 @@ void Blinker::blink(void *par) {
 
     while(1) {
         OUTB ^= 1 << (led->pin-32);
-        waitx(led->delay);
+        waitcnt(led->delay + CNT);
     }
 }
 
@@ -72,8 +71,8 @@ void start_blinks(Blinker *led, ...) {
 }
 
 int main() {
-    clkset(_SETFREQ, _CLOCKFREQ);
-    uart_clock_per_bits = uart_init(RX_PIN, TX_PIN, 230400);
+    _clkset(_SETFREQ, _CLOCKFREQ);
+    _uart_init(RX_PIN, TX_PIN, 230400);
 
     printf("Variadic function test\n");
 
@@ -81,7 +80,7 @@ int main() {
 
     while(1) {
         printf("running blinking with c++!\n");
-        waitx(_clkfreq);
+        waitx(CLKFREQ);
     }
     return 0;
 }

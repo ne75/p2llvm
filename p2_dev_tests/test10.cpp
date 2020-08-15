@@ -27,7 +27,7 @@ volatile unsigned int blink4_stack[32];
 volatile int uart_clock_per_bits;
 
 void uart_str(const char *str) __attribute__((noinline));
-void uart_int(int n, unsigned int base) __attribute__((noinline));
+//void uart_int(int n, unsigned int base) __attribute__((noinline));
 
 /*
  * print a 0 terminated string
@@ -36,7 +36,7 @@ void uart_str(const char *str) {
     while (*str) {
         uart_putc(*str);
         str++;
-        waitx(uart_clock_per_bits*10); // wait for the bits to send
+        //waitx(uart_clock_per_bits*10); // wait for the bits to send
     }
 }
 
@@ -109,12 +109,12 @@ int main() {
     clkset(_SETFREQ, _CLOCKFREQ);
     uart_clock_per_bits = uart_init(RX_PIN, TX_PIN, 230400);
 
-    // uart_str("Variadic function test\n");
+    uart_str("Variadic function test\n");
 
-    // // led_mb_t led1 = {56, 20000000, (unsigned int*)blink1_stack};
-    // // led_mb_t led2 = {57, 20000000/2, (unsigned int*)blink2_stack};
-    // // led_mb_t led3 = {58, 20000000/3, (unsigned int*)blink3_stack};
-    // // led_mb_t led4 = {59, 20000000/4, (unsigned int*)blink4_stack};
+    // led_mb_t led1 = {56, 20000000, (unsigned int*)blink1_stack};
+    // led_mb_t led2 = {57, 20000000/2, (unsigned int*)blink2_stack};
+    // led_mb_t led3 = {58, 20000000/3, (unsigned int*)blink3_stack};
+    // led_mb_t led4 = {59, 20000000/4, (unsigned int*)blink4_stack};
 
     // See wiki for why I'm doing things this way
     led_mb_t led1 = {56, _CLOCKFREQ, 0};
@@ -128,6 +128,15 @@ int main() {
     led4.stack = (unsigned int*)blink4_stack;
 
     start_blinks(&led1, &led2, &led3, &led4, 0);
+
+    uart_str("string 1\n");
+    uart_str("string 2\n");
+    uart_str("string 3\n");
+    uart_str("string 4\n");
+    uart_str("string 5\n");
+    uart_str("string 6\n");
+    uart_str("string 7\n");
+    uart_str("string 8\n");
 
     int x = sum(5, 10, 20, -1, 34, -24);
     uart_int(x, 10);

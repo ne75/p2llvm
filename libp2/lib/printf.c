@@ -10,11 +10,11 @@
  */
 
 #include <stdarg.h>
-#include <compiler.h>
+//#include <compiler.h>
 
 #include "propeller2.h"
 
-#define putchar uart_putc
+#define putchar _uart_putc
 
 int isdigit(int c) {
   if (c >= '0' && c <= '9')
@@ -100,6 +100,9 @@ _doprnt( const char *fmt, va_list args )
 
    while( (c = *fmt++) != 0 ) {
      if (c != '%') {
+       if (c == '\n') {
+        outbytes += PUTC('\r', 1);
+       }
        outbytes += PUTC(c, 1);
        continue;
      }
