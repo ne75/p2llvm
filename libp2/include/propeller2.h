@@ -67,6 +67,11 @@ void _coginit(unsigned mode, void (*f)(void *), int par, unsigned *stack);
 void _cognew(void (*f)(void *), int par, unsigned *stack);
 
 /*
+ * reverse bits in x
+ */
+unsigned int _rev(unsigned int x);
+
+/*
  * initialize the given rx/tx pins in async mode (uart)
  * this needs to be called again if using UART and clkset is called to adjust baud rates
  */

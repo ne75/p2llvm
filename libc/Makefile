@@ -29,8 +29,7 @@ WARN = -Wall -Werror
 BASEFLAGS = $(WARN) -Os -nostdinc -I./include -ffunction-sections -fno-jump-tables --target=p2
 CFLAGS = $(BASEFLAGS) -D__propeller2__
 MATHCFLAGS = $(WARN) -m$(MODEL) $(CHIPOPT) $(FLOATDEF) -Os -nostdinc -I./include
-#LLVM = ~/Documents/Programming/Propeller/p2-llvm
-LLVM = ~/Github/llvm-propeller2/build
+LLVM = /opt/p2llvm
 AR = $(LLVM)/bin/llvm-ar
 CC = $(LLVM)/bin/clang
 OBJCOPY = $(LLVM)/bin/llvm-objcopy
