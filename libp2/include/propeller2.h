@@ -18,6 +18,11 @@
 #define _clkmode (*((int*)0x18))
 #define _baudrate (*((int*)0x1c))
 
+register volatile int PA asm ("pa");
+register volatile int PB asm ("pb");
+register volatile int PTRA asm ("ptra");
+register volatile int PTRB asm ("ptrb");
+
 register volatile int DIRA asm ("dira");
 register volatile int DIRB asm ("dirb");
 register volatile int OUTA asm ("outa");
