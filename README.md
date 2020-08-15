@@ -24,7 +24,7 @@ mkdir build & cd build
 ```
 3. Configure the project for building. This gives the basic configuration and creates Makefiles. See https://llvm.org/docs/GettingStarted.html for details on this command
 ``` 
-cmake -G "Unix Makefiles" -DLLVM_ENABLE_PROJECTS="lld;clang" -DCMAKE_INSTALL_PREFIX=<install dir> -DLLVM_EXPERIMENTAL_TARGETS_TO_BUILD=P2 -DLLVM_TARGETS_TO_BUILD="" ../llvm
+cmake -G "Unix Makefiles" -DCMAKE_INSTALL_PREFIX=/opt/p2llvm -DLLVM_ENABLE_PROJECTS="lld;clang" -DCMAKE_BUILD_TYPE=Release -DLLVM_EXPERIMENTAL_TARGETS_TO_BUILD=P2 -DLLVM_TARGETS_TO_BUILD="" ../llvm-project/llvm
 ```
 Make `install dir` something like `/opt/p2llvm`
 

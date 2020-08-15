@@ -114,8 +114,8 @@ int main()
 
 #ifdef LLVM
     //extern int uart_init(int, int, int);
-    clkset(_SETFREQ, _CLOCKFREQ);
-    uart_init(63, 62, 230400);
+    _clkset(_SETFREQ, _CLOCKFREQ);
+    _uart_init(63, 62, 230400);
 #endif
     printf("SPI simulation on pins %d to %d\n", BASEPIN, BASEPIN+3);
 
