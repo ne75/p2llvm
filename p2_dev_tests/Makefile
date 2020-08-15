@@ -1,4 +1,4 @@
-LLVM_BASE = ../build
+LLVM_BASE = /opt/p2llvm
 CC = $(LLVM_BASE)/bin/clang
 LD = $(LLVM_BASE)/bin/ld.lld
 LOAD = loadp2
@@ -8,8 +8,8 @@ LIBC = ../libc
 TARGET = fft_bench
 OBJDIR = build
 
-CFLAGS = -Os -ffunction-sections -fdata-sections -fno-jump-tables --target=p2 -I$(LIBP2)/include -I$(LIBC)/include -DLLVM
-LFLAGS = -Tp2.ld -L$(LIBP2) -L$(LIBP2)/build -lp2 -L$(LIBC)/build -lc
+CFLAGS = -Os -ffunction-sections -fdata-sections -fno-jump-tables --target=p2
+LFLAGS = --target=p2
 LOADFLAGS = -v -ZERO -b 230400 -t
 
 .PHONY: all setup clean load
@@ -21,10 +21,10 @@ setup:
 	mkdir -p $(OBJDIR)
 
 $(OBJDIR)/$(TARGET).elf: $(OBJDIR)/$(TARGET).o
-		$(LD) -n -N $(LFLAGS) -o $@ $^ #-mllvm -debug
+		$(CC) $(LFLAGS) -o $@ $^
 
 $(OBJDIR)/$(TARGET).o: $(TARGET).cpp
-		$(CC) $(CFLAGS) -o $@ -c $< #-mllvm -debug #--debug-only=p2-isel-lowering
+		$(CC) $(CFLAGS) -o $@ -c $<
 
 load:
 	$(LOAD) $(LOADFLAGS) $(OBJDIR)/$(TARGET).elf

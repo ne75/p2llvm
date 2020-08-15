@@ -100,6 +100,9 @@ _doprnt( const char *fmt, va_list args )
 
    while( (c = *fmt++) != 0 ) {
      if (c != '%') {
+       if (c == '\n') {
+        outbytes += PUTC('\r', 1);
+       }
        outbytes += PUTC(c, 1);
        continue;
      }

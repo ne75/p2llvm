@@ -3,6 +3,8 @@
 
 #include "propeller2.h"
 
+__attribute__ ((section (".stack"))) unsigned int *__stack;
+
 __attribute__ ((section ("COG"))) void _unreachable();
 __attribute__ ((section ("COG"))) void _start();
 __attribute__ ((section ("COG"))) int __sdiv(int a, int b);
@@ -27,10 +29,13 @@ void _start() {
         "rdlong $r1, $r0\n"     //  read out first stack value
         "add $r0, #4\n"
         "rdlong $r0, $r0\n"     //  read out second stack value
-        "jmp $r1\n"             //  jump to the cog function
+        "jmp $r1\n");           //  jump to the cog function
 
-        "augs #1\n"
-        "mov $ptra, #0x100\n"   // cog0 startup: start the stack at 0x300 to reserve room for startup code/global things stored at the start of memory
+    //PTRA = (unsigned int)__stack; // can't do this yet because then _start will try to save registers to the stack, which doesn't exist yet
+                                    // need an attribute to block CSRs in this function.
+
+    asm("augs #0x3d0\n"
+        "mov $ptra, #0\n"       // cog0 startup: start the stack at 0x300 to reserve room for startup code/global things stored at the start of memory
         "augs #2\n"
         "mov $r0, #0\n"         // r0 = 0x400
         "jmp $r0");             // jump to the start of our program (0x400)
@@ -49,7 +54,7 @@ int __sdiv(int a, int b) {
     // to and from the stack
     int result_neg = (a ^ b) >> 31;
 
-    // faster than using absolute function
+    // faster than using abs() function
     asm("abs %0, %1" : "=r"(a) : "r"(a));
     asm("abs %0, %1" : "=r"(b) : "r"(b));
 
@@ -65,7 +70,7 @@ int __srem(int a, int b) {
     // per LLVM instruction set, srem return should have the same sign as the first operand, a
     int result_neg = a >> 31;
 
-    // faster than using absolute function
+    // faster than using abs() function
     asm("abs %0, %1" : "=r"(a) : "r"(a));
     asm("abs %0, %1" : "=r"(b) : "r"(b));
 

@@ -9,7 +9,7 @@ ifndef OBJDIR
 endif
 
 ifndef DEST
-	DEST = ~/Documents/Programming/Propeller/p2-llvm
+	DEST = /opt/p2lvm/libc
 endif
 
 # ifeq ($(SHORTDOUBLES),1)
@@ -234,7 +234,7 @@ $(PREFIX)/%.o: %.sx
 $(MATHDIR)/%.o: %.c
 	$(CC) $(MATHCFLAGS) -o $@ -c $<
 
-SRCLIBS = libc.a libm.a libpthread.a
+SRCLIBS = libc.a #libm.a libpthread.a
 
 install: all install-dirs install-includes
 	cp $(addprefix $(OBJDIR)/, $(SRCLIBS)) $(DEST)/lib/
