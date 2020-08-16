@@ -117,6 +117,7 @@ if $build_libp2; then
     echo "==== Building libp2 ====="
     echo "========================="
     cd libp2
+    make clean
     make -j8
     cd ..
 

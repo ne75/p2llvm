@@ -23,7 +23,7 @@ $(OBJDIR)/$(LIBTARGET).a: $(addprefix $(OBJDIR)/, $(OBJS))
 		$(AR) rcs $@ $^
 
 $(OBJDIR)/%.o: lib/%.c
-		$(CC) $(CFLAGS) -o $@ -c $<
+		$(CC) $(CFLAGS) -o $@ -c $< #-mllvm --debug-only=p2-frame-lower
 
 clean:
 	rm -rf ./$(OBJDIR)

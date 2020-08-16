@@ -26,7 +26,7 @@
 #endif
 #define getcnt(x)      (x = CNT)
 
-#elif defined(LLVM)
+#elif defined(__p2llvm__)
 
 #define P2_TARGET_MHZ   200
 #include "propeller2.h"
@@ -112,7 +112,7 @@ int main()
     int i;
     unsigned long startcycle, endcycle;
 
-#ifdef LLVM
+#ifdef __p2llvm__
     //extern int uart_init(int, int, int);
     _clkset(_SETFREQ, _CLOCKFREQ);
     _uart_init(63, 62, 230400);
