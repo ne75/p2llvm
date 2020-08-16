@@ -41,9 +41,9 @@ Aside: This entire wiki is mostly stream of consciousness writing, so there migh
     - see if dynamic allocation will actually work
 1. Expand assembly parser to support wc/wz/wcz and conditional modifiers on instructions
 1. Random TODOs
-    - ~~change spilling/restoring callee saved regs using pusha/popa instead of rdlong/wrlong. would convert 3 instructions/register save into 1.~ implemented using special immediates into wrlong for PTRA (since pusha/popa is just an alias for wrlong/rdlong with an immediate)
-    - ~~change frame pointer elimination to instead of subtracting an offset to use the special form of rdlong/wrlong on ptra (page 60 of datasheet)~ this implementation is what actually does the above functionality.
-    - ~~implement "libcalls" for signed division, multiplication, etc and functions that can live in cog memory for speed.~ the implementation is a little fragile, since it relies on lib calls being a different type of symbol than normal function calls. Need to test if `extern` functions will have the same behavior and accidentally get relocated as lib functions. If that happens, will need to create a custom MCSymbol for cog based symbols.
+    - ~~change spilling/restoring callee saved regs using pusha/popa instead of rdlong/wrlong. would convert 3 instructions/register save into 1.~ implemented using special immediates into wrlong for PTRA (since pusha/popa is just an alias for wrlong/rdlong with an immediate)~~
+    - ~~change frame pointer elimination to instead of subtracting an offset to use the special form of rdlong/wrlong on ptra (page 60 of datasheet)~ this implementation is what actually does the above functionality.~~
+    - ~~implement "libcalls" for signed division, multiplication, etc and functions that can live in cog memory for speed.~ the implementation is a little fragile, since it relies on lib calls being a different type of symbol than normal function calls. Need to test if `extern` functions will have the same behavior and accidentally get relocated as lib functions. If that happens, will need to create a custom MCSymbol for cog based symbols.~~
     - ~~clean up all the build warnings and get rid of a lot of extra commented code that's currently there.~~
     - allow changing the cog 0 stack location on startup if a large stack for cog 0 is needed.
     - ~~try to save registers using setq for block transfers instead of one at a time~~
