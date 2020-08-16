@@ -31,13 +31,13 @@ Aside: This entire wiki is mostly stream of consciousness writing, so there migh
     - ~~implement basic cog starting for cogs that do not require a stack~
     - ~~implement including setq to pass the stack pointer and then assign the stack pointer to that value. Some startup code will be needed.~
 1. expand on the rest of the propeller instruction set
-1. create clang extensions for special directives and being able to write directly to I/O regsiters, specify functions and variables as going into hub, cog, or LUT memory, etc.
-    - might not be necessary, here's one way to do writing registers: https://forums.parallax.com/discussion/comment/1502336/#Comment_1502336
+1. ~~create clang extensions for special directives and being able to write directly to I/O regsiters,~~ specify functions and variables as going into hub, cog, or LUT memory, etc. Specifying data location might not make sense with how we structured the code, tbd.
+    - ~~might not be necessary, here's one way to do writing registers: https://forums.parallax.com/discussion/comment/1502336/#Comment_1502336~~
 1. allow the COG attribute used by the AsmBackend and specify the correct relocation method for a function/variable based on that.
 1. port the necessary functions from the c standard library to make c/c++ useful.
     - port over propgcc library for this.
 1. Figure out what's needed for classes
-    - ~test basic classes that start static functions in new cogs.~
+    - ~~test basic classes that start static functions in new cogs.~~
     - see if dynamic allocation will actually work
 1. Expand assembly parser to support wc/wz/wcz and conditional modifiers on instructions
 1. Random TODOs
@@ -46,7 +46,7 @@ Aside: This entire wiki is mostly stream of consciousness writing, so there migh
     - ~~implement "libcalls" for signed division, multiplication, etc and functions that can live in cog memory for speed.~ the implementation is a little fragile, since it relies on lib calls being a different type of symbol than normal function calls. Need to test if `extern` functions will have the same behavior and accidentally get relocated as lib functions. If that happens, will need to create a custom MCSymbol for cog based symbols.
     - ~~clean up all the build warnings and get rid of a lot of extra commented code that's currently there.~~
     - allow changing the cog 0 stack location on startup if a large stack for cog 0 is needed.
-    - try to save registers using setq for block transfers instead of one at a time
+    - ~~try to save registers using setq for block transfers instead of one at a time~~
 
 The high level of how this will work:
 1. use clang to compile c/c++ source into LLVM's IR language. Eventually any LLVM front end should work
