@@ -1,20 +1,25 @@
-ENTRY(_entry)
+ENTRY(__entry)
+
+/*MEMORY {
+    ram         (rwx) : ORIGIN = 0x00000, LENGTH = 0x7c000
+    debug_rom   (rx)  : ORIGIN = 0x7c000, LENGTH = 0x04000
+}*/
 
 STACK_SIZE = 0x2000;
 
 SECTIONS {
     . = 0x00000;
     .text : {
-        KEEP(*(.text._entry));
+        KEEP(*(.text.__entry));
     }
 
     . = 0x00100;
     .cog : {
-        KEEP(_start())
-        KEEP(*(COG))
+        KEEP(__start())
+        KEEP(*(cog))
     }
 
-    . = 0x00400;
+    . = 0x00900;
     .text : {
         KEEP(*(.text.main))
         *(.text*);
@@ -32,15 +37,9 @@ SECTIONS {
         *(.bss*);
     }
 
-    /* end of usable memory is 0xFC000
-     *
-     * eventually should make this all dynamic so just changing the stack size will adjust
-     * the location to start the stack at and make the startup code use a relocation
-     */
-    . = 0xFA000;
+    /* end of usable memory is 0x7C000 */
+    . = 0x7c000 - STACK_SIZE;
     .stack (NOLOAD) : {
-        . = ALIGN(4);
-        . = . + STACK_SIZE;
         . = ALIGN(4);
     }
 

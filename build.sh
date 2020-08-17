@@ -23,26 +23,6 @@ build_libc=true
 build_libp2=true
 
 # get options
-# while getopts ":" option; do
-#     case $option in
-#         h) # display Help
-#             help
-#             exit;;
-#         --skip_llvm)
-#             echo "Skip LLVM"
-#             build_llvm=false;;
-#         --skip_libc)
-#             echo "Skip libc"
-#             build_libc=false;;
-#         --skip_libp2)
-#             echo "Skip libp2"
-#             build_libp2=false;;
-#         \?) # incorrect option
-#             echo "Error: Invalid option"
-#             exit;;
-#     esac
-# done
-
 install_dir_base=$1
 
 while [ -n "$2" ]; do # while loop starts
@@ -100,8 +80,10 @@ if $build_libc; then
     echo "========================"
     cd libc
     if [ $# -ne 0 ]; then
+        make clean
         make install -j8 DEST=$install_dir_base/libc
     else
+        make clean
         make -j8
     fi
     cd ..

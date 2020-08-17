@@ -1,6 +1,6 @@
 #include "propeller2.h"
 
-extern void _start();
+extern void __start();
 
 unsigned _uart_tx_pin;
 unsigned _uart_rx_pin;
@@ -34,7 +34,7 @@ void _coginit(unsigned mode, void (*f)(void *), int par, unsigned *stack) {
     asm("setq %0\n"
         "coginit %1, %2"
         : // no outputs
-        : "r"(stack), "r"(mode), "r"(_start)
+        : "r"(stack), "r"(mode), "r"(__start)
         );
 }
 

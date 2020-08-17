@@ -24,7 +24,7 @@ $(OBJDIR)/$(TARGET).elf: $(OBJDIR)/$(TARGET).o
 		$(CC) $(LFLAGS) -o $@ $^
 
 $(OBJDIR)/$(TARGET).o: $(TARGET).cpp
-		$(CC) $(CFLAGS) -o $@ -c $< #-mllvm --debug-only=p2-frame-lower
+		$(CC) $(CFLAGS) -o $@ -c $< -mllvm --debug-only=p2-frame-lower
 
 load:
 	$(LOAD) $(LOADFLAGS) $(OBJDIR)/$(TARGET).elf
