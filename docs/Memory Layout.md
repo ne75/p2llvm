@@ -1,0 +1,35 @@
+# Memory Layout
+
+## Hub RAM
+Propeller 2 hub RAM ranges from 0x0000 to 0x7FFFF. The top 16KB (0x7C000-0x7FFFF) is reserved for the debugger code, if used, and is mapped to via address range 0xFC000-0xFFFFF. If debugging is not used, 0x7C000-0x7FFFF is normall addressable RAM space. 
+
+
+| Address     | Description | 
+|-------------|-------------|
+| 0x00000     | One time startup code to jump to re-usable startup code | 
+| 0x00100     | Re-usable COG code |
+| 0x00400     | Start of generic program space (should be moved to 0x00800) |
+| 0x7A000     | 2KB Cog 0 Stack Space |
+| 0x7CFFF     | Start of debugger reserved space |
+| 0x7FFFF     | End of memory (on Rev B silicon) |
+
+### Initial startup code
+This is a single instruction to jump to Re-usable startup code. This allows the chip to re-start itself, either by cog 0 jumping there, or by reseting via `hubset`. 
+
+### Re-usable Cog Code
+This is the startup function that can initiate a new cog. It relies on `setq` being used to set the start of the stack for the new cog. Cog 0 skips this setup and uses the static values from the table above for the stack and starting function. Upon startup, the cog startup code assumes PTRA will point to the start of the stack allocated for this cog, with the first long in the stack (`ptra[0]`) containing a pointer to the function to begin executing, and the second long in the stack (`ptra[1]`) containing an optional parameter to be passed into the new function.
+
+After the re-usable startup code (and up to 0x00900) is free space for any runtime library functions (such as signed division, `__sdiv`). Eventually, there should be functionality to store a variable (or function) in this free space instead of hub RAM, depending on it's use, to be determined at compile time of the application (and not the library)
+
+Important note: the linker relocator code assumes this starts at 0x00100, so do not change the linker code to move this.
+
+As of now, the program code starts at 0x00400, but it should be moved to 0x00800, and the initial startup code moved to 0x00020, reserving space for global HUB variables (`clkmode`, `clkfreq`, etc). The remaining 480 longs of memory are all free to use for cog-based code.
+
+### Generic Program Space
+Any and all program code goes here, including functions to be run in other cogs. No special rules about this space, it's free for use and will be filled up. 
+
+### Cog 0 Stack
+This is a fixed stack for use by cog 0. As of now, it's hard coded in the startup code to the address in the table, but eventually, it will be adjustable via the linker script (and possible at compile time by overriding variables in the linker script)
+
+### Debugger Reserved Space
+As of now, there is no debugger program, but it should be written eventually, and placed here. Then, the Propeller debugging interrupts can be used to call this code, which will be able to provide register info, stack printing, etc. 
