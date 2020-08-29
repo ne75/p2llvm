@@ -1,5 +1,6 @@
 #include <signal.h>
 #include <errno.h>
+#include <stdlib.h>
 
 sighandler_t __sigs[_NSIGS];
 

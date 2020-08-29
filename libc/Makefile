@@ -27,7 +27,7 @@ PREFIX = $(OBJDIR)
 WARN = -Wall -Werror
 #WARN =
 BASEFLAGS = $(WARN) -Os -nostdinc -I./include -ffunction-sections -fno-jump-tables --target=p2
-CFLAGS = $(BASEFLAGS) -D__propeller2__
+CFLAGS = $(BASEFLAGS)
 MATHCFLAGS = $(WARN) -m$(MODEL) $(CHIPOPT) $(FLOATDEF) -Os -nostdinc -I./include
 LLVM = /opt/p2llvm
 AR = $(LLVM)/bin/llvm-ar
@@ -62,14 +62,19 @@ STDLIB = malloc.o calloc.o realloc.o atoi.o atoll.o atof.o atexit.o abort.o \
 	assert.o rand.o div.o lldiv.o abs.o llabs.o getenv.o \
 	multibyte.o fenv.o mblencur.o
 
+# MISC = 	ctype.o toupper.o tolower.o \
+# 	isalpha.o isalnum.o iscntrl.o isprint.o isspace.o isdigit.o \
+#         isblank.o isxdigit.o isupper.o islower.o isgraph.o ispunct.o \
+# 	sbrk.o signal.o assert.o locale.o \
+# 	chdir.o rmdir.o mkdir.o opendir.o rdwr.o lseek.o \
+# 	putenv.o fdopen.o open.o close.o unlink.o stat.o isatty.o \
+# 	mktemp.o \
+# 	tinyomp.o
+
 MISC = 	ctype.o toupper.o tolower.o \
 	isalpha.o isalnum.o iscntrl.o isprint.o isspace.o isdigit.o \
         isblank.o isxdigit.o isupper.o islower.o isgraph.o ispunct.o \
-	sbrk.o signal.o assert.o locale.o \
-	chdir.o rmdir.o mkdir.o opendir.o rdwr.o lseek.o \
-	putenv.o fdopen.o open.o close.o unlink.o stat.o isatty.o \
-	mktemp.o \
-	tinyomp.o
+	sbrk.o signal.o assert.o locale.o
 
 WCHAR = wctype.o iswctype.o iswalnum.o iswalpha.o iswblank.o \
       iswcntrl.o iswdigit.o iswgraph.o iswlower.o iswprint.o \
@@ -150,7 +155,7 @@ LIBM_EXTRA =	float_printf.o float_simple_printf.o $(PRINTF) \
 #PROPELLER = propeller.o
 
 #OBJS = $(STDIO) $(STDLIB) $(MISC) $(THREADS) $(STRING) $(TIME) $(DRIVERS) $(PROPELLER) $(WCHAR)
-OBJS = $(STDLIB)
+OBJS = $(STDLIB) $(WCHAR) $(MISC)
 
 MODEL_OBJS = $(addprefix $(PREFIX)/, $(OBJS))
 MODEL_LIBM_OBJS = $(addprefix $(MATHDIR)/, $(LIBM))
@@ -178,7 +183,7 @@ $(PREFIX)/float_scanf.o: vfscanf.c
 	$(CC) $(CFLAGS) -o $@ -DFLOAT_SUPPORT -c $<
 
 $(PREFIX)/%.o: %.c
-	$(CC) $(CFLAGS) -o $@ -c $< #-mllvm --debug-only=p2-inst-info #-mllvm -view-isel-dags
+	$(CC) $(CFLAGS) -o $@ -c $< #-mllvm -debug #--debug-only=mccodeemitter
 
 # this is used to build the COG C EEPROM driver and is rounded up to 2K bytes so the space can be used as a buffer
 # for loading other COGs once the EEPROM driver has been loaded

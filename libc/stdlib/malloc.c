@@ -8,12 +8,14 @@
  * Copyright (c) 2011 Parallax, Inc.
  * Written by Eric R. Smith, Total Spectrum Software Inc.
  * MIT licensed (see terms at end of file)
+ *
+ * Modified by Nikita Ermoshkin, 2020 for P2.
+ *
  */
 
 #include <stdlib.h>
 #include <string.h>
 #include <sys/thread.h>
-//#include <propeller.h>
 #include "malloc.h"
 
 /* we only need the external memory heap if we're in xmm mode (not lmm or xmmc) */
@@ -22,19 +24,14 @@ MemHeap _malloc_heap = {
     .free = NULL
 };
 
-MemHeap _hub_malloc_heap = {
-    .sbrk = _hubsbrk,
-    .free = NULL
-};
-
 // FIXME: implement locking when doing malloc
 
-// static atomic_t malloc_lock;
+//static atomic_t malloc_lock;
 
 /* local functions */
-static void common_free(MemHeap *heap, void *ptr);
+static void _free(MemHeap *heap, void *ptr);
 
-void *_common_malloc(MemHeap *heap, size_t n) {
+void *_malloc(MemHeap *heap, size_t n) {
     MemHeader *p;
     MemHeader **prevp;
     size_t numunits;  /* size of block in MemHeader size chunks */
@@ -73,14 +70,14 @@ void *_common_malloc(MemHeap *heap, size_t n) {
 }
 
 void *malloc(size_t n) {
-    return _common_malloc(&_malloc_heap, n);
+    return _malloc(&_malloc_heap, n);
 }
 
 void free(void *ptr) {
-    common_free(&_malloc_heap, ptr);
+    _free(&_malloc_heap, ptr);
 }
 
-static void common_free(MemHeap *heap, void *ptr) {
+static void _free(MemHeap *heap, void *ptr) {
     struct MemHeader *thisp, *p, **prev;
 
     thisp = (MemHeader *)ptr;
@@ -142,29 +139,6 @@ static void common_free(MemHeap *heap, void *ptr) {
     *prev = thisp;
     //__unlock(&malloc_lock);
 }
-
-// FIXME: fix the aliasing stuff. requires more backend work.
-
-//#if defined(__PROPELLER_LMM__) || defined(__PROPELLER_XMMC__)
-// __strong_alias(_hubmalloc, malloc);
-// __strong_alias(_hubfree, free);
-// __weak_alias(hubmalloc, malloc);
-// __weak_alias(hubfree, free);
-// #else
-// void *
-// _hubmalloc(size_t n)
-// {
-//     return _common_malloc(&_hub_malloc_heap, n);
-// }
-
-// void
-// _hubfree(void *ptr)
-// {
-//     common_free(&_hub_malloc_heap, ptr);
-// }
-// __weak_alias(hubmalloc, _hubmalloc);
-// __weak_alias(hubfree, _hubfree);
-// #endif
 
 
 /* +--------------------------------------------------------------------

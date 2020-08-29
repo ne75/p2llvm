@@ -81,7 +81,7 @@ if $build_libc; then
     cd libc
     if [ $# -ne 0 ]; then
         make clean
-        make install -j8 DEST=$install_dir_base/libc
+        make -j8 install DEST=$install_dir_base/libc
     else
         make clean
         make -j8

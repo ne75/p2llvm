@@ -3,7 +3,7 @@
 
 #include "propeller2.h"
 
-__attribute__ ((section (".stack"))) unsigned int __stack;
+__attribute__ ((section (".stack"))) unsigned int *__stack;
 
 __attribute__ ((section ("cog"))) void __unreachable();
 __attribute__ ((section ("cog"))) void __start();
@@ -38,7 +38,7 @@ void __start() {
 }
 
 // a give-up function if we have some fatal error.
-void __unreachable() {
+void __unreachable(int status) {
     while(1);
 }
 

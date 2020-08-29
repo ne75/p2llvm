@@ -17,13 +17,13 @@ all: setup $(OBJDIR)/$(LIBTARGET).a
 setup:
 	mkdir -p $(OBJDIR)
 
-OBJS = crt0.o propeller2.o printf.o
+OBJS = crt0.o printf.o propeller2.o
 
 $(OBJDIR)/$(LIBTARGET).a: $(addprefix $(OBJDIR)/, $(OBJS))
 		$(AR) rcs $@ $^
 
 $(OBJDIR)/%.o: lib/%.c
-		$(CC) $(CFLAGS) -o $@ -c $< #-mllvm --debug-only=p2-frame-lower
+		$(CC) $(CFLAGS) -o $@ -c $< #-mllvm -debug #--debug-only=p2-frame-lower
 
 clean:
 	rm -rf ./$(OBJDIR)

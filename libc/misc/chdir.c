@@ -1,7 +1,7 @@
 /*
 # #########################################################
 # This file contains the chdir and getcwd functions
-#   
+#
 # Written by Dave Hein
 # Copyright (c) 2011 Parallax, Inc.
 # MIT Licensed
@@ -16,7 +16,7 @@
 #include <sys/sd.h>
 #include <compiler.h>
 #include <errno.h>
-#include <propeller.h>
+//#include <propeller.h>
 #include <unistd.h>
 #include "../drivers/sd_internal.h"
 
