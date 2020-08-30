@@ -14,21 +14,19 @@
 #define outh(pin) asm("outh %0" : : "r"(pin))
 #define outl(pin) asm("outl %0" : : "r"(pin))
 
-// void blink() {
-//     outh(56);
-//     waitx(20000000);
-//     outl(56);
-//     waitx(20000000);
-// }
+void blink() {
+    outh(56);
+    waitx(20000000);
+    outl(56);
+    waitx(20000000);
+}
 
 int main() {
 
     dirh(56);
-    outl(56);
 
     while(1) {
-        //waitx(20000000);
-        //blink();
+        blink();
     }
 
     return 0;

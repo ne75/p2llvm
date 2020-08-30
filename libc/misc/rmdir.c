@@ -4,7 +4,7 @@
 # file sytem driver.  The code is separated into two main
 # sections, which consist of the standard file I/O driver
 # and the basic file routines that call the DOSFS fucntions.
-#   
+#
 # Written by Dave Hein with contributions from other GCC
 # development team members.
 # Copyright (c) 2011 Parallax, Inc.
@@ -19,7 +19,7 @@
 #include <sys/driver.h>
 #include <compiler.h>
 #include <errno.h>
-#include <propeller.h>
+//#include <propeller.h>
 #include <sys/sd.h>
 #include "../drivers/sd_internal.h"
 

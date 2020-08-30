@@ -6,6 +6,7 @@
  * for gcc, the default for wchar_t is "int" and for wint_t is "unsigned int"
  */
 
+#ifndef __cplusplus
 #ifndef _WCHAR_T_DEFINED
 #ifndef _WCHAR_T_TYPE
 #define _WCHAR_T_TYPE int
@@ -26,4 +27,5 @@ typedef struct _Mbstate {
   unsigned int partial:22; /* partial wide character constructed/output */
 } _Mbstate_t;
 #define _MBSTATE_T_DEFINED _Mbstate_t
+#endif
 #endif

@@ -8,6 +8,9 @@
  * Copyright (c) 2011 Parallax, Inc.
  * Written by Eric R. Smith, Total Spectrum Software Inc.
  * MIT licensed (see terms at end of file)
+ *
+ * Modified by Nikita Ermoshkin, 2020 for P2.
+ *
  */
 
 #include <stdlib.h>
@@ -16,7 +19,7 @@
 #include "malloc.h"
 
 /* local functions */
-static void *common_realloc(MemHeap *heap, void *ptr, size_t n);
+static void *_realloc(MemHeap *heap, void *ptr, size_t n);
 
 /*
  * realloc: expand or shrink a block
@@ -24,68 +27,53 @@ static void *common_realloc(MemHeap *heap, void *ptr, size_t n);
  * expand it on request, but for now we just punt
  * the shrinking we really do correctly though
  */
-void *
-realloc(void *ptr, size_t n)
-{
-    return common_realloc(&_malloc_heap, ptr, n);
+void *realloc(void *ptr, size_t n) {
+    return _realloc(&_malloc_heap, ptr, n);
 }
 
-void *
-hubrealloc(void *ptr, size_t n)
-{
-#if defined(__PROPELLER_LMM__) || defined(__PROPELLER_XMMC__)
-    return common_realloc(&_malloc_heap, ptr, n);
-#else
-    return common_realloc(&_hub_malloc_heap, ptr, n);
-#endif
-}
+static void *_realloc(MemHeap *heap, void *ptr, size_t n) {
+    MemHeader *thisp, *newp;
+    void *newptr;
+    size_t numunits;
 
-static void *
-common_realloc(MemHeap *heap, void *ptr, size_t n)
-{
-  MemHeader *thisp, *newp;
-  void *newptr;
-  size_t numunits;
+    if (ptr == NULL)
+        return malloc(n);
 
-  if (ptr == NULL)
-    return malloc(n);
-  if (n == 0)
-    {
-      free(ptr);
-      return NULL;
+    if (n == 0){
+        free(ptr);
+        return NULL;
     }
 
-  thisp = (MemHeader *)ptr;
-  --thisp;
-  if (thisp->next != MAGIC)
-    {
-      return NULL; /* cannot do anything */
+    thisp = (MemHeader *)ptr;
+    --thisp;
+    if (thisp->next != MAGIC) {
+        return NULL; /* cannot do anything */
     }
 
-  numunits = (n + sizeof(MemHeader)-1)/sizeof(MemHeader) + 1;
-  if (thisp->len == numunits)
-    {
-      /* nothing to do, just return it unchanged */
-      return ptr;
-    }
-  if (thisp->len > numunits)
-    {
-      /* shrink the block */
-      newp = thisp + numunits;
-      newp->next = MAGIC;
-      newp->len = thisp->len - numunits;
-      thisp->len -= numunits;
-      free(newp+1);
-      return ptr;
+    numunits = (n + sizeof(MemHeader)-1)/sizeof(MemHeader) + 1;
+    if (thisp->len == numunits) {
+        /* nothing to do, just return it unchanged */
+        return ptr;
     }
 
-  /* OK, the tricky case: allocate a new block and copy the memory into it */
-  newptr = _common_malloc(heap, n);
-  if (!newptr)
-    return NULL;
-  memcpy(newptr, ptr, (thisp->len-1)*sizeof(MemHeader));
-  free(ptr);
-  return newptr;
+    if (thisp->len > numunits) {
+        /* shrink the block */
+        newp = thisp + numunits;
+        newp->next = MAGIC;
+        newp->len = thisp->len - numunits;
+        thisp->len -= numunits;
+        free(newp+1);
+        return ptr;
+    }
+
+    /* OK, the tricky case: allocate a new block and copy the memory into it */
+    newptr = _malloc(heap, n);
+    if (!newptr)
+        return NULL;
+
+    memcpy(newptr, ptr, (thisp->len-1)*sizeof(MemHeader));
+    free(ptr);
+    return newptr;
 }
 /* +--------------------------------------------------------------------
  * ¦  TERMS OF USE: MIT License

@@ -8,6 +8,9 @@
  * Copyright (c) 2011 Parallax, Inc.
  * Written by Eric R. Smith, Total Spectrum Software Inc.
  * MIT licensed (see terms at end of file)
+ *
+ * Modified by Nikita Ermoshkin, 2020 for P2.
+ *
  */
 typedef struct MemHeader {
   struct MemHeader *next;  /* pointer to next member, if on free list */
@@ -22,12 +25,11 @@ typedef struct MemHeap {
 /* magic number to indicate allocated memory */
 #define MAGIC ((MemHeader *)0xa110c)
 
-/* normal and hub heaps */
+/* memory heaps */
 extern MemHeap _malloc_heap;
-extern MemHeap _hub_malloc_heap;
 
 /* internal malloc function that can allocate from either heap */
-void *_common_malloc(MemHeap *heap, size_t n);
+void *_malloc(MemHeap *heap, size_t n);
 
 /* function to request memory from the OS */
 extern void *_sbrk(unsigned long n);

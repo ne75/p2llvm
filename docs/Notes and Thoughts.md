@@ -108,7 +108,7 @@ When calling a function, the caller will increment `PTRA` to allocate space for 
 
 This section describes how a program should be organized in hub memory. Below is a simple diagram.
 
-| 0x00100                 | 0x00300     | 0x00400                        | 0x7fffff (or 0x7cffff?)          |
+| 0x00100                 | 0x00300     | 0x00400                        | 0x7ffff (or 0x7cfff?)            |
 |-------------------------|-------------|--------------------------------|----------------------------------|
 | Startup/COG memory code | Cog 0 stack | Start of generic program space | End of memory (on Rev B silicon) |
 

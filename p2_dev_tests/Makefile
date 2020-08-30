@@ -5,7 +5,7 @@ LOAD = loadp2
 LIBP2 = ../libp2
 LIBC = ../libc
 
-TARGET = fft_bench
+TARGET = test16
 OBJDIR = build
 
 CFLAGS = -Os -ffunction-sections -fdata-sections -fno-jump-tables --target=p2
@@ -24,7 +24,7 @@ $(OBJDIR)/$(TARGET).elf: $(OBJDIR)/$(TARGET).o
 		$(CC) $(LFLAGS) -o $@ $^
 
 $(OBJDIR)/$(TARGET).o: $(TARGET).cpp
-		$(CC) $(CFLAGS) -o $@ -c $<
+		$(CC) $(CFLAGS) -o $@ -c $< #-mllvm -debug-only=p2-asm-parser,asm-matcher,mccodeemitter
 
 load:
 	$(LOAD) $(LOADFLAGS) $(OBJDIR)/$(TARGET).elf

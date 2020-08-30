@@ -34,7 +34,7 @@ void uart_str(const char *str) __attribute__((noinline));
  */
 void uart_str(const char *str) {
     while (*str) {
-        uart_putc(*str);
+        _uart_putc(*str);
         str++;
         //waitx(uart_clock_per_bits*10); // wait for the bits to send
     }
@@ -86,7 +86,7 @@ void start_blinks(led_mb_t *led, ...) {
 
     led_mb_t *l = led;
     while(l != 0) {
-        cognew(blink, (int)l, (unsigned int*)(l->stack));
+        _cognew(blink, (int)l, (unsigned int*)(l->stack));
         l = va_arg(args, led_mb_t*);
     }
 }
@@ -106,8 +106,8 @@ int sum(int n, ...) {
 }
 
 int main() {
-    clkset(_SETFREQ, _CLOCKFREQ);
-    uart_clock_per_bits = uart_init(RX_PIN, TX_PIN, 230400);
+    _clkset(_SETFREQ, _CLOCKFREQ);
+    uart_clock_per_bits = _uart_init(RX_PIN, TX_PIN, 230400);
 
     uart_str("Variadic function test\n");
 

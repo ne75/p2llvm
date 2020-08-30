@@ -51,7 +51,7 @@ led_mb_t modify_led_mb(led_mb_t l) {
 int main() {
 
     //waitx(12500000);
-    clkset(_SETFREQ, _CLOCKFREQ);
+    _clkset(_SETFREQ, _CLOCKFREQ);
 
     led_mb_t led1;
     led_mb_t led2;
@@ -60,8 +60,8 @@ int main() {
     led1.delay = _CLOCKFREQ;
     led2 = modify_led_mb(led1);
 
-    cognew(blink, (int)&led1, (unsigned int*)blink1_stack);
-    cognew(blink, (int)&led2, (unsigned int*)blink2_stack);
+    _cognew(blink, (int)&led1, (unsigned int*)blink1_stack);
+    _cognew(blink, (int)&led2, (unsigned int*)blink2_stack);
 
     while(1);
 

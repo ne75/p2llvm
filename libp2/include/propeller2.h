@@ -37,6 +37,13 @@ register volatile int IRET2 asm ("iret2");
 register volatile int IJMP1 asm ("ijmp1");
 register volatile int IRET1 asm ("iret1");
 
+#ifndef __weak_alias
+#define __weak_alias(sym, oldfunc) extern __typeof (oldfunc) sym __attribute__ ((weak, alias (#oldfunc)));
+#endif
+#ifndef __strong_alias
+#define __strong_alias(sym, oldfunc) extern __typeof (oldfunc) sym __attribute__ ((alias (#oldfunc)));
+#endif
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -82,6 +89,26 @@ unsigned _uart_init(unsigned rx, unsigned tx, unsigned baud);
  * eventually need to wrap this using the FILE interface in the C std library
  */
 void _uart_putc(char c);
+
+/*
+ * request a new hardware lock
+ */
+unsigned int _locknew();
+
+/*
+ * return the lock to the pool
+ */
+void _lockret(unsigned int l);
+
+/*
+ * try to lock a lock, blocking until it is acquired.
+ */
+void _lock(unsigned int l);
+
+/*
+ * release the lock
+ */
+void _unlock(unsigned int l);
 
 #ifdef __cplusplus
 }
