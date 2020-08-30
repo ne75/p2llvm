@@ -13,6 +13,8 @@
  *
  */
 
+#include <propeller.h>
+
 #include <stdlib.h>
 #include <string.h>
 #include <sys/thread.h>
@@ -24,9 +26,7 @@ MemHeap _malloc_heap = {
     .free = NULL
 };
 
-// FIXME: implement locking when doing malloc
-
-//static atomic_t malloc_lock;
+atomic_t malloc_lock;
 
 /* local functions */
 static void _free(MemHeap *heap, void *ptr);
@@ -38,7 +38,7 @@ void *_malloc(MemHeap *heap, size_t n) {
 
     numunits = (n + sizeof(MemHeader)-1)/sizeof(MemHeader) + 1;
 
-    //__lock(&malloc_lock);
+    _lock(malloc_lock);
     prevp = &heap->free;
 
     for (p = (*prevp); p; prevp = &p->next, p = p->next) {
@@ -61,7 +61,7 @@ void *_malloc(MemHeap *heap, size_t n) {
         p = (*heap->sbrk)(numunits * sizeof(MemHeader));
     }
 
-    //__unlock(&malloc_lock);
+    _unlock(malloc_lock);
     if (!p)
         return NULL;
     p->next = MAGIC;
@@ -89,7 +89,7 @@ static void _free(MemHeap *heap, void *ptr) {
 
     thisp->next = NULL;
 
-    //__lock(&malloc_lock);
+    _lock(malloc_lock);
     /* see if we can merge this into a block on the free list */
     if (!heap->free) {
         /* no freelist, so just release this right away */
@@ -137,7 +137,7 @@ static void _free(MemHeap *heap, void *ptr) {
     /* just add it to the free list */
     thisp->next = *prev;
     *prev = thisp;
-    //__unlock(&malloc_lock);
+    _unlock(malloc_lock);
 }
 
 

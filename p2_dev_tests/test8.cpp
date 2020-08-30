@@ -43,7 +43,7 @@ void blink(void *par) {
  */
 void uart_str(const char *str) {
     while (*str) {
-        uart_putc(*str);
+        _uart_putc(*str);
         str++;
         waitx(uart_clock_per_bits*10); // wait for the bits to send
     }
@@ -72,18 +72,18 @@ void uart_dec(int n) {
 
 int main() {
 
-    clkset(_SETFREQ, _CLOCKFREQ);
+    _clkset(_SETFREQ, _CLOCKFREQ);
 
     //waitx(_CLOCKFREQ/10);
 
-    uart_clock_per_bits = uart_init(RX_PIN, TX_PIN, 230400);
+    uart_clock_per_bits = _uart_init(RX_PIN, TX_PIN, 230400);
 
     uart_str("Hello World!\n");
     led_mb_t led1 = {56, _CLOCKFREQ};
     led_mb_t led2 = {58, _CLOCKFREQ/2};
 
-    cognew(blink, (int)&led1, blink1_stack);
-    cognew(blink, (int)&led2, blink2_stack);
+    _cognew(blink, (int)&led1, blink1_stack);
+    _cognew(blink, (int)&led2, blink2_stack);
 
     uart_dec(_clkfreq);
 

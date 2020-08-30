@@ -44,14 +44,10 @@
 #define _NANL __builtin_nanl("1")
 #define _NANF __builtin_nanf("1")
 #ifndef __weak_alias
-//#define __weak_alias(sym, oldfunc) \
-  //__asm__( " .weak _" #sym "\n  .equ _" #sym ",_" #oldfunc "\n" )
 #define __weak_alias(sym, oldfunc) extern __typeof (oldfunc) sym __attribute__ ((weak, alias (#oldfunc)));
 #endif
 #ifndef __strong_alias
-// #define __strong_alias(sym, oldfunc) \
-//   __asm__( " .global _" #sym "\n  .equ _" #sym ",_" #oldfunc "\n" )
-#define _strong_alias(sym, oldfunc) extern __typeof (oldfunc) sym __attribute__ ((alias (#oldfunc)));
+#define __strong_alias(sym, oldfunc) extern __typeof (oldfunc) sym __attribute__ ((alias (#oldfunc)));
 #endif
 
 #else

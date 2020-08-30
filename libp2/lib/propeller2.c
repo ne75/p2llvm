@@ -42,6 +42,25 @@ void _cognew(void (*f)(void *), int par, unsigned *stack) {
     _coginit(0x10, f, par, stack);
 }
 
+unsigned int _locknew() {
+    int x;
+    asm("locknew %0" : "=r"(x) : );
+    return x;
+}
+
+void _lockret(unsigned int l) {
+    asm("locknew %0" : : "r"(l));
+}
+
+void _lock(unsigned int l) {
+    asm("locktry %0 wc" : : "r"(l));
+    asm("if_nc jmp #-8");
+}
+
+void _unlock(unsigned int l) {
+    asm("lockrel %0" : : "r"(l));
+}
+
 unsigned int _rev(unsigned int x) {
     asm("rev %0" : : "r"(x));
     return x;

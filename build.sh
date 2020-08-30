@@ -71,25 +71,6 @@ if $build_llvm; then
 fi
 
 #
-# build and optionally install libc
-#
-if $build_libc; then
-    echo
-    echo "========================"
-    echo "==== Building libc ====="
-    echo "========================"
-    cd libc
-    if [ $# -ne 0 ]; then
-        make clean
-        make -j8 install DEST=$install_dir_base/libc
-    else
-        make clean
-        make -j8
-    fi
-    cd ..
-fi
-
-#
 # build libp2
 #
 
@@ -113,6 +94,25 @@ if $build_libp2; then
         cp libp2/build/libp2.a $install_dir/lib/libp2.a
         cp -r libp2/include $install_dir/
     fi
+fi
+
+#
+# build and optionally install libc
+#
+if $build_libc; then
+    echo
+    echo "========================"
+    echo "==== Building libc ====="
+    echo "========================"
+    cd libc
+    if [ $# -ne 0 ]; then
+        make clean
+        make -j8 install DEST=$install_dir_base/libc
+    else
+        make clean
+        make -j8
+    fi
+    cd ..
 fi
 
 echo "Done"

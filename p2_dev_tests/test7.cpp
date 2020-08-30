@@ -20,28 +20,16 @@ struct led_mb_t {
 };
 
 void blink(void *par) {
-    // led_mb_t *led = (led_mb_t*)par;
-
-    // dirh(led->pin);
-
-    // while(1) {
-    //     outl(led->pin);
-    //     waitx(led->delay);
-    //     outh(led->pin);
-    //     waitx(led->delay);
-    // }
-
     led_mb_t *led = (led_mb_t*)par;
 
-    dirh(56);
+    dirh(led->pin);
 
     while(1) {
-        outl(56);
-        waitx(20000000);
-        outh(56);
-        waitx(20000000);
+        outl(led->pin);
+        waitx(led->delay);
+        outh(led->pin);
+        waitx(led->delay);
     }
-
 }
 
 led_mb_t modify_led_mb(led_mb_t l) __attribute__((noinline));
@@ -63,17 +51,17 @@ led_mb_t modify_led_mb(led_mb_t l) {
 int main() {
 
     //waitx(12500000);
-    //_clkset(_SETFREQ, _CLOCKFREQ);
+    _clkset(_SETFREQ, _CLOCKFREQ);
 
-    //led_mb_t led1;
-    //led_mb_t led2;
+    led_mb_t led1;
+    led_mb_t led2;
 
-    //led1.pin = 56;
-    //led1.delay = _CLOCKFREQ;
-    //led2 = modify_led_mb(led1);
+    led1.pin = 56;
+    led1.delay = _CLOCKFREQ;
+    led2 = modify_led_mb(led1);
 
-    _cognew(blink, 0, (unsigned int*)blink1_stack);
-    //_cognew(blink, (int)&led2, (unsigned int*)blink2_stack);
+    _cognew(blink, (int)&led1, (unsigned int*)blink1_stack);
+    _cognew(blink, (int)&led2, (unsigned int*)blink2_stack);
 
     while(1);
 

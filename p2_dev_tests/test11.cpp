@@ -64,6 +64,8 @@ int main() {
     i = -1;
     if (i >= 0) {
         uart_str("i >= 0\n");
+    } else {
+        uart_str("i < 0\n");
     }
 
     while(1);

@@ -142,16 +142,12 @@ typedef _atomic_t atomic_t;
 #if !defined(__cplusplus)
   /* the GNU C++ library already has locks in it, so don't conflict */
 
-  /* we don't have the necessary primitives in the XMM kernel */
-#define __trylock(ptr) __sync_bool_compare_and_swap(ptr, 0, 1)
-#define __addlock(ptr, inc) __sync_add_and_fetch(ptr, inc)
-
 #if defined(__GNUC__)
-#define __lock(val) while (__builtin_expect(!__trylock(val), 0)) ;
+#define __lock(val) _lock(val);
 #else
-#define __lock(val) while (!__trylock(val)) ;
+#define __lock(val) _lock(val);
 #endif
-#define __unlock(val) *val = 0
+#define __unlock(val) _unlock(val)
 
 #endif /* !defined(__cplusplus) */
 

@@ -5,7 +5,7 @@ LOAD = loadp2
 LIBP2 = ../libp2
 LIBC = ../libc
 
-TARGET = test7
+TARGET = test16
 OBJDIR = build
 
 CFLAGS = -Os -ffunction-sections -fdata-sections -fno-jump-tables --target=p2

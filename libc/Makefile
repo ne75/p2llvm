@@ -27,13 +27,14 @@ PREFIX = $(OBJDIR)
 WARN = -Wall -Werror
 #WARN =
 BASEFLAGS = $(WARN) -Os -nostdinc -I./include -ffunction-sections -fno-jump-tables --target=p2
-CFLAGS = $(BASEFLAGS)
 MATHCFLAGS = $(WARN) -m$(MODEL) $(CHIPOPT) $(FLOATDEF) -Os -nostdinc -I./include
 LLVM = /opt/p2llvm
 AR = $(LLVM)/bin/llvm-ar
 CC = $(LLVM)/bin/clang
 OBJCOPY = $(LLVM)/bin/llvm-objcopy
 MKDIR = mkdir -p
+
+CFLAGS = $(BASEFLAGS) -I$(LLVM)/libp2/include # include libp2 for necessary functions. libp2's startup code will then call this library's startup code
 
 VPATH=.:misc:stdio:stdlib:string:sys:sys/propeller:time:drivers:math:pthreads:wchar
 
@@ -60,7 +61,7 @@ STDLIB = malloc.o calloc.o realloc.o atoi.o atoll.o atof.o atexit.o abort.o \
 	qsort.o bsearch.o strtol.o strtoul.o strtod.o strtof.o \
 	strtoll.o strtoull.o \
 	assert.o rand.o div.o lldiv.o abs.o llabs.o getenv.o \
-	multibyte.o fenv.o mblencur.o
+	multibyte.o fenv.o mblencur.o cstd_init.o
 
 # MISC = 	ctype.o toupper.o tolower.o \
 # 	isalpha.o isalnum.o iscntrl.o isprint.o isspace.o isdigit.o \

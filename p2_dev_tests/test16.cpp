@@ -19,6 +19,8 @@
 #define RX_PIN 63
 #define TX_PIN 62
 
+volatile unsigned int print_lock;
+
 class Blinker {
 
     char pin;
@@ -52,6 +54,9 @@ void Blinker::blink(void *par) {
     volatile int t[32];
 
     while(1) {
+        _lock(print_lock);
+        printf("blinker print!\n");
+        _unlock(print_lock);
         OUTB ^= 1 << (led->pin-32);
         waitcnt(led->delay + CNT);
     }
@@ -77,23 +82,25 @@ int main() {
     _clkset(_SETFREQ, _CLOCKFREQ);
     _uart_init(RX_PIN, TX_PIN, 230400);
 
-    printf("Variadic function test\n");
+    // printf("Variadic function test\n");
 
-    start_blinks(&led1, &led2, &led3, &led4, 0);
+    // start_blinks(&led1, &led2, &led3, &led4, 0);
+
+    // while(1) {
+    //     printf("running blinking with c++!\n");
+    //     waitx(CLKFREQ);
+    // }
+
+    print_lock = _locknew();
+
+    led1.start();
 
     while(1) {
-        printf("running blinking with c++!\n");
-        waitx(CLKFREQ);
+        _lock(print_lock);
+        printf("main print\n");
+        _unlock(print_lock);
+        waitx(_CLOCKFREQ/10);
     }
-
-    //led1.start();
-
-    // int lock;
-    // asm("lockret %0" : "=r"(lock) : );
-    // asm("locktry %0 wc" : : "r"(lock));
-
-    // asm("locktry %0 wc" : : "r"(lock));
-    // asm("if_nc jmp #-8")
 
     return 0;
 }
