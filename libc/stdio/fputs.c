@@ -15,12 +15,12 @@ __do_fputs(const char *str, FILE *fp, int trailing_newline)
   int c;
   int bytes = 0;
 
-  __lock(&fp->_lock);
+  __lock(fp->_lock);
   while ( 0 != (c = *str++) ) {
     c = fputc(c, fp);
     if (c < 0)
       {
-	__unlock(&fp->_lock);
+	__unlock(fp->_lock);
 	return EOF;
       }
     bytes++;
@@ -33,7 +33,7 @@ __do_fputs(const char *str, FILE *fp, int trailing_newline)
       else
 	bytes++;
     }
-  __unlock(&fp->_lock);
+  __unlock(fp->_lock);
   return bytes;
 }
 

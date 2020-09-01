@@ -6,11 +6,8 @@
  */
 
 #include <stdio.h>
-#include <cog.h>
 
-__attribute__((section(".hubtext")))
-int
-_term_write(FILE *fp, unsigned char *buf, int size)
+int _term_write(FILE *fp, unsigned char *buf, int size)
 {
   int count = 0;
   int c;
@@ -30,9 +27,7 @@ _term_write(FILE *fp, unsigned char *buf, int size)
   return count;
 }
 
-__attribute__((section(".hubtext")))
-int
-_term_read(FILE *fp, unsigned char *buf, int size)
+int _term_read(FILE *fp, unsigned char *buf, int size)
 {
   int (*putbyte)(int c, FILE *fp);
   int (*getbyte)(FILE *fp);

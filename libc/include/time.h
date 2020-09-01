@@ -1,12 +1,14 @@
 #ifndef _TIME_H
 #define _TIME_H
 
+#include <propeller.h>
+
 #if defined(__cplusplus)
 extern "C" {
 #endif
 
 typedef unsigned int clock_t;
-extern clock_t _clkfreq;
+//extern clock_t _clkfreq;
 /* the actual frequency the machine is running at may vary */
 #define CLOCKS_PER_SEC _clkfreq
 #define CLK_TCK _clkfreq

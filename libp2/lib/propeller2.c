@@ -28,18 +28,26 @@ void _clkset(unsigned clkmode, unsigned clkfreq) {
     hubset(clkmode | 3);
 }
 
-void _coginit(unsigned mode, void (*f)(void *), int par, unsigned *stack) {
-    stack[0] = (int)f;
-    stack[1] = par;
+int _coginit(unsigned mode, void (*f)(void *), void *par) {
     asm("setq %0\n"
-        "coginit %1, %2"
+        "coginit %1, %2 wc"
         : // no outputs
-        : "r"(stack), "r"(mode), "r"(__start)
+        : "r"(par), "r"(mode), "r"(f)
         );
+    int res;
+    wrc(res);
+
+    if (res) {
+        return -1;
+    } else {
+        return mode;
+    }
 }
 
-void _cognew(void (*f)(void *), int par, unsigned *stack) {
-    _coginit(0x10, f, par, stack);
+int cogstart(void (*f)(void *), int par, int *stack, unsigned int stacksize) {
+    stack[0] = (int)f;
+    stack[1] = par;
+    return _coginit(0x10, __start, stack);
 }
 
 unsigned int _locknew() {
@@ -52,12 +60,12 @@ void _lockret(unsigned int l) {
     asm("locknew %0" : : "r"(l));
 }
 
-void _lock(unsigned int l) {
+void _lock(atomic_t l) {
     asm("locktry %0 wc" : : "r"(l));
     asm("if_nc jmp #-8");
 }
 
-void _unlock(unsigned int l) {
+void _unlock(atomic_t l) {
     asm("lockrel %0" : : "r"(l));
 }
 
@@ -95,4 +103,18 @@ unsigned _uart_init(unsigned rx, unsigned tx, unsigned baud) {
 void _uart_putc(char c) {
     wypin(c, _uart_tx_pin);
     waitx(_uart_clock_per_bit*10); // eventually should be a wait based on the buffer
+}
+
+char _uart_getc() {
+    int has_dat = 0;
+
+    testp(_uart_rx_pin, has_dat);
+
+    if (has_dat) {
+        int x;
+        rdpin(x, _uart_rx_pin);
+        return (char)(x >> 24);
+    } else {
+        return -1;
+    }
 }

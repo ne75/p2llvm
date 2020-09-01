@@ -3,16 +3,28 @@
 
 #include "smartpins.h"
 
-#define hubset(h) asm("hubset %0" : : "r"(h));
+#define hubset(h) asm("hubset %0" : : "r"(h))
 #define waitx(t) asm("waitx %0" : : "r"(t))
 #define dirh(pin) asm("dirh %0" : : "r"(pin))
 #define dirl(pin) asm("dirl %0" : : "r"(pin))
 #define outh(pin) asm("outh %0" : : "r"(pin))
 #define outl(pin) asm("outl %0" : : "r"(pin))
 
-#define wrpin(pin, r) asm("wrpin %0, %1" : : "r"(pin), "r"(r))
-#define wxpin(pin, r) asm("wxpin %0, %1" : : "r"(pin), "r"(r))
-#define wypin(pin, r) asm("wypin %0, %1" : : "r"(pin), "r"(r))
+#define testp(pin, res) asm("testp %1 wc\n"     \
+                            "if_c mov %0, #1\n"  \
+                            "if_nc mov %0, #0" : "=r"(res) : "r"(pin))
+
+#define rdpin(v, pin) asm("rdpin %0, %1" : "=r"(v) : "r"(pin))
+#define rqpin(v, pin) asm("rqpin %0, %1" : "=r"(v) : "r"(pin))
+
+#define wrpin(v, pin) asm("wrpin %0, %1" : : "r"(v), "r"(pin))
+#define wxpin(v, pin) asm("wxpin %0, %1" : : "r"(v), "r"(pin))
+#define wypin(v, pin) asm("wypin %0, %1" : : "r"(v), "r"(pin))
+
+#define wrc(x) asm("wrc %0" : "=r"(x) :)
+#define wrnc(x) asm("wrnc %0" : "=r"(x) :)
+#define wrz(x) asm("wrz %0" : "=r"(x) :)
+#define wrnz(x) asm("wrnz %0" : "=r"(x) :)
 
 #define _clkfreq (*((int*)0x14))
 #define _clkmode (*((int*)0x18))
@@ -44,6 +56,14 @@ register volatile int IRET1 asm ("iret1");
 #define __strong_alias(sym, oldfunc) extern __typeof (oldfunc) sym __attribute__ ((alias (#oldfunc)));
 #endif
 
+/* type for a volatile lock */
+/* if we change this type, change the definitions of SIG_ATOMIC_{MIN,MAX}
+ * in stdint.h too
+ */
+/* also note that in practice these have to go in HUB memory */
+typedef volatile int _atomic_t;
+typedef _atomic_t atomic_t;
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -66,12 +86,7 @@ void _waitcnt(unsigned int cnt);
 /*
  * start a new hub mode cog dictated by mode
  */
-void _coginit(unsigned mode, void (*f)(void *), int par, unsigned *stack);
-
-/*
- * start the next available cog in hub mode
- */
-void _cognew(void (*f)(void *), int par, unsigned *stack);
+int _coginit(unsigned mode, void (*f)(void *), void *par) __attribute__((noinline));
 
 /*
  * reverse bits in x
@@ -86,9 +101,13 @@ unsigned _uart_init(unsigned rx, unsigned tx, unsigned baud);
 
 /*
  * write a character to the builtin UART
- * eventually need to wrap this using the FILE interface in the C std library
  */
 void _uart_putc(char c);
+
+/*
+ * read a character from the builtin UART
+ */
+char _uart_getc();
 
 /*
  * request a new hardware lock
@@ -103,12 +122,12 @@ void _lockret(unsigned int l);
 /*
  * try to lock a lock, blocking until it is acquired.
  */
-void _lock(unsigned int l);
+void _lock(atomic_t l);
 
 /*
  * release the lock
  */
-void _unlock(unsigned int l);
+void _unlock(atomic_t l);
 
 #ifdef __cplusplus
 }

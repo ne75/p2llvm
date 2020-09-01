@@ -1,6 +1,8 @@
 #ifndef _SYS_JMPBUF_H
 #define _SYS_JMPBUF_H
 
+// FIXME: update this for whatever it does
+
 #ifdef __propeller2__
 #define _JBLEN 9
 /* register offsets in the jmp buffer */

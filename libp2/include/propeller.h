@@ -31,6 +31,11 @@
 #define CLKFREQ _clkfreq
 #define clkset(a, b) _clkset(a, b)
 
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /**
  * @brief Start a new propeller LMM function/thread in another COG.
  *
@@ -50,7 +55,11 @@
 #ifdef __FLEXC__
 #define cogstart(func, par, stack, stacksize) __builtin_cogstart(func(par), stack)
 #else
-int cogstart(void (*func)(void *), void *par, void *stack, unsigned int stacksize);
+int cogstart(void (*func)(void *), int par, int *stack, unsigned int stacksize);
+#endif
+
+#ifdef __cplusplus
+}
 #endif
 
 #endif

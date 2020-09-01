@@ -37,6 +37,7 @@ extern "C" {
 #include <sys/va_list.h>
 #include <sys/driver.h>
 #include <sys/null.h>
+#include <propeller.h>
 #include <sys/thread.h>
 
 #if defined(__GNUC__)
@@ -140,8 +141,8 @@ extern "C" {
   int fprintf(FILE *fp, const char *fmt, ...);
   int sprintf(char *str, const char *format, ...);
   int snprintf(char *str, size_t size, const char *format, ...);
-  int __simple_printf(const char *fmt, ...) _PRINTF_FUNC;
-  int __simple_float_printf(const char *fmt, ...) _PRINTF_FUNC;
+  // int __simple_printf(const char *fmt, ...) _PRINTF_FUNC;
+  // int __simple_float_printf(const char *fmt, ...) _PRINTF_FUNC;
   void perror(const char *msg);
 
   int vprintf(const char *fmt, __va_list ap);
@@ -199,8 +200,8 @@ extern "C" {
 
   /* lock used to let multiple threads work together nicer */
   extern _atomic_t __stdio_lock;
-#define __lock_stdio()   __lock(&__stdio_lock)
-#define __unlock_stdio() __unlock(&__stdio_lock)
+#define __lock_stdio()   __lock(__stdio_lock)
+#define __unlock_stdio() __unlock(__stdio_lock)
 
 #if defined(__cplusplus)
 }

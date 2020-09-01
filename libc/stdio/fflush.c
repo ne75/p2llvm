@@ -24,7 +24,7 @@ _fflush(FILE *fp)
   if (!(f & (_IORW | _IOREAD | _IOWRT)))  /* file not open */
     return(EOF);
 
-  __lock(&fp->_lock);
+  __lock(fp->_lock);
   if(fp->_cnt > 0)	 		/* data in the buffer */
     {
       if(f & _IOWRT)				/* writing */
@@ -36,7 +36,7 @@ _fflush(FILE *fp)
 	  /* exit if ^C is pressed during this write */
 	  todo = fp->_cnt;
 	  fp->_cnt = 0;
-	  if(fp->_drv->write(fp, fp->_base, todo) != todo) 
+	  if(fp->_drv->write(fp, fp->_base, todo) != todo)
 	    {
 	      fp->_flag |= _IOERR;
 	      rv = EOF;
@@ -54,7 +54,7 @@ _fflush(FILE *fp)
     fp->_flag &= ~(_IOREAD | _IOWRT);
   fp->_ptr = fp->_base;
   fp->_cnt = 0;
-  __unlock(&fp->_lock);
+  __unlock(fp->_lock);
   return(rv);
 }
 

@@ -2,12 +2,14 @@
  * simple serial driver
  * Copyright (c) Parallax Inc. 2011
  * MIT Licensed (see end of file)
+ *
+ * updated 2020 Nikita Ermoshkin
+ *
  */
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
-#include <cog.h>
 #include <errno.h>
 #include <propeller.h>
 #include <sys/driver.h>
@@ -15,12 +17,15 @@
 /* globals that the loader may change; these represent the default
  * pins to use
  */
-extern unsigned int _rxpin;
-extern unsigned int _txpin;
+extern unsigned int _uart_rx_pin;
+extern unsigned int _uart_tx_pin;
+
+#ifndef __propeller2__
 extern unsigned int _baud;
+#endif
 
 /*
- * we use the following elements of the FILE structure
+ * we use the following elements of the FILE structure (P1 only. P2 sets up everything when opening the FILE)
  * drvarg[0] = rxpin
  * drvarg[1] = txpin
  * drvarg[2] = baud
@@ -31,36 +36,12 @@ extern unsigned int _baud;
  * We need _serial_putbyte to always be fcached so that the timing is
  * OK.
  */
-#ifdef __PROPELLER2__
-__attribute__((fcache))
-static int
-_serial_putbyte(int c, FILE *fp)
-{
-  unsigned int bitcycles = fp->drvarg[3];
-  unsigned int txpin = fp->drvarg[1];
-
-  unsigned int waitcycles;
-  int i, value;
-
-  /* set output */
-  setpin(txpin, 1);
-
-  value = (c | 256) << 1;
-  waitcycles = getcnt() + bitcycles;
-  for (i = 0; i < 10; i++)
-    {
-      waitcycles = waitcnt2(waitcycles, bitcycles);
-      setpin(txpin, (value & 1) ? 1 : 0);
-      value >>= 1;
-    }
-  // if we turn off DIRA, then some boards (like QuickStart) are left with
-  // floating pins and garbage output; if we leave it on, we're left with
-  // a high pin and other cogs cannot produce output on it
-  // the solution is to use FullDuplexSerialDriver instead on applications
-  // with multiple cogs
-  //_DIRA &= ~txmask;
-  return c;
+#ifdef __propeller2__
+static int _serial_putbyte(int c, FILE *fp) {
+    _uart_putc(c);
+    return c;
 }
+
 #else
 __attribute__((fcache))
 static int
@@ -97,38 +78,21 @@ _serial_putbyte(int c, FILE *fp)
 #endif
 
 /* and here is getbyte */
-/* we need to put it in fcache to get it to work in XMM and CMM modes */
-#ifdef __PROPELLER2__
-__attribute__((fcache))
-static int
-_serial_getbyte(FILE *fp)
-{
-  unsigned int bitcycles = fp->drvarg[3];
-  unsigned int rxpin = fp->drvarg[0];
-  unsigned int waitcycles;
-  int value;
-  int i;
+/* we need to put it in fcache to get it to work in XMM and CMM modes (P1 only) */
+#ifdef __propeller2__
+static int _serial_getbyte(FILE *fp) {
+    int value;
 
-  /* wait for a start bit */
-  if (fp->_flag & _IONONBLOCK) {
-    /* if non-blocking I/O, return immediately if no data */
-    if ( 0 != getpin(rxpin) )
-      return -1;
-  } else {
-    while (getpin(rxpin))
-      ;
-  }
-  /* sync for one half bit */
-  waitcycles = getcnt() + (bitcycles>>1) + bitcycles;
-  value = 0;
-  for (i = 0; i < 8; i++) {
-    waitcycles = waitcnt2(waitcycles, bitcycles);
-    value = (getpin(rxpin) << 7) | (value >> 1);
-  }
-  /* wait for the line to go high (as it will when the stop bit arrives) */
-    while (!getpin(rxpin))
-      ;
-  return value;
+    /* wait for a start bit */
+    if (fp->_flag & _IONONBLOCK) {
+        /* if non-blocking I/O, return immediately if no data */
+        return _uart_getc();
+    } else {
+        do {
+            value = _uart_getc();
+        } while (value == -1);
+        return value;
+    }
 }
 #else
 __attribute__((fcache))
@@ -176,10 +140,14 @@ _serial_getbyte(FILE *fp)
 
 static int _serial_fopen(FILE *fp, const char *name, const char *mode)
 {
+  #ifdef __propeller2__
+  unsigned int baud = _baudrate;
+  #else
   unsigned int baud = _baud;
-  unsigned int txpin = _txpin;
-  unsigned int rxpin = _rxpin;
-  unsigned int bitcycles;
+  #endif
+
+  unsigned int txpin = _uart_tx_pin;
+  unsigned int rxpin = _uart_rx_pin;
 
   if (name && *name) {
     baud = atoi(name);
@@ -195,21 +163,24 @@ static int _serial_fopen(FILE *fp, const char *name, const char *mode)
         }
     }
   }
-  bitcycles = _clkfreq / baud;
 
-  /* set up the array */
-#if defined(__PROPELLER2__)
-  fp->drvarg[0] = (rxpin);
-  fp->drvarg[1] = (txpin);
-#else
-  fp->drvarg[0] = (1U<<rxpin);
-  fp->drvarg[1] = (1U<<txpin);
-#endif
-  fp->drvarg[2] = baud;
-  fp->drvarg[3] = bitcycles;
+  #if defined(__propeller2__)
+    // probably don't need this, but save it anyway
+    fp->drvarg[0] = (rxpin);
+    fp->drvarg[1] = (txpin);
+    fp->drvarg[2] = baud;
+
+    _uart_init(rxpin, txpin, baud);
+  #else
+    fp->drvarg[0] = (1U<<rxpin);
+    fp->drvarg[1] = (1U<<txpin);
+    bitcycles = _clkfreq / baud;
+    fp->drvarg[3] = bitcycles;
+  #endif
 
   /* mark it as being a terminal */
   fp->_flag |= _IODEV;
+  fp->_lock = _locknew();
 
   /* all OK */
   return 0;
@@ -229,7 +200,7 @@ static void SimpleSerialExit(void)
 }
 
 /*
- * and the actual driver 
+ * and the actual driver
  */
 
 const char _SimpleSerialPrefix[] = "SSER:";

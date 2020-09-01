@@ -14,7 +14,7 @@ static void
 deletetemps()
 {
   struct tmpf *s, *nexts;
-  __lock(&dellock);
+  __lock(dellock);
   s = deletelist;
   while (s) {
     remove(s->namebuf);
@@ -22,7 +22,7 @@ deletetemps()
     free(s);
     s = nexts;
   }
-  __unlock(&dellock);
+  __unlock(dellock);
 }
 
 FILE *tmpfile(void)
@@ -36,14 +36,14 @@ FILE *tmpfile(void)
   if (name) {
     f = fopen(name, "w+");
     if (f) {
-      __lock(&dellock);
+      __lock(dellock);
       del->next = deletelist;
       deletelist = del;
       if (!delete_registered) {
 	atexit(deletetemps);
 	delete_registered = 1;
       }
-      __unlock(&dellock);
+      __unlock(dellock);
     }
   }
   return f;

@@ -45,23 +45,34 @@ all: $(PREFIX) $(PREFIX)/libc.a
 PRINTF = printf.o fprintf.o vprintf.o sprintf.o snprintf.o vsprintf.o vsnprintf.o
 SCANF =  scanf.o vscanf.o sscanf.o fscanf.o
 
+# STDIO = clearerr.o feof.o ferror.o fflush.o \
+# 	fgetc.o fputc.o fputs.o puts.o putchar.o getchar.o \
+# 	putc.o getc.o ungetc.o gets.o fgets.o \
+# 	setvbuf.o setbuf.o setlinebuf.o setbuffer.o \
+# 	fopen.o fopen_intern.o freopen.o \
+# 	fwrite.o fread.o fseek.o ftell.o fgetpos.o fsetpos.o rewind.o \
+# 	stringio.o vfprintf.o vfscanf.o \
+# 	$(PRINTF) $(SCANF) \
+# 	simple_printf.o \
+# 	default_io.o init_io.o remove.o fmemopen.o \
+# 	tmpnam.o tmpfile.o
+
 STDIO = clearerr.o feof.o ferror.o fflush.o \
 	fgetc.o fputc.o fputs.o puts.o putchar.o getchar.o \
 	putc.o getc.o ungetc.o gets.o fgets.o \
 	setvbuf.o setbuf.o setlinebuf.o setbuffer.o \
 	fopen.o fopen_intern.o freopen.o \
 	fwrite.o fread.o fseek.o ftell.o fgetpos.o fsetpos.o rewind.o \
-	stringio.o vfprintf.o vfscanf.o \
+	stringio.o \
 	$(PRINTF) $(SCANF) \
 	simple_printf.o \
 	default_io.o init_io.o remove.o fmemopen.o \
-	tmpnam.o tmpfile.o
 
 STDLIB = malloc.o calloc.o realloc.o atoi.o atoll.o atof.o atexit.o abort.o \
 	qsort.o bsearch.o strtol.o strtoul.o strtod.o strtof.o \
 	strtoll.o strtoull.o \
 	assert.o rand.o div.o lldiv.o abs.o llabs.o getenv.o \
-	multibyte.o fenv.o mblencur.o cstd_init.o
+	multibyte.o fenv.o mblencur.o init_cstd.o
 
 # MISC = 	ctype.o toupper.o tolower.o \
 # 	isalpha.o isalnum.o iscntrl.o isprint.o isspace.o isdigit.o \
@@ -99,21 +110,25 @@ STRING = memcpy.o memmove.o memset.o memchr.o memcmp.o \
 TIME = clock.o sleep.o usleep.o time.o difftime.o strftime.o localtim.o asctime.o \
 	settimeofday.o gettimeofday.o
 
-THREADS = thread.o cogthread.o cogstart.o cogload.o clonecog.o nap.o atomic64.o
+#THREADS = thread.o cogthread.o cogstart.o cogload.o clonecog.o nap.o atomic64.o
+
+THREADS = thread.o
 
 PTHREADS = pthread_create.o pthread_join.o pthread_detach.o \
 	pthread_mutex.o pthread_attr.o pthread_io.o pthread_cond.o \
 	pthread_key.o semaphore.o
 
-DRIVERS = SimpleSerial.o serialparam.o serial_break.o serial_exit.o memory.o \
-	FdSerial.o FullDuplexSerial.cog null.o drivers.o rtc.o terminal.o \
-	FileDriver.o mount.o dosfs.o file_io.o load_sd_driver.o sd_driver.cog \
-	rtc_cog.o i2c_simple.o \
-	i2c_interface.o i2c_common.o \
-	boot_read.o boot_write.o \
-	i2c_driver.cog \
-	i2c_driver_boot.cog \
-	eeprom.o
+# DRIVERS = SimpleSerial.o serialparam.o serial_break.o serial_exit.o memory.o \
+# 	FdSerial.o FullDuplexSerial.cog null.o drivers.o rtc.o terminal.o \
+# 	FileDriver.o mount.o dosfs.o file_io.o load_sd_driver.o sd_driver.cog \
+# 	rtc_cog.o i2c_simple.o \
+# 	i2c_interface.o i2c_common.o \
+# 	boot_read.o boot_write.o \
+# 	i2c_driver.cog \
+# 	i2c_driver_boot.cog \
+# 	eeprom.o
+
+DRIVERS = SimpleSerial.o terminal.o
 
 LIBM = 	k_rem_pio2.o k_cos.o k_sin.o k_tan.o \
 	k_rem_pio2f.o k_cosf.o k_sinf.o k_tanf.o \
@@ -156,7 +171,7 @@ LIBM_EXTRA =	float_printf.o float_simple_printf.o $(PRINTF) \
 #PROPELLER = propeller.o
 
 #OBJS = $(STDIO) $(STDLIB) $(MISC) $(THREADS) $(STRING) $(TIME) $(DRIVERS) $(PROPELLER) $(WCHAR)
-OBJS = $(STDLIB) $(WCHAR) $(MISC)
+OBJS = $(STDIO) $(STDLIB) $(WCHAR) $(MISC) $(DRIVERS) $(THREADS)
 
 MODEL_OBJS = $(addprefix $(PREFIX)/, $(OBJS))
 MODEL_LIBM_OBJS = $(addprefix $(MATHDIR)/, $(LIBM))
@@ -184,7 +199,7 @@ $(PREFIX)/float_scanf.o: vfscanf.c
 	$(CC) $(CFLAGS) -o $@ -DFLOAT_SUPPORT -c $<
 
 $(PREFIX)/%.o: %.c
-	$(CC) $(CFLAGS) -o $@ -c $< #-mllvm -debug #--debug-only=mccodeemitter
+	$(CC) $(CFLAGS) -o $@ -c $< #-mllvm -debug #--debug-only=p2-isel,isel
 
 # this is used to build the COG C EEPROM driver and is rounded up to 2K bytes so the space can be used as a buffer
 # for loading other COGs once the EEPROM driver has been loaded

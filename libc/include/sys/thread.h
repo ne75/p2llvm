@@ -28,6 +28,7 @@
 #include <sys/jmpbuf.h>
 #include <sys/fenv.h>
 #include <sys/wchar_t.h>
+#include <propeller.h>
 
 #if defined(__cplusplus)
 extern "C" {
@@ -85,7 +86,8 @@ struct _thread {
   unsigned short affinity; /* processor affinity mask inverted */
 
   /* multibyte character conversion state */
-  _Mbstate_t mbr_intern;
+  // FIXME: make this work, idk why it doesn't
+  //_Mbstate_t mbr_intern;
 
   /* floating point environment; not used currently */
   /* _fenv_t fenv; */
@@ -130,14 +132,6 @@ int _start_cog_thread(void *stacktop, void (*func)(void *), void *arg, _thread_s
   */
   unsigned long long _getAtomic64(unsigned long long *ptr);
   void _putAtomic64(unsigned long long x, unsigned long long *ptr);
-
-/* type for a volatile lock */
-/* if we change this type, change the definitions of SIG_ATOMIC_{MIN,MAX}
- * in stdint.h too
- */
-/* also note that in practice these have to go in HUB memory */
-typedef volatile int _atomic_t;
-typedef _atomic_t atomic_t;
 
 #if !defined(__cplusplus)
   /* the GNU C++ library already has locks in it, so don't conflict */

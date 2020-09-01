@@ -316,7 +316,7 @@ vfprintf(FILE *fp, const char *format, va_list args)
 	char ch = *format++;
 	size_t len = 0;
 
-	__lock(&fp->_lock);
+	__lock(fp->_lock);
 
 	while (ch != '\0')
 		switch (state) {
@@ -670,7 +670,7 @@ vfprintf(FILE *fp, const char *format, va_list args)
 			break;
 		}
 out:
-	__unlock(&fp->_lock);
+	__unlock(fp->_lock);
 
 	if (overflow || len >= INT_MAX) {
 		errno = overflow ? EOVERFLOW : ERANGE;
