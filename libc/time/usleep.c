@@ -2,7 +2,6 @@
 #include <sys/thread.h>
 #include <unistd.h>
 #include <propeller.h>
-#include "cog.h"
 
 int
 usleep(unsigned int n)

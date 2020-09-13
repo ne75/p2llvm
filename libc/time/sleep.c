@@ -1,7 +1,6 @@
 #include <time.h>
 #include <sys/thread.h>
 #include <propeller.h>
-#include "cog.h"
 
 void
 sleep(unsigned int n)
@@ -10,7 +9,7 @@ sleep(unsigned int n)
   unsigned second = _clkfreq;
 
   waitcycles = getcnt();
-  while (n > 0) 
+  while (n > 0)
     {
       waitcycles += second;
       __napuntil(waitcycles);

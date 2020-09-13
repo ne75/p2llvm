@@ -2,10 +2,10 @@
  * pins to use
  */
 #if defined(__PROPELLER2__)
-unsigned int _rxpin = 91;
-unsigned int _txpin = 90;
+unsigned int _rxpin = 63;
+unsigned int _txpin = 62;
 #else
 unsigned int _rxpin = 31;
 unsigned int _txpin = 30;
 #endif
-unsigned int _baud = 115200;
+unsigned int _baud = 230400;

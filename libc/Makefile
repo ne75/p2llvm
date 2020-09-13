@@ -104,7 +104,7 @@ STRING = memcpy.o memmove.o memset.o memchr.o memcmp.o \
 	strchr.o strrchr.o strspn.o strcspn.o strtok.o \
 	strcoll.o strxfrm.o \
 	strstr.o strpbrk.o \
-	strerror.o strcasecmp.o strncasecmp.o xmmcopy.o \
+	strerror.o strcasecmp.o strncasecmp.o \
 	strdup.o
 
 TIME = clock.o sleep.o usleep.o time.o difftime.o strftime.o localtim.o asctime.o \
@@ -171,7 +171,7 @@ LIBM_EXTRA =	float_printf.o float_simple_printf.o $(PRINTF) \
 #PROPELLER = propeller.o
 
 #OBJS = $(STDIO) $(STDLIB) $(MISC) $(THREADS) $(STRING) $(TIME) $(DRIVERS) $(PROPELLER) $(WCHAR)
-OBJS = $(STDIO) $(STDLIB) $(WCHAR) $(MISC) $(DRIVERS) $(THREADS)
+OBJS = $(STDIO) $(STDLIB) $(WCHAR) $(MISC) $(DRIVERS) $(THREADS) $(STRING) $(TIME)
 
 MODEL_OBJS = $(addprefix $(PREFIX)/, $(OBJS))
 MODEL_LIBM_OBJS = $(addprefix $(MATHDIR)/, $(LIBM))

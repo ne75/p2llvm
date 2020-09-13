@@ -24,9 +24,13 @@ void __entry() {
 // I eventually want to figure out how to do labels in the assembly parser so that I don't need to pre-compute jump offsets
 // can also probably re-write this to always run the not-cog 0 version of the startup and do the cog 0 startup stuff in
 // _entry()
+//
+// standard labels work (i.e. cog0: ), but it gets encoded as 4x the offset because it assumes it's a hubexec location.
+// need a way to know that the jump location is in the cog rather than the hub so we need to create the correct fixup
 
 void __start() {
     // TODO: figure out how to rewrite this without needing inline asm.
+
     asm("cogid $r0\n"           // get the current cog ID
         "tjz $r0, #5\n"         // if cog 0, jump to the special cog0 startup code.
 

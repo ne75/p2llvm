@@ -16,11 +16,13 @@
 #define RX_PIN 63
 #define TX_PIN 62
 
-// _Driver *_driverlist[] = {
-//     &_SimpleSerialDriver,
-//     &_FullDuplexSerialDriver,
-//     NULL
-// };
+extern _Driver _SimpleSerialDriver;
+
+_Driver *_driverlist[] = {
+    &_SimpleSerialDriver,
+    //&_FullDuplexSerialDriver,
+    NULL
+};
 
 int main() {
     _clkset(_SETFREQ, _CLOCKFREQ);

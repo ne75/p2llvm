@@ -9,6 +9,7 @@
 #define dirl(pin) asm("dirl %0" : : "r"(pin))
 #define outh(pin) asm("outh %0" : : "r"(pin))
 #define outl(pin) asm("outl %0" : : "r"(pin))
+#define outnot(pin) asm("outnot %0" : : "r"(pin))
 
 #define testp(pin, res) asm("testp %1 wc\n"     \
                             "if_c mov %0, #1\n"  \
@@ -29,6 +30,39 @@
 #define _clkfreq (*((int*)0x14))
 #define _clkmode (*((int*)0x18))
 #define _baudrate (*((int*)0x1c))
+
+register volatile int R0 asm ("r0");
+register volatile int R1 asm ("r1");
+register volatile int R2 asm ("r2");
+register volatile int R3 asm ("r3");
+register volatile int R4 asm ("r4");
+register volatile int R5 asm ("r5");
+register volatile int R6 asm ("r6");
+register volatile int R7 asm ("r7");
+register volatile int R8 asm ("r8");
+register volatile int R9 asm ("r9");
+register volatile int R10 asm ("r10");
+register volatile int R11 asm ("r11");
+register volatile int R12 asm ("r12");
+register volatile int R13 asm ("r13");
+register volatile int R14 asm ("r14");
+register volatile int R15 asm ("r15");
+register volatile int R16 asm ("r16");
+register volatile int R17 asm ("r17");
+register volatile int R18 asm ("r18");
+register volatile int R19 asm ("r19");
+register volatile int R20 asm ("r20");
+register volatile int R21 asm ("r21");
+register volatile int R22 asm ("r22");
+register volatile int R23 asm ("r23");
+register volatile int R24 asm ("r24");
+register volatile int R25 asm ("r25");
+register volatile int R26 asm ("r26");
+register volatile int R27 asm ("r27");
+register volatile int R28 asm ("r28");
+register volatile int R29 asm ("r29");
+register volatile int R30 asm ("r30");
+register volatile int R31 asm ("r31");
 
 register volatile int PA asm ("pa");
 register volatile int PB asm ("pb");
