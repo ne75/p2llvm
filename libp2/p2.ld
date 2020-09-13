@@ -38,6 +38,7 @@ SECTIONS {
         *(.bss*);
     }
 
+
     .heap (NOLOAD) : {
         . = ALIGN(4);
         __heap_start = .;
