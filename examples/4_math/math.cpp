@@ -44,6 +44,4 @@ int main() {
     printf("%d*%d = %d\n", i, j, i*j);
 
     while(1);
-
-    while(1);
 }
