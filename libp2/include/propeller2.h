@@ -27,6 +27,13 @@
 #define wrz(x) asm("wrz %0" : "=r"(x) :)
 #define wrnz(x) asm("wrnz %0" : "=r"(x) :)
 
+#define xinit(x, y) asm("xinit %0, %1" : : "r"(x), "r"(y))
+#define setxfrq(x) asm("setxfrq %0" : : "r"(x))
+#define rdfast(x, y) asm("rdfast %0, %1" : : "r"(x), "r"(y))
+
+#define wrlut(x, addr) asm("wrlut %0, %1" : : "r"(x), "r"(addr))
+#define rdlut(x, addr) asm("rdlut %0, %1" : "=r"(x), : "r"(addr))
+
 #define _clkfreq (*((int*)0x14))
 #define _clkmode (*((int*)0x18))
 #define _baudrate (*((int*)0x1c))
@@ -118,7 +125,7 @@ unsigned int _cnt();
 void _waitcnt(unsigned int cnt);
 
 /*
- * start a new hub mode cog dictated by mode
+ * start a new cog dictated by mode
  */
 int _coginit(unsigned mode, void (*f)(void *), void *par) __attribute__((noinline));
 

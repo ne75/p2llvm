@@ -5,7 +5,7 @@ LOAD = loadp2
 LIBP2 = ../libp2
 LIBC = ../libc
 
-TARGET = test17
+TARGET = test16
 OBJDIR = build
 
 CFLAGS = -Os -ffunction-sections -fdata-sections -fno-jump-tables --target=p2 -Dprintf=__simple_printf
@@ -21,10 +21,10 @@ setup:
 	mkdir -p $(OBJDIR)
 
 $(OBJDIR)/$(TARGET).elf: $(OBJDIR)/$(TARGET).o
-		$(CC) $(LFLAGS) -o $@ $^
+		$(CC) $(LFLAGS) -o $@ $^ #-Wl,--threads=1
 
 $(OBJDIR)/$(TARGET).o: $(TARGET).cpp
-		$(CC) $(CFLAGS) -o $@ -c $< #-mllvm -debug-only=p2-asm-parser,asm-matcher,mccodeemitter
+		$(CC) $(CFLAGS) -o $@ -c $< -mllvm -debug-only=p2-asm-backend #p2-mc-ilower,p2-asm-printer,mccodeemitter,p2-asm-parser #p2-asm-parser,mccodeemitter
 
 load:
 	$(LOAD) $(LOADFLAGS) $(OBJDIR)/$(TARGET).elf

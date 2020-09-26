@@ -22,7 +22,7 @@
 
 #define INCLUDE_DRIVER(x) extern _Driver x; __asm__("\t.global\t_" #x);
 /** @see Details above */
-void _InitIO(void) __attribute__((constructor));
+void _InitIO(void); //__attribute__((constructor));
 
 #else
 

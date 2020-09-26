@@ -14,6 +14,7 @@ SECTIONS {
         KEEP(*(.text.__entry));
     }
 
+    /* If this address gets changes, we need to update lld's relocation function since it's hard coded there */
     . = 0x00100;
     .cog : {
         KEEP(__start())
@@ -24,6 +25,18 @@ SECTIONS {
     .text : {
         KEEP(*(.text.main))
         *(.text*);
+    }
+
+    .init_array : {
+        _init_array_start = . ;
+        KEEP(*(.init_array))
+        _init_array_end = . ;
+    }
+
+    .fini_array : {
+        _fini_array_start = .;
+        KEEP(*(.fini_array))
+        _fini_array_end = .;
     }
 
     .rodata : {
@@ -37,7 +50,6 @@ SECTIONS {
     .bss : {
         *(.bss*);
     }
-
 
     .heap (NOLOAD) : {
         . = ALIGN(4);

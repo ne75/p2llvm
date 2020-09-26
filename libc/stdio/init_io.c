@@ -12,8 +12,7 @@
 static unsigned char linebuf[80];
 
 /* initialize I/O */
-_CONSTRUCTOR void
-_InitIO(void)
+void _InitIO(void)
 {
   /* open stdin */
   __fopen_driver(stdin, _driverlist[0], "", "r");

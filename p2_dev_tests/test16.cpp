@@ -9,10 +9,7 @@
 #include "propeller.h"
 #include "sys/p2es_clock.h"
 
-#include "printf.h"
-
-//#include <sys/va_list.h>
-
+#include <stdio.h>
 #include <stdarg.h>
 #include <stdlib.h>
 
