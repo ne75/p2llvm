@@ -1,7 +1,9 @@
 #include <stdlib.h>
+#include <propeller.h>
 
 void
 abort(void)
 {
-  _Exit(0xff);
+  __unreachable();
+  while(1); // include to suppress silly errors that this function shouldn't return
 }

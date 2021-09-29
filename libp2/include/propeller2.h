@@ -2,6 +2,7 @@
 #define _PROPELLER2_H
 
 #include "smartpins.h"
+#include "streamer.h"
 
 #define hubset(h) asm("hubset %0" : : "r"(h))
 #define waitx(t) asm("waitx %0" : : "r"(t))
@@ -11,9 +12,7 @@
 #define outl(pin) asm("outl %0" : : "r"(pin))
 #define outnot(pin) asm("outnot %0" : : "r"(pin))
 
-#define testp(pin, res) asm("testp %1 wc\n"     \
-                            "if_c mov %0, #1\n"  \
-                            "if_nc mov %0, #0" : "=r"(res) : "r"(pin))
+#define testp(pin, res) asm("testp %1 wc\nwrc %0\n" : "=r"(res) : "r"(pin))
 
 #define rdpin(v, pin) asm("rdpin %0, %1" : "=r"(v) : "r"(pin))
 #define rqpin(v, pin) asm("rqpin %0, %1" : "=r"(v) : "r"(pin))
@@ -97,6 +96,10 @@ register volatile int IRET1 asm ("iret1");
 #define __strong_alias(sym, oldfunc) extern __typeof (oldfunc) sym __attribute__ ((alias (#oldfunc)));
 #endif
 
+#define COG_PARAM_TO_OBJ(p, type) ((type*)((int*)p)[0]);
+
+__attribute__ ((section ("cog"))) void __unreachable();
+
 /* type for a volatile lock */
 /* if we change this type, change the definitions of SIG_ATOMIC_{MIN,MAX}
  * in stdint.h too
@@ -109,63 +112,66 @@ typedef _atomic_t atomic_t;
 extern "C" {
 #endif
 
-/*
+#define COGINIT_MODE_COG 0x10
+#define COGINIT_MODE_HUB 0x00
+
+/**
  * run clock configuration to the desired clock mode and clock frequency
  */
 void _clkset(unsigned clkmode, unsigned clkfreq);
 
-/*
+/**
  * return the current count
  */
 unsigned int _cnt();
 
-/*
+/**
  * wait until current count == cnt
  */
 void _waitcnt(unsigned int cnt);
 
-/*
+/**
  * start a new cog dictated by mode
  */
 int _coginit(unsigned mode, void (*f)(void *), void *par) __attribute__((noinline));
 
-/*
+/**
  * reverse bits in x
  */
 unsigned int _rev(unsigned int x);
 
-/*
+/**
  * initialize the given rx/tx pins in async mode (uart)
  * this needs to be called again if using UART and clkset is called to adjust baud rates
  */
 unsigned _uart_init(unsigned rx, unsigned tx, unsigned baud);
 
-/*
+/**
  * write a character to the builtin UART
  */
 void _uart_putc(char c);
 
-/*
+/**
  * read a character from the builtin UART
  */
 char _uart_getc();
 
-/*
+/**
  * request a new hardware lock
  */
 unsigned int _locknew();
 
-/*
+/**
  * return the lock to the pool
  */
 void _lockret(unsigned int l);
 
-/*
+/**
  * try to lock a lock, blocking until it is acquired.
  */
 void _lock(atomic_t l);
 
-/*
+/**
  * release the lock
  */
 void _unlock(atomic_t l);

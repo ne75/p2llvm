@@ -5,8 +5,8 @@ ENTRY(__entry)
     debug_rom   (rx)  : ORIGIN = 0x7c000, LENGTH = 0x04000
 }*/
 
-STACK_SIZE = 0x2000;
-HEAP_SIZE = 0x2000;
+STACK_SIZE = 0xC000;
+HEAP_SIZE = 0xC000;
 
 SECTIONS {
     . = 0x00000;

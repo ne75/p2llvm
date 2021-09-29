@@ -72,7 +72,7 @@ STDLIB = malloc.o calloc.o realloc.o atoi.o atoll.o atof.o atexit.o abort.o \
 	qsort.o bsearch.o strtol.o strtoul.o strtod.o strtof.o \
 	strtoll.o strtoull.o \
 	assert.o rand.o div.o lldiv.o abs.o llabs.o getenv.o \
-	multibyte.o fenv.o mblencur.o init_cstd.o
+	multibyte.o fenv.o mblencur.o init_cstd.o c++.o
 
 # MISC = 	ctype.o toupper.o tolower.o \
 # 	isalpha.o isalnum.o iscntrl.o isprint.o isspace.o isdigit.o \
@@ -198,8 +198,11 @@ $(PREFIX)/float_printf.o: vfprintf.c
 $(PREFIX)/float_scanf.o: vfscanf.c
 	$(CC) $(CFLAGS) -o $@ -DFLOAT_SUPPORT -c $<
 
+$(PREFIX)/c++.o: c++.cpp
+	$(CC) $(CFLAGS) -o $@ -c $<
+
 $(PREFIX)/%.o: %.c
-	$(CC) $(CFLAGS) -o $@ -c $< #-mllvm -debug #--debug-only=p2-isel,isel
+	$(CC) $(CFLAGS) -o $@ -c $<
 
 # this is used to build the COG C EEPROM driver and is rounded up to 2K bytes so the space can be used as a buffer
 # for loading other COGs once the EEPROM driver has been loaded

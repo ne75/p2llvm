@@ -57,7 +57,7 @@ unsigned int _locknew() {
 }
 
 void _lockret(unsigned int l) {
-    asm("locknew %0" : : "r"(l));
+    asm("lockret %0" : : "r"(l));
 }
 
 void _lock(atomic_t l) {
@@ -89,11 +89,11 @@ unsigned _uart_init(unsigned rx, unsigned tx, unsigned baud) {
     x &= 0xfffffc00;
     x |= 7;
 
-    wrpin(ASYNC_TX_MODE, tx);
+    wrpin(SP_ASYNC_TX_MODE, tx);
     wxpin(x, tx);
     dirh(tx);
 
-    wrpin(ASYNC_RX_MODE, rx);
+    wrpin(SP_ASYNC_RX_MODE, rx);
     wxpin(x, rx);
     dirh(rx);
 

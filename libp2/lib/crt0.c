@@ -1,5 +1,6 @@
-// due to current limitations of the ASM parser, need to manually calculate jump offsets.
-// eventually need label support so that jumps can be done much more easily
+/**
+ * All of the core code necessary to run our compiled binaries
+ */
 
 #include "propeller2.h"
 
@@ -7,7 +8,6 @@ typedef void (*func_ptr)(void);
 
 __attribute__ ((section (".stack"))) unsigned int __stack;
 
-__attribute__ ((section ("cog"))) void __unreachable();
 __attribute__ ((section ("cog"), cogmain)) void __start();
 __attribute__ ((section ("cog"))) void _init();
 __attribute__ ((section ("cog"))) void _fini();
@@ -32,10 +32,6 @@ __attribute__ ((cogmain)) void __entry() {
     // this function will get overwritten later by hub params (clkfreq, clkmode, etc)
     asm("coginit #0, #0x100");
 }
-
-// I eventually want to figure out how to do labels in the assembly parser so that I don't need to pre-compute jump offsets
-// can also probably re-write this to always run the not-cog 0 version of the startup and do the cog 0 startup stuff in
-// _entry()
 
 void __start() {
     // TODO: figure out how to rewrite this without needing inline asm.
@@ -82,8 +78,12 @@ void _fini(void) {
 }
 
 // a give-up function if we have some fatal error.
-void __unreachable(int status) {
+void __unreachable() {
     while(1);
+}
+
+void __cxa_pure_virtual() {
+    __unreachable();
 }
 
 int __sdiv(int a, int b) {
@@ -121,7 +121,7 @@ int __srem(int a, int b) {
     return res;
 }
 
-__attribute__ ((no_builtin("memcpy")))void *__memcpy(void *dst, const void *src, unsigned n) {
+__attribute__ ((no_builtin("memcpy"))) void *__memcpy(void *dst, const void *src, unsigned n) {
     char *d = (char *)dst;
     const char *s = (const char*)src;
 
