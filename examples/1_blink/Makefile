@@ -1,14 +1,14 @@
 LLVM_BASE = /opt/p2llvm
 CC = $(LLVM_BASE)/bin/clang
 LD = $(LLVM_BASE)/bin/ld.lld
-LOAD = loadp2
+LOAD = $(LLVM_BASE)/bin/loadp2
 
 TARGET = blink
 OBJDIR = ../build
 
 CFLAGS = -Os -ffunction-sections -fdata-sections -fno-jump-tables --target=p2 -Dprintf=__simple_printf -DP2_TARGET_MHZ=200
 LFLAGS = --target=p2 -Wl,--gc-sections -Wl,--print-gc-sections
-LOADFLAGS = -v -ZERO -b 230400 -t
+LOADFLAGS = -v -ZERO -b 230400 -FIFO 1024 -t 
 
 .PHONY: all setup clean load
 

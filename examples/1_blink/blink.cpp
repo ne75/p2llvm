@@ -10,10 +10,12 @@
 int main() {
     _clkset(_SETFREQ, _CLOCKFREQ);
 
-    DIRB |= 1 << 24;
+    dirh(0);
+    dirh(1);
 
     while(1) {
-        OUTB ^= 1 << 24;
+        outnot(0);
+        outnot(1);
         waitcnt(CLKFREQ + CNT);
     }
 }

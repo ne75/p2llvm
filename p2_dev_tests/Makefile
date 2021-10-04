@@ -1,16 +1,16 @@
 LLVM_BASE = /opt/p2llvm
 CC = $(LLVM_BASE)/bin/clang
 LD = $(LLVM_BASE)/bin/ld.lld
-LOAD = loadp2
+LOAD = $(LLVM_BASE)/bin/loadp2
 LIBP2 = ../libp2
 LIBC = ../libc
 
-TARGET = test19
+TARGET = test20
 OBJDIR = build
 
-CFLAGS = -Os -ffunction-sections -fdata-sections --target=p2 -Dprintf=__simple_printf
+CFLAGS = -ffunction-sections -fdata-sections --target=p2 -Dprintf=__simple_printf
 LFLAGS = --target=p2 #-Wl,--gc-sections -Wl,--print-gc-sections
-LOADFLAGS = -v -ZERO -b 230400 -t
+LOADFLAGS = -v -ZERO -FIFO 1024 -b 230400 -t
 
 .PHONY: all setup clean load
 
@@ -25,6 +25,7 @@ $(OBJDIR)/$(TARGET).elf: $(OBJDIR)/$(TARGET).o
 
 $(OBJDIR)/$(TARGET).o: $(TARGET).cpp
 		$(CC) $(CFLAGS) -o $@ -c $<
+		# $(CC) $(CFLAGS) -mllvm -debug -o $@ -c $<
 
 load:
 	$(LOAD) $(LOADFLAGS) $(OBJDIR)/$(TARGET).elf

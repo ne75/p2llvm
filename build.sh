@@ -106,7 +106,7 @@ if $build_libc; then
     echo "========================"
     cd libc
     if [ $# -ne 0 ]; then
-        make clean
+        # make clean
         make -j8 install DEST=$install_dir_base/libc
     else
         make clean

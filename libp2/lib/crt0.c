@@ -56,6 +56,9 @@ void __start() {
     // initialize all our constructors
     _init();
 
+    // for some reason, pin 0 starts in some smartpin mode. Not sure where it comes from (yet), but just clear it here
+    wrpin(0, 0);
+
     // run the main function
     main();
 
