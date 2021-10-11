@@ -61,8 +61,16 @@ void _lockret(unsigned int l) {
 }
 
 void _lock(atomic_t l) {
+    asm(".L_locktry:");
     asm("locktry %0 wc" : : "r"(l));
-    asm("if_nc jmp #-8");
+    asm("if_nc jmp #.L_locktry");
+}
+
+int _locktry(atomic_t l) {
+    int x;
+    asm("locktry %0 wc" : : "r"(l));
+    wrc(x);
+    return x;
 }
 
 void _unlock(atomic_t l) {

@@ -29,6 +29,7 @@
 #define xinit(x, y) asm("xinit %0, %1" : : "r"(x), "r"(y))
 #define setxfrq(x) asm("setxfrq %0" : : "r"(x))
 #define rdfast(x, y) asm("rdfast %0, %1" : : "r"(x), "r"(y))
+#define wrfast(x, y) asm("wrfast %0, %1" : : "r"(x), "r"(y))
 
 #define wrlut(x, addr) asm("wrlut %0, %1" : : "r"(x), "r"(addr))
 #define rdlut(x, addr) asm("rdlut %0, %1" : "=r"(x), : "r"(addr))
@@ -165,6 +166,11 @@ unsigned int _locknew();
  * return the lock to the pool
  */
 void _lockret(unsigned int l);
+
+/**
+ * try to lock a lock, returning 1 if it succeed, 0 if not.
+ */
+int _locktry(atomic_t l);
 
 /**
  * try to lock a lock, blocking until it is acquired.

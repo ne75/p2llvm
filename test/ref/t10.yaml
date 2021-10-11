@@ -1,0 +1,7 @@
+expected_output: |
+  case 0
+  case 1
+  case 2 with fallthrough to case 3
+  case 3
+  case 4
+  unknown case
