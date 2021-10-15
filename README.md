@@ -57,4 +57,8 @@ LFLAGS = --target=p2
 ```
 loadp2 -v -ZERO -b 230400 -t hello.elf
 ```
-
+4. To load to SPI Flash (on the P2ES or equivalent board)
+```
+loadp2 -b 230400 "@0=<this dir>/loadp2/board/P2ES_flashloader.bin,@8000+hello.elf" -t
+```
+Be sure that the "FLASH" switch is on so that the chip interacts with SPI flash. 

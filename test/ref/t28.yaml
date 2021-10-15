@@ -1,0 +1,4 @@
+expected_output: |
+  cog 1 has the lock
+  cog 0 failed to get the lock
+  cog 0 has the lock

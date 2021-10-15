@@ -19,8 +19,10 @@ help()
 }
 
 build_llvm=true
+build_llvm_release=false
 build_libc=true
 build_libp2=true
+build_type=Debug
 
 # get options
 install_dir_base=$1
@@ -39,6 +41,10 @@ while [ -n "$2" ]; do # while loop starts
         --skip_libp2)
             echo "Skip libp2"
             build_libp2=false;;
+        --release)
+            echo "Build release version of LLVM"
+            build_type=Release
+            build_llvm_release=true;;
     esac
     shift
 done
@@ -54,16 +60,22 @@ if $build_llvm; then
     echo "==== Building llvm ====="
     echo "========================"
     cd llvm-project
-    mkdir -p build_release
-    cd build_release
+
+    if $build_llvm_release; then
+        mkdir -p build_release
+        cd build_release
+    else
+        mkdir -p build_debug
+        cd build_debug
+    fi
 
     if [ $# -ne 0 ]; then
-        cmake -G "Unix Makefiles" -DLLVM_ENABLE_PROJECTS="lld;clang" -DCMAKE_INSTALL_PREFIX=$install_dir_base -DCMAKE_BUILD_TYPE=Release -DLLVM_EXPERIMENTAL_TARGETS_TO_BUILD=P2 -DLLVM_TARGETS_TO_BUILD="" ../llvm
+        cmake -G "Unix Makefiles" -DLLVM_ENABLE_PROJECTS="lld;clang" -DCMAKE_INSTALL_PREFIX=$install_dir_base -DCMAKE_BUILD_TYPE=$build_type -DLLVM_EXPERIMENTAL_TARGETS_TO_BUILD=P2 -DLLVM_TARGETS_TO_BUILD="" ../llvm
 
         make install -j8
         cp ../../libp2/p2.ld $install_dir_base/
     else
-        cmake -G "Unix Makefiles" -DLLVM_ENABLE_PROJECTS="lld;clang" -DCMAKE_BUILD_TYPE=Release -DLLVM_EXPERIMENTAL_TARGETS_TO_BUILD=P2 -DLLVM_TARGETS_TO_BUILD="" ../llvm
+        cmake -G "Unix Makefiles" -DLLVM_ENABLE_PROJECTS="lld;clang" -DCMAKE_BUILD_TYPE=$build_type -DLLVM_EXPERIMENTAL_TARGETS_TO_BUILD=P2 -DLLVM_TARGETS_TO_BUILD="" ../llvm
 
         make -j8
     fi

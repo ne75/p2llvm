@@ -92,20 +92,19 @@ This is a list of all tests and the feature(s) they each test.
 - `t13`: Functions: no arguments and a return value
 - `t14`: Functions: <4 arguments
 - `t15`: Functions: >4 arguments
-- `t16`: Functions: stack-based arguments
-- `t17`: Functions: global arguments
-- `t18`: Functions: calling a function with reference and pointer arguments
-- `t19`: Functions: pointer/reference to a stack-based arguments
-- `t20`: Functions: pointer/reference to a global argument
-- `t21`: Functions: mixed argument sources (stack, global, pointer, etc)
-- `t22`: Recursion
-- `t23`: Variadic functions
-- `t24`: Setting/reading P2 hardware registers
-- `t25`: Waiting by a fixed amount
-- `t26`: Starting hub-mode cogs
-- `t27`: Starting cog-mode cogs
-- `t28`: Streamer functions
-- `t29`: Locks
-- `t30`-`t49`: Reserved for future use
+- `t16`: Functions: stack-based arguments (including byval)
+- `t17`: Functions: global arguments (including byval)
+- `t18`: Functions: pointer/reference to a stack-based arguments
+- `t19`: Functions: pointer/reference to a global argument
+- `t20`: Functions: mixed argument sources (stack, global, pointer, etc)
+- `t21`: Recursion
+- `t22`: Variadic functions, with a struct in the argument list
+- `t23`: Setting/reading P2 hardware registers
+- `t24`: Waiting by a fixed amount
+- `t25`: Starting hub-mode cogs
+- `t26`: Starting cog-mode cogs
+- `t27`: Streamer functions (not sure how to test this yet)
+- `t28`: Locks
+- `t29`-`t49`: Reserved for future use
 - `t50`: Dyanmic memory allocation (using `new`)
 - `t51`: Linking external objects

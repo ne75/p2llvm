@@ -9,6 +9,7 @@
 #define P2_TARGET_MHZ   200
 #include "propeller2.h"
 #include "sys/p2es_clock.h"
+#include <stdarg.h>
 
 #define RX_PIN 63
 #define TX_PIN 62

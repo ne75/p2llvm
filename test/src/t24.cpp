@@ -3,37 +3,23 @@
 #include "sys/p2es_clock.h"
 
 #include <stdio.h>
-#include <stdarg.h>
 #include <stdlib.h>
 
 #define RX_PIN 63
 #define TX_PIN 62
-
-class A {
-public:
-    A() {};
-    ~A() {};
-    virtual void a() = 0;
-};
-
-class B : public A {
-public:
-    B() {};
-    ~B() {};
-
-    void a() override {
-        printf("virtual a()\n");
-    }
-};
 
 int main() {
     _clkset(_SETFREQ, _CLOCKFREQ);
     _uart_init(RX_PIN, TX_PIN, 230400);
     printf("$\n"); // start of test character
 
-    B b;
+    int start = CNT;
+    waitx(CLKFREQ);
+    int end = CNT;
+    int t = end - start;
 
-    b.a();
+    if (abs(t - CLKFREQ) < 100) 
+        printf("off by < 100\n");
 
     printf("~\n"); // end of test character
     return 0;

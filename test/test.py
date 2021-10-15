@@ -1,19 +1,18 @@
 import argparse
 import yaml
 import os
-import signal
 import subprocess
 from colorama import Fore
 import re
 import serial
-import time
+import sys
 
 # TODO: make directorys more robust 
 no_opt_build_dir = 'build/no_opt'
 opt_build_dir = 'build/opt'
 
 load_cmd = '/opt/p2llvm/bin/loadp2'
-load_args = ['-ZERO', '-l', '230400, ''-SINGLE', '-FIFO', '4096', '-v']
+load_args = ['-ZERO', '-l', '230400', '-SINGLE', '-FIFO', '20000', '-v']
 
 START_OF_TEST = '$'
 END_OF_TEST = '~'
@@ -46,7 +45,7 @@ class TestCase:
         self.compile_success = True
         return True
 
-    def run(self, port):
+    def run(self, port, show_output=False):
         if (not self.compile_success):
             return False
 
@@ -56,7 +55,7 @@ class TestCase:
         ser.dtr = False
         ser.open()
 
-        print(Fore.GREEN + self.name + ": Running non-optimized test" + Fore.RESET)
+        print(Fore.LIGHTMAGENTA_EX + self.name + ": " + Fore.RESET + "Running non-optimized test")
         if not self.load(port, os.path.join(no_opt_build_dir, 'src', self.name)):
             return False
 
@@ -64,29 +63,29 @@ class TestCase:
         opt_res = True
 
         if (self.expected_output):
-            non_opt_res = self.compare(self.get_output(ser))
-            if non_opt_res:
-                print(Fore.GREEN + self.name + ": Non-optimized test passed" + Fore.RESET)
-            else:
+            out = self.get_output(ser, show_output)
+
+            non_opt_res = self.compare(out)
+            if not non_opt_res:
                 print(Fore.RED + self.name + ": Non-optimized test failed" + Fore.RESET)
                 return False
 
-        print(Fore.GREEN + self.name + ": Running optimized test" + Fore.RESET)
+        print(Fore.LIGHTMAGENTA_EX + self.name + ": " + Fore.RESET + "Running optimized test")
         if not self.load(port, os.path.join(opt_build_dir, 'src', self.name)):
             return False
 
         if (self.expected_output):
-            opt_res = self.compare(self.get_output(ser))
-            if non_opt_res:
-                print(Fore.GREEN + self.name + ": Non-optimized test passed" + Fore.RESET)
-            else:
+            out = self.get_output(ser, show_output)
+
+            opt_res = self.compare(out)
+            if not opt_res:
                 print(Fore.RED + self.name + ": Non-optimized test failed" + Fore.RESET)
                 return False
 
         return True
 
     def load(self, port, app):
-        args_base = load_args
+        args_base = load_args.copy()
         args_base.append('-p')
         args_base.append(port)
 
@@ -103,11 +102,14 @@ class TestCase:
 
         return True
 
-    def get_output(self, ser):
+    def get_output(self, ser, show):
         done = False
         results = ''
         while not done:
             l = ser.readline().decode('ascii').strip() + '\n'
+            if (show):
+                print(l.strip());
+
             results += l
 
             if (l == '~\n'):
@@ -167,6 +169,8 @@ def main():
     parser = argparse.ArgumentParser(description='P2 LLVM Tests')
     parser.add_argument('--port', type=str, required=True)
     parser.add_argument('--tests', type=str, nargs='+')
+    parser.add_argument('--show_output', nargs='?', const=True, default=False);
+    parser.add_argument('--no_clean', nargs='?', const=True, default=False)
 
     args = parser.parse_args()
     port = args.port
@@ -175,10 +179,20 @@ def main():
     # assemble the list of tests to run
     tests_to_run = []
 
+    all_pass = True
+
+    if not args.no_clean:
+        p = subprocess.Popen(['make', 'clean'], cwd=os.path.join(no_opt_build_dir))
+        p.wait()
+
+        p = subprocess.Popen(['make', 'clean'], cwd=os.path.join(opt_build_dir))
+        p.wait()
+
     if (args.tests):
         for t in args.tests:
             if t in test_names:
                 tests_to_run.append(TestCase(t))
+
     else:
         for t in test_names:
             tests_to_run.append(TestCase(t))
@@ -187,10 +201,14 @@ def main():
         t.compile_case()
 
     for t in tests_to_run:
-        if (t.run(port)):
+        if (t.run(port, args.show_output)):
             print(Fore.LIGHTGREEN_EX + t.name + ": PASS!" + Fore.RESET)
         else:
+            all_pass = False;
             print(Fore.LIGHTRED_EX + t.name + ": FAIL!" + Fore.RESET)
+
+    if (all_pass):
+        print(Fore.LIGHTGREEN_EX + "All tests passed!" + Fore.RESET)
 
 if __name__ == "__main__":
     main()

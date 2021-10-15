@@ -3,38 +3,31 @@
 #include "sys/p2es_clock.h"
 
 #include <stdio.h>
-#include <stdarg.h>
 #include <stdlib.h>
 
 #define RX_PIN 63
 #define TX_PIN 62
 
-class A {
-public:
-    A() {};
-    ~A() {};
-    virtual void a() = 0;
-};
+unsigned stack[128];
 
-class B : public A {
-public:
-    B() {};
-    ~B() {};
-
-    void a() override {
-        printf("virtual a()\n");
-    }
-};
+void hub_cog(void *p) {
+    printf("%d\n", (int)p);
+    while(1);
+}
 
 int main() {
     _clkset(_SETFREQ, _CLOCKFREQ);
     _uart_init(RX_PIN, TX_PIN, 230400);
+    waitx(CLKFREQ/5);
     printf("$\n"); // start of test character
+    waitx(CLKFREQ/10);
 
-    B b;
+    cogstart(hub_cog, 1, (int*)stack, sizeof(stack)/4);
 
-    b.a();
-
+    waitx(CLKFREQ/10);
     printf("~\n"); // end of test character
+
+    while(1);
+
     return 0;
 }

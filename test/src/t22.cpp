@@ -4,36 +4,30 @@
 
 #include <stdio.h>
 #include <stdarg.h>
-#include <stdlib.h>
 
 #define RX_PIN 63
 #define TX_PIN 62
 
-class A {
-public:
-    A() {};
-    ~A() {};
-    virtual void a() = 0;
-};
+int sum(int n, ...) {
+    va_list args;
+    va_start(args, n);
 
-class B : public A {
-public:
-    B() {};
-    ~B() {};
+    int v = 0;
 
-    void a() override {
-        printf("virtual a()\n");
+    for (int i = 0; i < n; i++) {
+        v += va_arg(args, int);
     }
-};
+
+    return v;
+}
 
 int main() {
     _clkset(_SETFREQ, _CLOCKFREQ);
     _uart_init(RX_PIN, TX_PIN, 230400);
     printf("$\n"); // start of test character
 
-    B b;
-
-    b.a();
+    int i = sum(8, 1, -2, 3, -4, 5, -6, 7, -8);
+    printf("%d\n", i); // expected -4
 
     printf("~\n"); // end of test character
     return 0;
