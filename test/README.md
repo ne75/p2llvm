@@ -105,6 +105,9 @@ This is a list of all tests and the feature(s) they each test.
 - `t26`: Starting cog-mode cogs
 - `t27`: Streamer functions (not sure how to test this yet)
 - `t28`: Locks
-- `t29`-`t49`: Reserved for future use
+- `t29`: Default values in function arguments
+- `t30`: Large memory offsets
+- `t31`: Returning structs by value
+- `t32`-`t49`: Reserved for future use
 - `t50`: Dyanmic memory allocation (using `new`)
 - `t51`: Linking external objects

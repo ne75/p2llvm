@@ -7,30 +7,23 @@
 #define RX_PIN 63
 #define TX_PIN 62
 
-struct s_t {
-    char a;
-    int b;
+struct a {
+    int x[1000];
+    int y;
 };
 
-void a(int a, int b, int c, int *d, s_t &e) {
-    printf("a(%d, %d, %d, %d, {%d, %d})\n", a, b, c, *d, e.a, e.b);
-}
+a t;
 
 int main() {
     _clkset(_SETFREQ, _CLOCKFREQ);
     _uart_init(RX_PIN, TX_PIN, 230400);
     printf("$\n"); // start of test character
 
-    int b, c, d, e;
-    s_t f;
-    b = 1;
-    c = 2;
-    d = 3;
-    e = 4;
-    f.a = 5;
-    f.b = 6;
+    t.x[0] = 1;
+    t.y = 2;
 
-    a(b, c, d, &e, f);
+    printf("%d\n", t.x[0]);
+    printf("%d\n", t.y);
 
     printf("~\n"); // end of test character
     return 0;

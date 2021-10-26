@@ -20,6 +20,8 @@ int main() {
 
     if (abs(t - CLKFREQ) < 100) 
         printf("off by < 100\n");
+    else
+        printf("off by %d\n", abs(t-CLKFREQ));
 
     printf("~\n"); // end of test character
     return 0;

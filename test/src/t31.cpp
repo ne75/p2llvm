@@ -12,8 +12,9 @@ struct s_t {
     int b;
 };
 
-void a(int a, int b, int c, int *d, s_t &e) {
-    printf("a(%d, %d, %d, %d, {%d, %d})\n", a, b, c, *d, e.a, e.b);
+s_t a(int a, int b, int c, int d, int e) {
+    s_t r = {1, 2};
+    return r;
 }
 
 int main() {
@@ -21,16 +22,8 @@ int main() {
     _uart_init(RX_PIN, TX_PIN, 230400);
     printf("$\n"); // start of test character
 
-    int b, c, d, e;
-    s_t f;
-    b = 1;
-    c = 2;
-    d = 3;
-    e = 4;
-    f.a = 5;
-    f.b = 6;
-
-    a(b, c, d, &e, f);
+    s_t r = a(1, 2, 3, 4, 5);
+    printf("%d %d\n", r.a, r.b);
 
     printf("~\n"); // end of test character
     return 0;

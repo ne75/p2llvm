@@ -22,4 +22,14 @@ if(OPTIMIZE)
     add_compile_options(-Os)
 endif()
 
+function (add_executable _name)
+    _add_executable(${ARGV})
+    if (TARGET ${_name})
+        add_custom_command(TARGET ${_name} POST_BUILD
+            COMMAND ${CMAKE_OBJCOPY} ARGS -O binary ${_name} ${_name}.bin
+            COMMENT "Creating bin..."
+        )
+    endif()
+endfunction()
+
 add_subdirectory(src)

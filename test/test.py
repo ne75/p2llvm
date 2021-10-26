@@ -5,14 +5,15 @@ import subprocess
 from colorama import Fore
 import re
 import serial
-import sys
 
 # TODO: make directorys more robust 
 no_opt_build_dir = 'build/no_opt'
 opt_build_dir = 'build/opt'
 
 load_cmd = '/opt/p2llvm/bin/loadp2'
-load_args = ['-ZERO', '-l', '230400', '-SINGLE', '-FIFO', '20000', '-v']
+load_args = ['-ZERO', '-l', '230400', '-v', '-FIFO', '2048']
+
+verbose = False
 
 START_OF_TEST = '$'
 END_OF_TEST = '~'
@@ -45,7 +46,7 @@ class TestCase:
         self.compile_success = True
         return True
 
-    def run(self, port, show_output=False):
+    def run(self, port):
         if (not self.compile_success):
             return False
 
@@ -56,14 +57,18 @@ class TestCase:
         ser.open()
 
         print(Fore.LIGHTMAGENTA_EX + self.name + ": " + Fore.RESET + "Running non-optimized test")
-        if not self.load(port, os.path.join(no_opt_build_dir, 'src', self.name)):
+
+        if not self.load(port, os.path.join(no_opt_build_dir, 'src', self.name + ".bin")):
             return False
+
+        if verbose:
+            print("Done loading")
 
         non_opt_res = True
         opt_res = True
 
         if (self.expected_output):
-            out = self.get_output(ser, show_output)
+            out = self.get_output(ser)
 
             non_opt_res = self.compare(out)
             if not non_opt_res:
@@ -71,11 +76,11 @@ class TestCase:
                 return False
 
         print(Fore.LIGHTMAGENTA_EX + self.name + ": " + Fore.RESET + "Running optimized test")
-        if not self.load(port, os.path.join(opt_build_dir, 'src', self.name)):
+        if not self.load(port, os.path.join(opt_build_dir, 'src', self.name + ".bin")):
             return False
 
         if (self.expected_output):
-            out = self.get_output(ser, show_output)
+            out = self.get_output(ser)
 
             opt_res = self.compare(out)
             if not opt_res:
@@ -84,30 +89,45 @@ class TestCase:
 
         return True
 
-    def load(self, port, app):
-        args_base = load_args.copy()
-        args_base.append('-p')
-        args_base.append(port)
-
-        args = args_base + [app]
-        p = subprocess.Popen([load_cmd] + args, stdout=subprocess.PIPE)
+    def load(self, port, app, retries=3):
         
-        output = p.communicate()[0].decode('ascii')
+        result = False
 
-        if p.returncode != 0:
+        while retries:
+            args_base = load_args.copy()
+            args_base.append('-p')
+            args_base.append(port)
+
+            args = args_base + [app]
+            p = subprocess.Popen([load_cmd] + args, stdout=subprocess.PIPE)
+
+            if verbose:
+                print(" ".join([load_cmd] + args))
+            
+            output = p.communicate()[0].decode('ascii')
+
+            if p.returncode != 0:
+                print(Fore.RED + output + Fore.RESET)
+                print(Fore.YELLOW + "Load failed, retrying...\r" + Fore.RESET)
+                retries -= 1;
+                result = False;
+            else:
+                result = True;
+                break
+
+        if not result:
             print(Fore.RED + "Failed to load test case\r" + Fore.RESET)
-            print(Fore.RED + output + Fore.RESET)
-            print("Load command was: " + str([load_cmd] + args))
-            return False
+            if verbose:
+                print("Load command was: " + str([load_cmd] + args))
 
-        return True
+        return result
 
-    def get_output(self, ser, show):
+    def get_output(self, ser):
         done = False
         results = ''
         while not done:
             l = ser.readline().decode('ascii').strip() + '\n'
-            if (show):
+            if (verbose):
                 print(l.strip());
 
             results += l
@@ -118,7 +138,13 @@ class TestCase:
         return results.strip()
 
     def compare(self, output):
-        r = re.search(r'\$((.|\n)*?)\~', output).group(0)[1:-1].strip() # validate our output
+        r = re.search(r'\$((.|\n)*?)\~', output)
+        if not r:
+            print("Didn't get a full output string. Got:")
+            print(output)
+            return False
+            
+        r = r.group(0)[1:-1].strip() # validate our output
 
         if r and r == self.expected_output:
             return True
@@ -166,15 +192,18 @@ def natural_sort(l):
     return sorted(l, key=alphanum_key)
 
 def main():
+    global verbose
+
     parser = argparse.ArgumentParser(description='P2 LLVM Tests')
     parser.add_argument('--port', type=str, required=True)
     parser.add_argument('--tests', type=str, nargs='+')
-    parser.add_argument('--show_output', nargs='?', const=True, default=False);
+    parser.add_argument('--verbose', nargs='?', const=True, default=False);
     parser.add_argument('--no_clean', nargs='?', const=True, default=False)
 
     args = parser.parse_args()
     port = args.port
     test_names = natural_sort(prepare())
+    verbose = args.verbose
 
     # assemble the list of tests to run
     tests_to_run = []
@@ -192,6 +221,11 @@ def main():
         for t in args.tests:
             if t in test_names:
                 tests_to_run.append(TestCase(t))
+            else:
+                print("Unknown test: " + t);
+                print("Available tests are: ")
+                for _t in test_names:
+                    print("\t- " + _t);
 
     else:
         for t in test_names:
@@ -201,7 +235,7 @@ def main():
         t.compile_case()
 
     for t in tests_to_run:
-        if (t.run(port, args.show_output)):
+        if (t.run(port)):
             print(Fore.LIGHTGREEN_EX + t.name + ": PASS!" + Fore.RESET)
         else:
             all_pass = False;

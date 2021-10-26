@@ -7,13 +7,12 @@
 #define RX_PIN 63
 #define TX_PIN 62
 
-struct s_t {
-    char a;
-    int b;
-};
+void a(bool one=false) {
+    printf("1\n");
 
-void a(int a, int b, int c, int *d, s_t &e) {
-    printf("a(%d, %d, %d, %d, {%d, %d})\n", a, b, c, *d, e.a, e.b);
+    if (one) return;
+
+    printf("2\n");
 }
 
 int main() {
@@ -21,16 +20,8 @@ int main() {
     _uart_init(RX_PIN, TX_PIN, 230400);
     printf("$\n"); // start of test character
 
-    int b, c, d, e;
-    s_t f;
-    b = 1;
-    c = 2;
-    d = 3;
-    e = 4;
-    f.a = 5;
-    f.b = 6;
-
-    a(b, c, d, &e, f);
+    a();
+    a(true);
 
     printf("~\n"); // end of test character
     return 0;

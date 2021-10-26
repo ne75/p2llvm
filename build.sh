@@ -75,7 +75,7 @@ if $build_llvm; then
         make install -j8
         cp ../../libp2/p2.ld $install_dir_base/
     else
-        cmake -G "Unix Makefiles" -DLLVM_ENABLE_PROJECTS="lld;clang" -DCMAKE_BUILD_TYPE=$build_type -DLLVM_EXPERIMENTAL_TARGETS_TO_BUILD=P2 -DLLVM_TARGETS_TO_BUILD="" ../llvm
+        # cmake -G "Unix Makefiles" -DLLVM_ENABLE_PROJECTS="lld;clang" -DCMAKE_BUILD_TYPE=$build_type -DLLVM_EXPERIMENTAL_TARGETS_TO_BUILD=P2 -DLLVM_TARGETS_TO_BUILD="" ../llvm
 
         make -j8
     fi
@@ -118,7 +118,7 @@ if $build_libc; then
     echo "========================"
     cd libc
     if [ $# -ne 0 ]; then
-        # make clean
+        make clean
         make -j8 install DEST=$install_dir_base/libc
     else
         make clean
