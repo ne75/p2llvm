@@ -65,3 +65,5 @@ build/
 *vs/
 *.cog
 *.elf
+
+.vscode/
