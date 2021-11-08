@@ -16,10 +16,11 @@ string(STRIP ${version} version)
 add_compile_definitions(__P2_GIT_VERSION__="${version}")
 
 # add optimizer enabled or disabled option
-option(OPTIMIZE "Enable optimization in compiling")
+option(OPTIMIZE "Enable optimization in compiling" OFF)
 
 if(OPTIMIZE)
-    add_compile_options(-Os)
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Os" CACHE STRING "" FORCE)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Os" CACHE STRING "" FORCE)
 endif()
 
 function (add_executable _name)

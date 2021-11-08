@@ -4,16 +4,34 @@
 #include "smartpins.h"
 #include "streamer.h"
 
+// assembly macros
+
+// High level and misc
 #define hubset(h) asm("hubset %0" : : "r"(h))
 #define waitx(t) asm("waitx %0" : : "r"(t))
-#define dirh(pin) asm("dirh %0" : : "r"(pin))
-#define dirl(pin) asm("dirl %0" : : "r"(pin))
-#define outh(pin) asm("outh %0" : : "r"(pin))
-#define outl(pin) asm("outl %0" : : "r"(pin))
-#define outnot(pin) asm("outnot %0" : : "r"(pin))
 
+#define wrc(x) asm("wrc %0" : "=r"(x) :)
+#define wrnc(x) asm("wrnc %0" : "=r"(x) :)
+#define wrz(x) asm("wrz %0" : "=r"(x) :)
+#define wrnz(x) asm("wrnz %0" : "=r"(x) :)
+
+// branching
+#define cogret asm("ret")
+
+// Pin control
+#define dirh(pin) asm("dirh %0" : : "ri"(pin))
+#define dirl(pin) asm("dirl %0" : : "ri"(pin))
+#define outh(pin) asm("outh %0" : : "ri"(pin))
+#define outl(pin) asm("outl %0" : : "ri"(pin))
+#define outnot(pin) asm("outnot %0" : : "ri"(pin))
+#define drvh(pin) asm("drvh %0" : : "ri"(pin))
+#define drvl(pin) asm("drvl %0" : : "ri"(pin))
+#define drvnot(pin) asm("drvnot %0" : : "ri"(pin))
+
+// Test
 #define testp(pin, res) asm("testp %1 wc\nwrc %0\n" : "=r"(res) : "r"(pin))
 
+// Smart pin control
 #define rdpin(v, pin) asm("rdpin %0, %1" : "=r"(v) : "r"(pin))
 #define rqpin(v, pin) asm("rqpin %0, %1" : "=r"(v) : "r"(pin))
 
@@ -21,22 +39,29 @@
 #define wxpin(v, pin) asm("wxpin %0, %1" : : "r"(v), "r"(pin))
 #define wypin(v, pin) asm("wypin %0, %1" : : "r"(v), "r"(pin))
 
-#define wrc(x) asm("wrc %0" : "=r"(x) :)
-#define wrnc(x) asm("wrnc %0" : "=r"(x) :)
-#define wrz(x) asm("wrz %0" : "=r"(x) :)
-#define wrnz(x) asm("wrnz %0" : "=r"(x) :)
-
+// Streamer
 #define xinit(x, y) asm("xinit %0, %1" : : "r"(x), "r"(y))
 #define setxfrq(x) asm("setxfrq %0" : : "r"(x))
 #define rdfast(x, y) asm("rdfast %0, %1" : : "r"(x), "r"(y))
 #define wrfast(x, y) asm("wrfast %0, %1" : : "r"(x), "r"(y))
 
+// LUT 
 #define wrlut(x, addr) asm("wrlut %0, %1" : : "r"(x), "r"(addr))
 #define rdlut(x, addr) asm("rdlut %0, %1" : "=r"(x), : "r"(addr))
 
-#define _clkfreq (*((int*)0x14))
-#define _clkmode (*((int*)0x18))
-#define _baudrate (*((int*)0x1c))
+// Debugging
+#define brk(x) asm("brk %0" : : "r"(x))
+#define cogbrk(x) asm("cogbrk %0" : : "ri"(x))
+#define getbrk_wcz(x) asm("getbrk %0 wcz" : "=r"(x) :)
+#define getbrk_wc(x) asm("getbrk %0 wc" : "=r"(x) :)
+#define getbrk_wz(x) asm("getbrk %0 wz" : "=r"(x) :)
+
+#define _clkfreq (*((int*)0x24))
+#define _clkmode (*((int*)0x28))
+#define _baudrate (*((int*)0x2c))
+#define _uart_clock_per_bit (*((int*)0x30))
+#define _uart_tx_pin (*((int*)0x34))
+#define _uart_rx_pin (*((int*)0x38))
 
 register volatile int R0 asm ("r0");
 register volatile int R1 asm ("r1");
@@ -145,7 +170,7 @@ unsigned int _rev(unsigned int x);
  * initialize the given rx/tx pins in async mode (uart)
  * this needs to be called again if using UART and clkset is called to adjust baud rates
  */
-unsigned _uart_init(unsigned rx, unsigned tx, unsigned baud);
+void _uart_init(unsigned rx, unsigned tx, unsigned baud);
 
 /**
  * write a character to the builtin UART
@@ -155,7 +180,7 @@ void _uart_putc(char c);
 /**
  * read a character from the builtin UART
  */
-char _uart_getc();
+int _uart_getc();
 
 /**
  * request a new hardware lock
@@ -170,17 +195,17 @@ void _lockret(unsigned int l);
 /**
  * try to lock a lock, returning 1 if it succeed, 0 if not.
  */
-int _locktry(atomic_t l);
+int _locktry(unsigned int l);
 
 /**
  * try to lock a lock, blocking until it is acquired.
  */
-void _lock(atomic_t l);
+void _lock(unsigned int l);
 
 /**
  * release the lock
  */
-void _unlock(atomic_t l);
+void _unlock(unsigned int l);
 
 #ifdef __cplusplus
 }

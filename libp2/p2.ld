@@ -5,8 +5,8 @@ ENTRY(__entry)
     debug_rom   (rx)  : ORIGIN = 0x7c000, LENGTH = 0x04000
 }*/
 
-STACK_SIZE = 0xC000;
-HEAP_SIZE = 0xC000;
+STACK_SIZE = 0xc000;
+HEAP_SIZE = 0xBFFC;
 
 SECTIONS {
     . = 0x00000;
@@ -54,14 +54,14 @@ SECTIONS {
     .heap (NOLOAD) : {
         . = ALIGN(4);
         __heap_start = .;
-        . = . + HEAP_SIZE;
+        . = . + HEAP_SIZE - 4;
     }
 
     /* end of usable memory is 0x7C000 */
     . = 0x7c000 - STACK_SIZE;
     .stack (NOLOAD) : {
         . = ALIGN(4);
-        . = . + STACK_SIZE;
+        . = . + STACK_SIZE - 4;
     }
 
     _end = . ;

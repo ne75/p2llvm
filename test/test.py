@@ -171,7 +171,7 @@ def prepare():
         print(Fore.RED + "CMake configuration failed for non-optimized cases" + Fore.RESET)
 
     print(Fore.GREEN + "=== Generating optimized test cases ===" + Fore.RESET)
-    p = subprocess.Popen(['cmake', '../../'], cwd=opt_build_dir)
+    p = subprocess.Popen(['cmake', '-DOPTIMIZE=ON', '../../'], cwd=opt_build_dir)
     p.wait()
 
     if p.returncode != 0:

@@ -5,11 +5,14 @@ Contains Propeller 2 Library, C Standard Library, examples, and documentation fo
 (eventually I'll make a docker image that has all dependnecies set up so building is a simple one-step process)
 
 ### Build everything
-Run `./build.sh <install dir>` to build everything. This isn't a super robust script so stick to the process :). The following options can be given:
-- `--skip_llvm`: skip building/installing LLVM
-- `--skip_libc`: skip building/installing libc
-- `--skip_libp2`: skip building/installing libp2
-If install dir is not provided, installation will be skipped, but this is done very fragily and won't work if one of the --skip_ commands above is given (it will try to use the parameter as the install directory) 
+Run `python build.py`. The following options can be given: 
+- `--debug`: build the debug version. This is significantly larger (and slower at compiling), but is useful during development
+- '--skip_llvm`: skip building LLVM
+- `--skip_libp2`: skip building libp2
+- `--skip_libc`: skip building libc
+- `--install <dir>`: install everything to `dir`
+
+If `--install` is not provided, libc and libp2 will be installed to where llvm was build (if they are being built), which is hardcoded to `llvm-project/build_release` (or `llvm-project/build_debug` for a debug build)
 
 ### Build LLVM
 0. Make sure you have the reuqired dependancies listed here https://llvm.org/docs/GettingStarted.html#software

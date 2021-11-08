@@ -2,10 +2,6 @@
 
 extern void __start();
 
-unsigned _uart_tx_pin;
-unsigned _uart_rx_pin;
-unsigned _uart_clock_per_bit;
-
 unsigned int _cnt() {
     int x;
     asm("getct $r31" : "=r"(x) : );
@@ -60,20 +56,20 @@ void _lockret(unsigned int l) {
     asm("lockret %0" : : "r"(l));
 }
 
-void _lock(atomic_t l) {
+void _lock(unsigned int l) {
     asm(".L_locktry:");
     asm("locktry %0 wc" : : "r"(l));
     asm("if_nc jmp #.L_locktry");
 }
 
-int _locktry(atomic_t l) {
+int _locktry(unsigned int l) {
     int x;
     asm("locktry %0 wc" : : "r"(l));
     wrc(x);
     return x;
 }
 
-void _unlock(atomic_t l) {
+void _unlock(unsigned int l) {
     asm("lockrel %0" : : "r"(l));
 }
 
@@ -82,7 +78,7 @@ unsigned int _rev(unsigned int x) {
     return x;
 }
 
-unsigned _uart_init(unsigned rx, unsigned tx, unsigned baud) {
+void _uart_init(unsigned rx, unsigned tx, unsigned baud) {
     _uart_rx_pin = rx;
     _uart_tx_pin = tx;
     dirl(rx);
@@ -104,8 +100,6 @@ unsigned _uart_init(unsigned rx, unsigned tx, unsigned baud) {
     wrpin(SP_ASYNC_RX_MODE, rx);
     wxpin(x, rx);
     dirh(rx);
-
-    return _uart_clock_per_bit;
 }
 
 void _uart_putc(char c) {
@@ -113,7 +107,7 @@ void _uart_putc(char c) {
     waitx(_uart_clock_per_bit*10); // eventually should be a wait based on the buffer
 }
 
-char _uart_getc() {
+int _uart_getc() {
     int has_dat = 0;
 
     testp(_uart_rx_pin, has_dat);

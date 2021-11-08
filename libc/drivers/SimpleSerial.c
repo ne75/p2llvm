@@ -14,12 +14,6 @@
 #include <propeller.h>
 #include <sys/driver.h>
 
-/* globals that the loader may change; these represent the default
- * pins to use
- */
-extern unsigned int _uart_rx_pin;
-extern unsigned int _uart_tx_pin;
-
 #ifndef __propeller2__
 extern unsigned int _baud;
 #endif
@@ -170,7 +164,7 @@ static int _serial_fopen(FILE *fp, const char *name, const char *mode)
     fp->drvarg[1] = (txpin);
     fp->drvarg[2] = baud;
 
-    _uart_init(rxpin, txpin, baud);
+    // _uart_init(rxpin, txpin, baud);
   #else
     fp->drvarg[0] = (1U<<rxpin);
     fp->drvarg[1] = (1U<<txpin);

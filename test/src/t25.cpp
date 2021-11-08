@@ -22,9 +22,9 @@ int main() {
     printf("$\n"); // start of test character
     waitx(CLKFREQ/10);
 
-    cogstart(hub_cog, 1, (int*)stack, sizeof(stack)/4);
+    cogstart(hub_cog, 1, (int*)stack, sizeof(stack));
 
-    waitx(CLKFREQ/10);
+    waitx(CLKFREQ/5);
     printf("~\n"); // end of test character
 
     while(1);

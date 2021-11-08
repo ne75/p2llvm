@@ -9,14 +9,14 @@ typedef void (*func_ptr)(void);
 __attribute__ ((section (".stack"))) unsigned int __stack;
 
 __attribute__ ((section ("cog"), cogmain)) void __start();
-__attribute__ ((section ("cog"))) void _init();
-__attribute__ ((section ("cog"))) void _fini();
+__attribute__ ((section ("cog"), cogtext)) void _init();
+__attribute__ ((section ("cog"), cogtext)) void _fini();
 
 // These are our built-in functions that LLVM can use
-__attribute__ ((section ("cog"))) int __sdiv(int a, int b);
-__attribute__ ((section ("cog"))) int __srem(int a, int b);
-__attribute__ ((section ("cog"))) void *__memcpy(void *dst, const void *src, unsigned n);
-__attribute__ ((section ("cog"))) void *__memset(void *str, int c, unsigned n);
+__attribute__ ((section ("cog"), cogtext)) int __sdiv(int a, int b);
+__attribute__ ((section ("cog"), cogtext)) int __srem(int a, int b);
+__attribute__ ((section ("cog"), cogtext)) void *__memcpy(void *dst, const void *src, unsigned n);
+__attribute__ ((section ("cog"), cogtext)) void *__memset(void *str, int c, unsigned n);
 
 extern int main();
 extern void _cstd_init();
@@ -25,11 +25,14 @@ extern func_ptr _init_array_end[];
 extern func_ptr _fini_array_start[];
 extern func_ptr _fini_array_end[];
 
-__attribute__ ((cogmain)) void __entry() {
+__attribute__ ((cogmain, noreturn)) void __entry() {
     // basic entry code to jump to our resuable startup code. we do this by restarting cog 0, copying in
     // the code in the cog section (our reusable startup code). The linker will place _start() at address 0x100
 
-    // this function will get overwritten later by hub params (clkfreq, clkmode, etc)
+    // this function might get overwritten later by hub params (clkfreq, clkmode, etc), so DO NOT try to restart the code with coginit #0, #0
+
+    // before we start the routine, enable debugging for cog 0. any other cogs that want to be debugged should be enabled by the application
+    hubset(0x20000001);
     asm("coginit #0, #0x100");
 }
 
@@ -37,7 +40,7 @@ void __start() {
     // TODO: figure out how to rewrite this without needing inline asm.
 
     asm("cogid $r0\n"           // get the current cog ID
-        "tjz $r0, #.Linit\n"         // if cog 0, jump to the special cog0 startup code.
+        "tjz $r0, #.Linit\n"    // if cog 0, jump to the special cog0 startup code.
 
         "mov $r0, $ptra\n"      //  if not cog 0, save ptra (value at ptra should be pointer to start of stack)
         "rdlong $r1, $r0\n"     //  read out first stack value
@@ -56,9 +59,6 @@ void __start() {
     // initialize all our constructors
     _init();
 
-    // for some reason, pin 0 starts in some smartpin mode. Not sure where it comes from (yet), but just clear it here
-    wrpin(0, 0);
-
     // run the main function
     main();
 
@@ -71,8 +71,9 @@ void __start() {
 
 // got this implementation from https://wiki.osdev.org/Calling_Global_Constructors
 void _init(void) {
-    for (func_ptr* func = _init_array_start; func != _init_array_end; func++)
+    for (func_ptr* func = _init_array_start; func != _init_array_end; func++) {
         (*func)();
+    }
 }
 
 void _fini(void) {
@@ -95,6 +96,8 @@ int __sdiv(int a, int b) {
     // the alternative until we get there is to pre-compile asm functions with fast spin
     // and link the binary. Otherwise, we are using up cycles pushing and popping registers
     // to and from the stack
+    //
+    // TODO: we have full instruciton parsing, rewrite for efficiency
     int result_neg = (a ^ b) >> 31;
 
     // faster than using abs() function
