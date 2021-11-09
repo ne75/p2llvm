@@ -23,1188 +23,1541 @@ Disassembly of section .cog:
      11c: 2c a2 63 fd  			 jmp r1	
      120: df 03 00 ff  			 augs #991
      124: fc f1 07 f6  			 mov ptra, #508	
-     128: 68 0b c0 fd  			 calla #2920
-     12c: 0c 00 00 ff  			 augs #12
-     130: 24 a0 07 f6  			 mov r0, #36	
-     134: 0c 00 00 ff  			 augs #12
-     138: 24 a2 07 f6  			 mov r1, #36	
-     13c: d0 a3 5b f2  			 cmps r1, r0	wcz
-     140: 14 00 90 ad  		if_z	 jmp #20
-     144: d1 a5 03 fb  			 rdlong r2, r1	
-     148: 2e a4 63 fd  			 calla r2	
-     14c: 04 a2 07 f1  			 add r1, #4	
+     128: 3c 19 c0 fd  			 calla #6460
+     12c: 3c a0 07 f6  			 mov r0, #60	
+     130: d0 df 63 fc  			 wrlong r31, r0
+     134: 3c 19 c0 fd  			 calla #6460
+     138: d0 df 63 fc  			 wrlong r31, r0
+     13c: 6c 1a c0 fd  			 calla #6764
+     140: 0e 00 00 ff  			 augs #14
+     144: 74 a1 07 f6  			 mov r0, #372	
+     148: 0e 00 00 ff  			 augs #14
+     14c: 74 a3 07 f6  			 mov r1, #372	
      150: d0 a3 5b f2  			 cmps r1, r0	wcz
-     154: ec ff 9f 5d  		if_nz	 jmp #-20
-     158: 00 09 c0 fd  			 calla #2304
-     15c: 0c 00 00 ff  			 augs #12
-     160: 2c a0 07 f6  			 mov r0, #44	
-     164: 0c 00 00 ff  			 augs #12
-     168: 24 a2 07 f6  			 mov r1, #36	
-     16c: d0 a3 5b f2  			 cmps r1, r0	wcz
-     170: 14 00 90 ad  		if_z	 jmp #20
-     174: d1 a5 03 fb  			 rdlong r2, r1	
-     178: 2e a4 63 fd  			 calla r2	
-     17c: 04 a2 07 f1  			 add r1, #4	
+     154: 14 00 90 ad  		if_z	 jmp #20
+     158: d1 a5 03 fb  			 rdlong r2, r1	
+     15c: 2e a4 63 fd  			 calla r2	
+     160: 04 a2 07 f1  			 add r1, #4	
+     164: d0 a3 5b f2  			 cmps r1, r0	wcz
+     168: ec ff 9f 5d  		if_nz	 jmp #-20
+     16c: 08 09 c0 fd  			 calla #2312
+     170: 0e 00 00 ff  			 augs #14
+     174: 7c a1 07 f6  			 mov r0, #380	
+     178: 0e 00 00 ff  			 augs #14
+     17c: 74 a3 07 f6  			 mov r1, #372	
      180: d0 a3 5b f2  			 cmps r1, r0	wcz
-     184: ec ff 9f 5d  		if_nz	 jmp #-20
-     188: fc ff 9f fd  			 jmp #-4
+     184: 14 00 90 ad  		if_z	 jmp #20
+     188: d1 a5 03 fb  			 rdlong r2, r1	
+     18c: 2e a4 63 fd  			 calla r2	
+     190: 04 a2 07 f1  			 add r1, #4	
+     194: d0 a3 5b f2  			 cmps r1, r0	wcz
+     198: ec ff 9f 5d  		if_nz	 jmp #-20
+     19c: fc ff 9f fd  			 jmp #-4
 
-0000018c <_init>:
-     18c: 28 04 64 fd  			 setq #2
-     190: 61 a1 67 fc  			 wrlong r0, #353
-     194: 0c 00 00 ff  			 augs #12
-     198: 24 a0 07 f6  			 mov r0, #36	
-     19c: 0c 00 00 ff  			 augs #12
-     1a0: 24 a2 07 f6  			 mov r1, #36	
-     1a4: d0 a3 5b f2  			 cmps r1, r0	wcz
-     1a8: 18 00 90 ad  		if_z	 jmp #24
-     1ac: d1 a5 03 fb  			 rdlong r2, r1	
-     1b0: 2e a4 63 fd  			 calla r2	
-     1b4: 04 a2 07 f1  			 add r1, #4	
+000001a0 <_init>:
+     1a0: 28 04 64 fd  			 setq #2
+     1a4: 61 a1 67 fc  			 wrlong r0, #353
+     1a8: 0e 00 00 ff  			 augs #14
+     1ac: 74 a1 07 f6  			 mov r0, #372	
+     1b0: 0e 00 00 ff  			 augs #14
+     1b4: 74 a3 07 f6  			 mov r1, #372	
      1b8: d0 a3 5b f2  			 cmps r1, r0	wcz
-     1bc: 04 00 90 ad  		if_z	 jmp #4
-     1c0: e8 ff 9f fd  			 jmp #-24
-     1c4: 28 04 64 fd  			 setq #2
-     1c8: 5f a1 07 fb  			 rdlong r0, #351	
-     1cc: 2e 00 64 fd  			 reta	
+     1bc: 18 00 90 ad  		if_z	 jmp #24
+     1c0: d1 a5 03 fb  			 rdlong r2, r1	
+     1c4: 2e a4 63 fd  			 calla r2	
+     1c8: 04 a2 07 f1  			 add r1, #4	
+     1cc: d0 a3 5b f2  			 cmps r1, r0	wcz
+     1d0: 04 00 90 ad  		if_z	 jmp #4
+     1d4: e8 ff 9f fd  			 jmp #-24
+     1d8: 28 04 64 fd  			 setq #2
+     1dc: 5f a1 07 fb  			 rdlong r0, #351	
+     1e0: 2e 00 64 fd  			 reta	
 
-000001d0 <_fini>:
-     1d0: 28 04 64 fd  			 setq #2
-     1d4: 61 a1 67 fc  			 wrlong r0, #353
-     1d8: 0c 00 00 ff  			 augs #12
-     1dc: 2c a0 07 f6  			 mov r0, #44	
-     1e0: 0c 00 00 ff  			 augs #12
-     1e4: 24 a2 07 f6  			 mov r1, #36	
-     1e8: d0 a3 5b f2  			 cmps r1, r0	wcz
-     1ec: 18 00 90 ad  		if_z	 jmp #24
-     1f0: d1 a5 03 fb  			 rdlong r2, r1	
-     1f4: 2e a4 63 fd  			 calla r2	
-     1f8: 04 a2 07 f1  			 add r1, #4	
+000001e4 <_fini>:
+     1e4: 28 04 64 fd  			 setq #2
+     1e8: 61 a1 67 fc  			 wrlong r0, #353
+     1ec: 0e 00 00 ff  			 augs #14
+     1f0: 7c a1 07 f6  			 mov r0, #380	
+     1f4: 0e 00 00 ff  			 augs #14
+     1f8: 74 a3 07 f6  			 mov r1, #372	
      1fc: d0 a3 5b f2  			 cmps r1, r0	wcz
-     200: 04 00 90 ad  		if_z	 jmp #4
-     204: e8 ff 9f fd  			 jmp #-24
-     208: 28 04 64 fd  			 setq #2
-     20c: 5f a1 07 fb  			 rdlong r0, #351	
-     210: 2e 00 64 fd  			 reta	
+     200: 18 00 90 ad  		if_z	 jmp #24
+     204: d1 a5 03 fb  			 rdlong r2, r1	
+     208: 2e a4 63 fd  			 calla r2	
+     20c: 04 a2 07 f1  			 add r1, #4	
+     210: d0 a3 5b f2  			 cmps r1, r0	wcz
+     214: 04 00 90 ad  		if_z	 jmp #4
+     218: e8 ff 9f fd  			 jmp #-24
+     21c: 28 04 64 fd  			 setq #2
+     220: 5f a1 07 fb  			 rdlong r0, #351	
+     224: 2e 00 64 fd  			 reta	
 
-00000214 <__unreachable>:
-     214: fc ff 9f fd  			 jmp #-4
+00000228 <__unreachable>:
+     228: fc ff 9f fd  			 jmp #-4
 
-00000218 <__sdiv>:
-     218: 28 06 64 fd  			 setq #3
-     21c: 61 a1 67 fc  			 wrlong r0, #353
-     220: d1 a5 43 f6  			 abs r2, r1	
-     224: d0 a3 63 f5  			 xor r1, r0	
-     228: d0 a1 43 f6  			 abs r0, r0	
-     22c: d2 a1 13 fd  			 qdiv r0, r2
-     230: 18 a0 63 fd  			 getqx r0	
-     234: d0 a5 63 f6  			 neg r2, r0	
-     238: ff ff 7f ff  			 augs #8388607
-     23c: ff a7 07 f6  			 mov r3, #511	
-     240: d3 a3 5b f2  			 cmps r1, r3	wcz
-     244: d0 a1 03 16  	if_nc_and_nz	 mov r0, r0	
-     248: d2 a1 03 e6  	if_c_or_z	 mov r0, r2	
-     24c: d0 df 03 f6  			 mov r31, r0	
-     250: 28 06 64 fd  			 setq #3
-     254: 5f a1 07 fb  			 rdlong r0, #351	
-     258: 2e 00 64 fd  			 reta	
+0000022c <__sdiv>:
+     22c: 28 06 64 fd  			 setq #3
+     230: 61 a1 67 fc  			 wrlong r0, #353
+     234: d1 a5 43 f6  			 abs r2, r1	
+     238: d0 a3 63 f5  			 xor r1, r0	
+     23c: d0 a1 43 f6  			 abs r0, r0	
+     240: d2 a1 13 fd  			 qdiv r0, r2
+     244: 18 a0 63 fd  			 getqx r0	
+     248: d0 a5 63 f6  			 neg r2, r0	
+     24c: ff ff 7f ff  			 augs #8388607
+     250: ff a7 07 f6  			 mov r3, #511	
+     254: d3 a3 5b f2  			 cmps r1, r3	wcz
+     258: d0 a1 03 16  	if_nc_and_nz	 mov r0, r0	
+     25c: d2 a1 03 e6  	if_c_or_z	 mov r0, r2	
+     260: d0 df 03 f6  			 mov r31, r0	
+     264: 28 06 64 fd  			 setq #3
+     268: 5f a1 07 fb  			 rdlong r0, #351	
+     26c: 2e 00 64 fd  			 reta	
 
-0000025c <__srem>:
-     25c: 28 06 64 fd  			 setq #3
-     260: 61 a1 67 fc  			 wrlong r0, #353
-     264: d1 a3 43 f6  			 abs r1, r1	
-     268: d0 a5 43 f6  			 abs r2, r0	
-     26c: d1 a5 13 fd  			 qdiv r2, r1
-     270: 19 a2 63 fd  			 getqy r1	
-     274: d1 a5 63 f6  			 neg r2, r1	
-     278: ff ff 7f ff  			 augs #8388607
-     27c: ff a7 07 f6  			 mov r3, #511	
-     280: d3 a1 5b f2  			 cmps r0, r3	wcz
-     284: d1 a1 03 16  	if_nc_and_nz	 mov r0, r1	
-     288: d2 a1 03 e6  	if_c_or_z	 mov r0, r2	
-     28c: d0 df 03 f6  			 mov r31, r0	
-     290: 28 06 64 fd  			 setq #3
-     294: 5f a1 07 fb  			 rdlong r0, #351	
-     298: 2e 00 64 fd  			 reta	
+00000270 <__srem>:
+     270: 28 06 64 fd  			 setq #3
+     274: 61 a1 67 fc  			 wrlong r0, #353
+     278: d1 a3 43 f6  			 abs r1, r1	
+     27c: d0 a5 43 f6  			 abs r2, r0	
+     280: d1 a5 13 fd  			 qdiv r2, r1
+     284: 19 a2 63 fd  			 getqy r1	
+     288: d1 a5 63 f6  			 neg r2, r1	
+     28c: ff ff 7f ff  			 augs #8388607
+     290: ff a7 07 f6  			 mov r3, #511	
+     294: d3 a1 5b f2  			 cmps r0, r3	wcz
+     298: d1 a1 03 16  	if_nc_and_nz	 mov r0, r1	
+     29c: d2 a1 03 e6  	if_c_or_z	 mov r0, r2	
+     2a0: d0 df 03 f6  			 mov r31, r0	
+     2a4: 28 06 64 fd  			 setq #3
+     2a8: 5f a1 07 fb  			 rdlong r0, #351	
+     2ac: 2e 00 64 fd  			 reta	
 
-0000029c <__memcpy>:
-     29c: 28 06 64 fd  			 setq #3
-     2a0: 61 a3 67 fc  			 wrlong r1, #353
-     2a4: 00 a0 5f f2  			 cmps r0, #0	wcz
-     2a8: 30 00 90 ad  		if_z	 jmp #48
-     2ac: 00 a2 5f f2  			 cmps r1, #0	wcz
-     2b0: 28 00 90 ad  		if_z	 jmp #40
-     2b4: 00 a4 5f f2  			 cmps r2, #0	wcz
-     2b8: 20 00 90 ad  		if_z	 jmp #32
-     2bc: d0 a7 03 f6  			 mov r3, r0	
-     2c0: d1 a9 c3 fa  			 rdbyte r4, r1	
-     2c4: d3 a9 43 fc  			 wrbyte r4, r3
-     2c8: 01 a6 07 f1  			 add r3, #1	
-     2cc: 01 a2 07 f1  			 add r1, #1	
-     2d0: 01 a4 87 f1  			 sub r2, #1	
-     2d4: 00 a4 5f f2  			 cmps r2, #0	wcz
-     2d8: e4 ff 9f 5d  		if_nz	 jmp #-28
-     2dc: d0 df 03 f6  			 mov r31, r0	
-     2e0: 28 06 64 fd  			 setq #3
-     2e4: 5f a3 07 fb  			 rdlong r1, #351	
-     2e8: 2e 00 64 fd  			 reta	
+000002b0 <__memcpy>:
+     2b0: 28 06 64 fd  			 setq #3
+     2b4: 61 a3 67 fc  			 wrlong r1, #353
+     2b8: 00 a0 5f f2  			 cmps r0, #0	wcz
+     2bc: 30 00 90 ad  		if_z	 jmp #48
+     2c0: 00 a2 5f f2  			 cmps r1, #0	wcz
+     2c4: 28 00 90 ad  		if_z	 jmp #40
+     2c8: 00 a4 5f f2  			 cmps r2, #0	wcz
+     2cc: 20 00 90 ad  		if_z	 jmp #32
+     2d0: d0 a7 03 f6  			 mov r3, r0	
+     2d4: d1 a9 c3 fa  			 rdbyte r4, r1	
+     2d8: d3 a9 43 fc  			 wrbyte r4, r3
+     2dc: 01 a6 07 f1  			 add r3, #1	
+     2e0: 01 a2 07 f1  			 add r1, #1	
+     2e4: 01 a4 87 f1  			 sub r2, #1	
+     2e8: 00 a4 5f f2  			 cmps r2, #0	wcz
+     2ec: e4 ff 9f 5d  		if_nz	 jmp #-28
+     2f0: d0 df 03 f6  			 mov r31, r0	
+     2f4: 28 06 64 fd  			 setq #3
+     2f8: 5f a3 07 fb  			 rdlong r1, #351	
+     2fc: 2e 00 64 fd  			 reta	
 
-000002ec <__memset>:
-     2ec: 28 02 64 fd  			 setq #1
-     2f0: 61 a7 67 fc  			 wrlong r3, #353
-     2f4: 00 a0 5f f2  			 cmps r0, #0	wcz
-     2f8: 24 00 90 ad  		if_z	 jmp #36
-     2fc: 00 a4 5f f2  			 cmps r2, #0	wcz
-     300: 1c 00 90 ad  		if_z	 jmp #28
-     304: 00 a6 07 f6  			 mov r3, #0	
-     308: d0 a9 03 f6  			 mov r4, r0	
-     30c: d3 a9 03 f1  			 add r4, r3	
-     310: d4 a3 43 fc  			 wrbyte r1, r4
-     314: 01 a6 07 f1  			 add r3, #1	
-     318: d2 a7 1b f2  			 cmp r3, r2	wcz
-     31c: e8 ff 9f cd  		if_c	 jmp #-24
-     320: d0 df 03 f6  			 mov r31, r0	
-     324: 28 02 64 fd  			 setq #1
-     328: 5f a7 07 fb  			 rdlong r3, #351	
-     32c: 2e 00 64 fd  			 reta	
+00000300 <__memset>:
+     300: 28 02 64 fd  			 setq #1
+     304: 61 a7 67 fc  			 wrlong r3, #353
+     308: 00 a0 5f f2  			 cmps r0, #0	wcz
+     30c: 24 00 90 ad  		if_z	 jmp #36
+     310: 00 a4 5f f2  			 cmps r2, #0	wcz
+     314: 1c 00 90 ad  		if_z	 jmp #28
+     318: 00 a6 07 f6  			 mov r3, #0	
+     31c: d0 a9 03 f6  			 mov r4, r0	
+     320: d3 a9 03 f1  			 add r4, r3	
+     324: d4 a3 43 fc  			 wrbyte r1, r4
+     328: 01 a6 07 f1  			 add r3, #1	
+     32c: d2 a7 1b f2  			 cmp r3, r2	wcz
+     330: e8 ff 9f cd  		if_c	 jmp #-24
+     334: d0 df 03 f6  			 mov r31, r0	
+     338: 28 02 64 fd  			 setq #1
+     33c: 5f a7 07 fb  			 rdlong r3, #351	
+     340: 2e 00 64 fd  			 reta	
 
 Disassembly of section .text:
 
-00000900 <main>:
-     900: 28 04 64 fd  			 setq #2
-     904: 61 a1 67 fc  			 wrlong r0, #353
-     908: 04 f0 07 f1  			 add ptra, #4	
-     90c: 07 80 00 ff  			 augs #32775
-     910: f8 a0 07 f6  			 mov r0, #248	
-     914: d1 f0 08 ff  			 augs #585937
-     918: 00 a3 07 f6  			 mov r1, #256	
-     91c: 80 09 c0 fd  			 calla #2432
-     920: 3f a0 07 f6  			 mov r0, #63	
-     924: 3e a2 07 f6  			 mov r1, #62	
-     928: e3 16 00 ff  			 augs #5859
-     92c: c0 a4 07 f6  			 mov r2, #192	
-     930: 74 0a c0 fd  			 calla #2676
-     934: ff a0 07 f6  			 mov r0, #255	
-     938: 36 a0 63 fd  			 brk r0
-     93c: f8 ed 03 f6  			 mov pa, ptra	
-     940: 04 ec 87 f1  			 sub pa, #4	
-     944: f6 73 68 fc  			 wrlong #57, pa
-     948: f8 ed 03 f6  			 mov pa, ptra	
-     94c: 04 ec 87 f1  			 sub pa, #4	
-     950: f6 a1 03 fb  			 rdlong r0, pa	
-     954: 41 a0 63 fd  			 dirh r0	
-     958: f8 ed 03 f6  			 mov pa, ptra	
-     95c: 04 ec 87 f1  			 sub pa, #4	
-     960: f6 a1 03 fb  			 rdlong r0, pa	
-     964: 4f a0 63 fd  			 outnot r0	
-     968: ec ff 9f fd  			 jmp #-20
+00000900 <toggle>:
+     900: 4f a0 63 fd  			 outnot r0	
+     904: 2e 00 64 fd  			 reta	
 
-0000096c <_cnt>:
-     96c: 1a de 63 fd  			 getct r31	
-     970: 2e 00 64 fd  			 reta	
+00000908 <main>:
+     908: 28 04 64 fd  			 setq #2
+     90c: 61 a1 67 fc  			 wrlong r0, #353
+     910: 04 f0 07 f1  			 add ptra, #4	
+     914: 07 80 00 ff  			 augs #32775
+     918: f8 a0 07 f6  			 mov r0, #248	
+     91c: d1 f0 08 ff  			 augs #585937
+     920: 00 a3 07 f6  			 mov r1, #256	
+     924: 84 18 c0 fd  			 calla #6276
+     928: 3f a0 07 f6  			 mov r0, #63	
+     92c: 3e a2 07 f6  			 mov r1, #62	
+     930: e3 16 00 ff  			 augs #5859
+     934: c0 a4 07 f6  			 mov r2, #192	
+     938: 78 19 c0 fd  			 calla #6520
+     93c: 3c a0 07 f6  			 mov r0, #60	
+     940: d0 a1 03 fb  			 rdlong r0, r0	
+     944: f8 a3 03 f6  			 mov r1, ptra	
+     948: 00 a2 07 f1  			 add r1, #0	
+     94c: d1 a1 63 fc  			 wrlong r0, r1
+     950: f8 a1 03 f6  			 mov r0, ptra	
+     954: 04 a0 07 f1  			 add r0, #4	
+     958: 0e 00 00 ff  			 augs #14
+     95c: 7e a3 07 f6  			 mov r1, #382	
+     960: d0 a3 63 fc  			 wrlong r1, r0
+     964: 08 f0 07 f1  			 add ptra, #8	
+     968: a0 09 c0 fd  			 calla #2464
+     96c: 08 f0 87 f1  			 sub ptra, #8	
+     970: f8 ed 03 f6  			 mov pa, ptra	
+     974: 04 ec 87 f1  			 sub pa, #4	
+     978: f6 7b 68 fc  			 wrlong #61, pa
+     97c: f8 ed 03 f6  			 mov pa, ptra	
+     980: 04 ec 87 f1  			 sub pa, #4	
+     984: f6 a1 03 fb  			 rdlong r0, pa	
+     988: 41 a0 63 fd  			 dirh r0	
+     98c: f8 ed 03 f6  			 mov pa, ptra	
+     990: 04 ec 87 f1  			 sub pa, #4	
+     994: f6 a1 03 fb  			 rdlong r0, pa	
+     998: 00 09 c0 fd  			 calla #2304
+     99c: ec ff 9f fd  			 jmp #-20
 
-00000974 <_waitcnt>:
-     974: 00 a0 67 fa  			 addct1 r0, #0
-     978: 24 22 60 fd  			 waitct1	
-     97c: 2e 00 64 fd  			 reta	
+000009a0 <__simple_printf>:
+     9a0: 28 26 64 fd  			 setq #19
+     9a4: 61 a1 67 fc  			 wrlong r0, #353
+     9a8: 20 f0 07 f1  			 add ptra, #32	
+     9ac: f8 a1 03 f6  			 mov r0, ptra	
+     9b0: 7c a0 87 f1  			 sub r0, #124	
+     9b4: f8 ed 03 f6  			 mov pa, ptra	
+     9b8: 04 ec 87 f1  			 sub pa, #4	
+     9bc: f6 a1 63 fc  			 wrlong r0, pa
+     9c0: f8 ed 03 f6  			 mov pa, ptra	
+     9c4: 08 ec 87 f1  			 sub pa, #8	
+     9c8: f6 a1 63 fc  			 wrlong r0, pa
+     9cc: 00 ae 07 f6  			 mov r7, #0	
+     9d0: f8 ed 03 f6  			 mov pa, ptra	
+     9d4: 78 ec 87 f1  			 sub pa, #120	
+     9d8: f6 b9 03 fb  			 rdlong r12, pa	
+     9dc: 0e 00 00 ff  			 augs #14
+     9e0: a8 b1 07 f6  			 mov r8, #424	
+     9e4: 25 a4 07 f6  			 mov r2, #37	
+     9e8: ff ff 7f ff  			 augs #8388607
+     9ec: ff b3 07 f6  			 mov r9, #511	
+     9f0: 0f 00 00 ff  			 augs #15
+     9f4: 64 a6 07 f6  			 mov r3, #100	
+     9f8: 34 a6 07 f1  			 add r3, #52	
+     9fc: 2d a8 07 f6  			 mov r4, #45	
+     a00: 0e 00 00 ff  			 augs #14
+     a04: 82 b5 07 f6  			 mov r10, #386	
+     a08: 20 aa 07 f6  			 mov r5, #32	
+     a0c: 0a b6 07 f6  			 mov r11, #10	
+     a10: d7 bb 03 f6  			 mov r13, r7	
+     a14: dc ad 03 f6  			 mov r6, r12	
+     a18: 01 ac 07 f1  			 add r6, #1	
+     a1c: dc a1 c3 fa  			 rdbyte r0, r12	
+     a20: 25 a0 5f f2  			 cmps r0, #37	wcz
+     a24: 04 00 90 ad  		if_z	 jmp #4
+     a28: 08 02 90 fd  			 jmp #520
+     a2c: d6 bd c3 fa  			 rdbyte r14, r6	
+     a30: 00 bc 5f f2  			 cmps r14, #0	wcz
+     a34: fc 02 90 ad  		if_z	 jmp #764
+     a38: 02 b8 07 f1  			 add r12, #2	
+     a3c: de bf 03 f6  			 mov r15, r14	
+     a40: d7 ad 03 f6  			 mov r6, r7	
+     a44: df a1 03 f6  			 mov r0, r15	
+     a48: 07 a0 67 f7  			 signx r0, #7	
+     a4c: 80 a0 1f f2  			 cmp r0, #128	wcz
+     a50: d0 a3 03 e6  	if_c_or_z	 mov r1, r0	
+     a54: 80 a2 07 16  	if_nc_and_nz	 mov r1, #128	
+     a58: d8 c1 03 f6  			 mov r16, r8	
+     a5c: d1 c1 03 f1  			 add r16, r1	
+     a60: e0 a3 c3 fa  			 rdbyte r1, r16	
+     a64: 02 a2 07 f5  			 and r1, #2	
+     a68: 00 a2 5f f2  			 cmps r1, #0	wcz
+     a6c: 28 00 90 ad  		if_z	 jmp #40
+     a70: db ad 03 fd  			 qmul r6, r11
+     a74: 18 a2 63 fd  			 getqx r1	
+     a78: d1 a1 03 f1  			 add r0, r1	
+     a7c: 30 a0 87 f1  			 sub r0, #48	
+     a80: dc bf c3 fa  			 rdbyte r15, r12	
+     a84: 01 b8 07 f1  			 add r12, #1	
+     a88: 00 be 5f f2  			 cmps r15, #0	wcz
+     a8c: d0 ad 03 f6  			 mov r6, r0	
+     a90: a0 02 90 ad  		if_z	 jmp #672
+     a94: ac ff 9f fd  			 jmp #-84
+     a98: df a1 03 f6  			 mov r0, r15	
+     a9c: df a0 07 f5  			 and r0, #223	
+     aa0: 4c a0 5f f2  			 cmps r0, #76	wcz
+     aa4: 20 00 90 5d  		if_nz	 jmp #32
+     aa8: dc bf c3 fa  			 rdbyte r15, r12	
+     aac: 01 b8 07 f1  			 add r12, #1	
+     ab0: df a1 03 f6  			 mov r0, r15	
+     ab4: df a0 07 f5  			 and r0, #223	
+     ab8: 4c a0 5f f2  			 cmps r0, #76	wcz
+     abc: e8 ff 9f ad  		if_z	 jmp #-24
+     ac0: 00 be 5f f2  			 cmps r15, #0	wcz
+     ac4: 6c 02 90 ad  		if_z	 jmp #620
+     ac8: df a1 03 f6  			 mov r0, r15	
+     acc: 07 a0 67 f7  			 signx r0, #7	
+     ad0: 72 a0 5f f2  			 cmps r0, #114	wcz
+     ad4: 1c 00 90 1d  	if_nc_and_nz	 jmp #28
+     ad8: 25 a0 5f f2  			 cmps r0, #37	wcz
+     adc: 74 01 90 ad  		if_z	 jmp #372
+     ae0: 63 a0 5f f2  			 cmps r0, #99	wcz
+     ae4: 74 01 90 ad  		if_z	 jmp #372
+     ae8: 64 a0 5f f2  			 cmps r0, #100	wcz
+     aec: 20 00 90 ad  		if_z	 jmp #32
+     af0: 20 ff 9f fd  			 jmp #-224
+     af4: 73 a0 5f f2  			 cmps r0, #115	wcz
+     af8: 9c 01 90 ad  		if_z	 jmp #412
+     afc: 75 a0 5f f2  			 cmps r0, #117	wcz
+     b00: 0c 00 90 ad  		if_z	 jmp #12
+     b04: 78 a0 5f f2  			 cmps r0, #120	wcz
+     b08: 04 00 90 ad  		if_z	 jmp #4
+     b0c: 04 ff 9f fd  			 jmp #-252
+     b10: f8 ed 03 f6  			 mov pa, ptra	
+     b14: 08 ec 87 f1  			 sub pa, #8	
+     b18: f6 a1 03 fb  			 rdlong r0, pa	
+     b1c: d0 a3 03 f6  			 mov r1, r0	
+     b20: 04 a2 87 f1  			 sub r1, #4	
+     b24: f8 ed 03 f6  			 mov pa, ptra	
+     b28: 08 ec 87 f1  			 sub pa, #8	
+     b2c: f6 a3 63 fc  			 wrlong r1, pa
+     b30: ff be 07 f5  			 and r15, #255	
+     b34: d0 c1 03 fb  			 rdlong r16, r0	
+     b38: 64 be 5f f2  			 cmps r15, #100	wcz
+     b3c: 20 00 90 5d  		if_nz	 jmp #32
+     b40: d9 c1 5b f2  			 cmps r16, r9	wcz
+     b44: 18 00 90 1d  	if_nc_and_nz	 jmp #24
+     b48: d4 a1 03 f6  			 mov r0, r4	
+     b4c: d3 a3 03 f6  			 mov r1, r3	
+     b50: 50 12 c0 fd  			 calla #4688
+     b54: e0 c1 63 f6  			 neg r16, r16	
+     b58: 01 ac 87 f1  			 sub r6, #1	
+     b5c: 01 ba 07 f1  			 add r13, #1	
+     b60: 30 bc 5f f2  			 cmps r14, #48	wcz
+     b64: 30 a0 07 a6  		if_z	 mov r0, #48	
+     b68: 20 a0 07 56  		if_nz	 mov r0, #32	
+     b6c: 78 be 5f f2  			 cmps r15, #120	wcz
+     b70: 10 a2 07 a6  		if_z	 mov r1, #16	
+     b74: 0a a2 07 56  		if_nz	 mov r1, #10	
+     b78: d7 bd 03 f6  			 mov r14, r7	
+     b7c: d6 bf 03 f6  			 mov r15, r6	
+     b80: d1 c1 13 fd  			 qdiv r16, r1
+     b84: 18 c2 63 fd  			 getqx r17	
+     b88: d1 c3 03 fd  			 qmul r17, r1
+     b8c: 18 c4 63 fd  			 getqx r18	
+     b90: e0 c7 03 f6  			 mov r19, r16	
+     b94: e2 c7 83 f1  			 sub r19, r18	
+     b98: da c5 03 f6  			 mov r18, r10	
+     b9c: e3 c5 03 f1  			 add r18, r19	
+     ba0: f8 c7 03 f6  			 mov r19, ptra	
+     ba4: 20 c6 87 f1  			 sub r19, #32	
+     ba8: de c7 03 f1  			 add r19, r14	
+     bac: e2 c5 c3 fa  			 rdbyte r18, r18	
+     bb0: e3 c5 43 fc  			 wrbyte r18, r19
+     bb4: 01 ac 87 f1  			 sub r6, #1	
+     bb8: 01 bc 07 f1  			 add r14, #1	
+     bbc: d1 c1 1b f2  			 cmp r16, r1	wcz
+     bc0: e1 c1 03 f6  			 mov r16, r17	
+     bc4: b4 ff 9f 3d  		if_nc	 jmp #-76
+     bc8: 02 be 5f f2  			 cmps r15, #2	wcz
+     bcc: d7 bf 03 f6  			 mov r15, r7	
+     bd0: 24 00 90 cd  		if_c	 jmp #36
+     bd4: d7 bf 03 f6  			 mov r15, r7	
+     bd8: d6 c1 03 f6  			 mov r16, r6	
+     bdc: d3 a3 03 f6  			 mov r1, r3	
+     be0: 50 12 c0 fd  			 calla #4688
+     be4: 01 be 07 f1  			 add r15, #1	
+     be8: 01 c0 87 f1  			 sub r16, #1	
+     bec: 01 ac 5f f2  			 cmps r6, #1	wcz
+     bf0: e0 ad 03 f6  			 mov r6, r16	
+     bf4: e4 ff 9f 1d  	if_nc_and_nz	 jmp #-28
+     bf8: de ad 03 f6  			 mov r6, r14	
+     bfc: 01 ac 87 f1  			 sub r6, #1	
+     c00: f8 a1 03 f6  			 mov r0, ptra	
+     c04: 20 a0 87 f1  			 sub r0, #32	
+     c08: d6 a1 03 f1  			 add r0, r6	
+     c0c: d0 a1 c3 fa  			 rdbyte r0, r0	
+     c10: 07 a0 67 f7  			 signx r0, #7	
+     c14: d3 a3 03 f6  			 mov r1, r3	
+     c18: 50 12 c0 fd  			 calla #4688
+     c1c: 00 ac 5f f2  			 cmps r6, #0	wcz
+     c20: d8 ff 9f 5d  		if_nz	 jmp #-40
+     c24: dd bd 03 f1  			 add r14, r13	
+     c28: df bd 03 f1  			 add r14, r15	
+     c2c: de bb 03 f6  			 mov r13, r14	
+     c30: e0 fd 9f fd  			 jmp #-544
+     c34: 00 a0 5f f2  			 cmps r0, #0	wcz
+     c38: f8 00 90 ad  		if_z	 jmp #248
+     c3c: 07 a0 67 f7  			 signx r0, #7	
+     c40: d3 a3 03 f6  			 mov r1, r3	
+     c44: 50 12 c0 fd  			 calla #4688
+     c48: 01 ba 07 f1  			 add r13, #1	
+     c4c: d6 b9 03 f6  			 mov r12, r6	
+     c50: c0 fd 9f fd  			 jmp #-576
+     c54: d2 a1 03 f6  			 mov r0, r2	
+     c58: 24 00 90 fd  			 jmp #36
+     c5c: f8 ed 03 f6  			 mov pa, ptra	
+     c60: 08 ec 87 f1  			 sub pa, #8	
+     c64: f6 a1 03 fb  			 rdlong r0, pa	
+     c68: d0 a3 03 f6  			 mov r1, r0	
+     c6c: 04 a2 87 f1  			 sub r1, #4	
+     c70: f8 ed 03 f6  			 mov pa, ptra	
+     c74: 08 ec 87 f1  			 sub pa, #8	
+     c78: f6 a3 63 fc  			 wrlong r1, pa
+     c7c: d0 a1 03 fb  			 rdlong r0, r0	
+     c80: d6 a3 03 f6  			 mov r1, r6	
+     c84: 48 0d c0 fd  			 calla #3400
+     c88: ef a1 03 f6  			 mov r0, r31	
+     c8c: dd a1 03 f1  			 add r0, r13	
+     c90: d0 bb 03 f6  			 mov r13, r0	
+     c94: 7c fd 9f fd  			 jmp #-644
+     c98: f8 ed 03 f6  			 mov pa, ptra	
+     c9c: 08 ec 87 f1  			 sub pa, #8	
+     ca0: f6 a1 03 fb  			 rdlong r0, pa	
+     ca4: d0 a3 03 f6  			 mov r1, r0	
+     ca8: 04 a2 87 f1  			 sub r1, #4	
+     cac: f8 ed 03 f6  			 mov pa, ptra	
+     cb0: 08 ec 87 f1  			 sub pa, #8	
+     cb4: f6 a3 63 fc  			 wrlong r1, pa
+     cb8: d0 bf 03 fb  			 rdlong r15, r0	
+     cbc: df a1 c3 fa  			 rdbyte r0, r15	
+     cc0: 00 a0 5f f2  			 cmps r0, #0	wcz
+     cc4: 2c 00 90 ad  		if_z	 jmp #44
+     cc8: d7 bd 03 f6  			 mov r14, r7	
+     ccc: 07 a0 67 f7  			 signx r0, #7	
+     cd0: d3 a3 03 f6  			 mov r1, r3	
+     cd4: 50 12 c0 fd  			 calla #4688
+     cd8: 01 ac 87 f1  			 sub r6, #1	
+     cdc: 01 bc 07 f1  			 add r14, #1	
+     ce0: 01 be 07 f1  			 add r15, #1	
+     ce4: df a1 c3 fa  			 rdbyte r0, r15	
+     ce8: 00 a0 5f f2  			 cmps r0, #0	wcz
+     cec: 08 00 90 ad  		if_z	 jmp #8
+     cf0: d8 ff 9f fd  			 jmp #-40
+     cf4: d7 bd 03 f6  			 mov r14, r7	
+     cf8: 01 ac 5f f2  			 cmps r6, #1	wcz
+     cfc: d6 bf 03 f6  			 mov r15, r6	
+     d00: 24 00 90 cd  		if_c	 jmp #36
+     d04: d5 a1 03 f6  			 mov r0, r5	
+     d08: d3 a3 03 f6  			 mov r1, r3	
+     d0c: 50 12 c0 fd  			 calla #4688
+     d10: df a1 03 f6  			 mov r0, r15	
+     d14: 01 a0 87 f1  			 sub r0, #1	
+     d18: 01 be 5f f2  			 cmps r15, #1	wcz
+     d1c: d0 bf 03 f6  			 mov r15, r0	
+     d20: e0 ff 9f 1d  	if_nc_and_nz	 jmp #-32
+     d24: d6 bd 03 f1  			 add r14, r6	
+     d28: dd bd 03 f1  			 add r14, r13	
+     d2c: de bb 03 f6  			 mov r13, r14	
+     d30: e0 fc 9f fd  			 jmp #-800
+     d34: dd df 03 f6  			 mov r31, r13	
+     d38: 20 f0 87 f1  			 sub ptra, #32	
+     d3c: 28 26 64 fd  			 setq #19
+     d40: 5f a1 07 fb  			 rdlong r0, #351	
+     d44: 2e 00 64 fd  			 reta	
 
-00000980 <_clkset>:
-     980: 28 04 64 fd  			 setq #2
-     984: 61 a1 67 fc  			 wrlong r0, #353
-     988: f0 a4 07 f6  			 mov r2, #240	
-     98c: 00 a4 63 fd  			 hubset r2
-     990: 28 a4 07 f6  			 mov r2, #40	
-     994: d2 a1 63 fc  			 wrlong r0, r2
-     998: 24 a4 07 f6  			 mov r2, #36	
-     99c: d2 a3 63 fc  			 wrlong r1, r2
-     9a0: 00 a0 63 fd  			 hubset r0
-     9a4: 86 01 00 ff  			 augs #390
-     9a8: 40 a3 07 f6  			 mov r1, #320	
-     9ac: 1f a2 63 fd  			 waitx r1
-     9b0: 03 a0 47 f5  			 or r0, #3	
-     9b4: 00 a0 63 fd  			 hubset r0
-     9b8: 28 04 64 fd  			 setq #2
-     9bc: 5f a1 07 fb  			 rdlong r0, #351	
-     9c0: 2e 00 64 fd  			 reta	
+00000d48 <PUTC>:
+     d48: 28 08 64 fd  			 setq #4
+     d4c: 61 a1 67 fc  			 wrlong r0, #353
+     d50: d1 a5 03 f6  			 mov r2, r1	
+     d54: 0f 00 00 ff  			 augs #15
+     d58: 64 a2 07 f6  			 mov r1, #100	
+     d5c: 34 a2 07 f1  			 add r1, #52	
+     d60: 50 12 c0 fd  			 calla #4688
+     d64: 02 a4 5f f2  			 cmps r2, #2	wcz
+     d68: 24 00 90 cd  		if_c	 jmp #36
+     d6c: 20 a0 07 f6  			 mov r0, #32	
+     d70: d2 a9 03 f6  			 mov r4, r2	
+     d74: d4 a7 03 f6  			 mov r3, r4	
+     d78: 50 12 c0 fd  			 calla #4688
+     d7c: 01 a6 87 f1  			 sub r3, #1	
+     d80: 02 a8 5f f2  			 cmps r4, #2	wcz
+     d84: d3 a9 03 f6  			 mov r4, r3	
+     d88: ec ff 9f 1d  	if_nc_and_nz	 jmp #-20
+     d8c: 04 00 90 fd  			 jmp #4
+     d90: 01 a4 07 f6  			 mov r2, #1	
+     d94: d2 df 03 f6  			 mov r31, r2	
+     d98: 28 08 64 fd  			 setq #4
+     d9c: 5f a1 07 fb  			 rdlong r0, #351	
+     da0: 2e 00 64 fd  			 reta	
 
-000009c4 <_coginit>:
-     9c4: 28 04 64 fd  			 setq #2
-     9c8: 61 a1 67 fc  			 wrlong r0, #353
-     9cc: 28 a4 63 fd  			 setq r2
-     9d0: d1 a1 f3 fc  			 coginit r0, r1	wc
-     9d4: 6c a2 63 fd  			 wrc r1
-     9d8: ff ff 7f ff  			 augs #8388607
-     9dc: ff a5 07 f6  			 mov r2, #511	
-     9e0: 00 a2 5f f2  			 cmps r1, #0	wcz
-     9e4: d0 a1 03 a6  		if_z	 mov r0, r0	
-     9e8: d2 a1 03 56  		if_nz	 mov r0, r2	
-     9ec: d0 df 03 f6  			 mov r31, r0	
-     9f0: 28 04 64 fd  			 setq #2
-     9f4: 5f a1 07 fb  			 rdlong r0, #351	
-     9f8: 2e 00 64 fd  			 reta	
+00000da4 <__fopen_driver>:
+     da4: 28 12 64 fd  			 setq #9
+     da8: 61 a1 67 fc  			 wrlong r0, #353
+     dac: d1 a9 03 f6  			 mov r4, r1	
+     db0: 0e 00 00 ff  			 augs #14
+     db4: a0 a3 07 f6  			 mov r1, #416	
+     db8: d1 a3 03 fb  			 rdlong r1, r1	
+     dbc: 00 a2 5f f2  			 cmps r1, #0	wcz
+     dc0: 6c 01 90 ad  		if_z	 jmp #364
+     dc4: d3 a3 c3 fa  			 rdbyte r1, r3	
+     dc8: 61 a2 5f f2  			 cmps r1, #97	wcz
+     dcc: 20 00 00 ff  			 augs #32
+     dd0: 00 aa 07 f6  			 mov r5, #0	
+     dd4: 2c 00 90 ad  		if_z	 jmp #44
+     dd8: 77 a2 5f f2  			 cmps r1, #119	wcz
+     ddc: 24 00 90 ad  		if_z	 jmp #36
+     de0: 72 a2 5f f2  			 cmps r1, #114	wcz
+     de4: 4c 00 90 5d  		if_nz	 jmp #76
+     de8: d3 a3 03 f6  			 mov r1, r3	
+     dec: 01 a2 07 f1  			 add r1, #1	
+     df0: d1 a3 c3 fa  			 rdbyte r1, r1	
+     df4: 2b a2 5f f2  			 cmps r1, #43	wcz
+     df8: 80 ac 07 a6  		if_z	 mov r6, #128	
+     dfc: 01 ac 07 56  		if_nz	 mov r6, #1	
+     e00: 34 00 90 fd  			 jmp #52
+     e04: d3 ad 03 f6  			 mov r6, r3	
+     e08: 01 ac 07 f1  			 add r6, #1	
+     e0c: d6 ad c3 fa  			 rdbyte r6, r6	
+     e10: 2b ac 5f f2  			 cmps r6, #43	wcz
+     e14: 80 ae 07 a6  		if_z	 mov r7, #128	
+     e18: 02 ae 07 56  		if_nz	 mov r7, #2	
+     e1c: d7 ad 03 f6  			 mov r6, r7	
+     e20: d5 ad 43 f5  			 or r6, r5	
+     e24: 61 a2 5f f2  			 cmps r1, #97	wcz
+     e28: d6 ad 03 a6  		if_z	 mov r6, r6	
+     e2c: d7 ad 03 56  		if_nz	 mov r6, r7	
+     e30: 04 00 90 fd  			 jmp #4
+     e34: 00 ac 07 f6  			 mov r6, #0	
+     e38: d0 af 03 f6  			 mov r7, r0	
+     e3c: 0c ae 07 f1  			 add r7, #12	
+     e40: d7 ad 63 fc  			 wrlong r6, r7
+     e44: d0 b1 03 f6  			 mov r8, r0	
+     e48: 08 b0 07 f1  			 add r8, #8	
+     e4c: d8 01 68 fc  			 wrlong #0, r8
+     e50: d4 a3 03 f6  			 mov r1, r4	
+     e54: 04 a2 07 f1  			 add r1, #4	
+     e58: d1 b3 03 fb  			 rdlong r9, r1	
+     e5c: 00 b2 5f f2  			 cmps r9, #0	wcz
+     e60: d6 a3 03 f6  			 mov r1, r6	
+     e64: 30 00 90 ad  		if_z	 jmp #48
+     e68: d2 a3 03 f6  			 mov r1, r2	
+     e6c: d3 a5 03 f6  			 mov r2, r3	
+     e70: 2e b2 63 fd  			 calla r9	
+     e74: ff ff 7f ff  			 augs #8388607
+     e78: ff a3 07 f6  			 mov r1, #511	
+     e7c: d1 df 5b f2  			 cmps r31, r1	wcz
+     e80: 04 00 90 1d  	if_nc_and_nz	 jmp #4
+     e84: 80 00 90 fd  			 jmp #128
+     e88: d8 a3 03 fb  			 rdlong r1, r8	
+     e8c: 00 a2 5f f2  			 cmps r1, #0	wcz
+     e90: 2c 00 90 5d  		if_nz	 jmp #44
+     e94: d7 a3 03 fb  			 rdlong r1, r7	
+     e98: 01 00 00 ff  			 augs #1
+     e9c: 00 a4 07 f6  			 mov r2, #0	
+     ea0: d2 a3 43 f5  			 or r1, r2	
+     ea4: d7 a3 63 fc  			 wrlong r1, r7
+     ea8: d0 a3 03 f6  			 mov r1, r0	
+     eac: 1c a2 07 f1  			 add r1, #28	
+     eb0: d8 a3 63 fc  			 wrlong r1, r8
+     eb4: d0 a5 03 f6  			 mov r2, r0	
+     eb8: 10 a4 07 f1  			 add r2, #16	
+     ebc: d2 11 68 fc  			 wrlong #8, r2
+     ec0: d0 a5 03 f6  			 mov r2, r0	
+     ec4: 18 a4 07 f1  			 add r2, #24	
+     ec8: d2 a9 63 fc  			 wrlong r4, r2
+     ecc: d0 a5 03 f6  			 mov r2, r0	
+     ed0: 04 a4 07 f1  			 add r2, #4	
+     ed4: d2 a3 63 fc  			 wrlong r1, r2
+     ed8: d0 01 68 fc  			 wrlong #0, r0
+     edc: d5 ad 03 f5  			 and r6, r5	
+     ee0: 00 ac 5f f2  			 cmps r6, #0	wcz
+     ee4: 4c 00 90 ad  		if_z	 jmp #76
+     ee8: 14 a8 07 f1  			 add r4, #20	
+     eec: d4 a7 03 fb  			 rdlong r3, r4	
+     ef0: 00 a6 5f f2  			 cmps r3, #0	wcz
+     ef4: 3c 00 90 ad  		if_z	 jmp #60
+     ef8: 00 a2 07 f6  			 mov r1, #0	
+     efc: 02 a4 07 f6  			 mov r2, #2	
+     f00: 2e a6 63 fd  			 calla r3	
+     f04: 2c 00 90 fd  			 jmp #44
+     f08: d0 a3 03 f6  			 mov r1, r0	
+     f0c: 04 a2 07 f1  			 add r1, #4	
+     f10: d1 01 68 fc  			 wrlong #0, r1
+     f14: d0 a3 03 f6  			 mov r1, r0	
+     f18: 18 a2 07 f1  			 add r1, #24	
+     f1c: d1 01 68 fc  			 wrlong #0, r1
+     f20: d8 01 68 fc  			 wrlong #0, r8
+     f24: d7 01 68 fc  			 wrlong #0, r7
+     f28: 10 a0 07 f1  			 add r0, #16	
+     f2c: d0 01 68 fc  			 wrlong #0, r0
+     f30: 00 a0 07 f6  			 mov r0, #0	
+     f34: d0 df 03 f6  			 mov r31, r0	
+     f38: 28 12 64 fd  			 setq #9
+     f3c: 5f a1 07 fb  			 rdlong r0, #351	
+     f40: 2e 00 64 fd  			 reta	
 
-000009fc <cogstart>:
-     9fc: 28 02 64 fd  			 setq #1
-     a00: 61 a1 67 fc  			 wrlong r0, #353
-     a04: 61 a7 67 fc  			 wrlong r3, #353
-     a08: d2 a7 03 f6  			 mov r3, r2	
-     a0c: 04 a6 07 f1  			 add r3, #4	
-     a10: d3 a3 63 fc  			 wrlong r1, r3
-     a14: d2 a1 63 fc  			 wrlong r0, r2
-     a18: 10 a0 07 f6  			 mov r0, #16	
-     a1c: 00 00 00 ff  			 augs #0
-     a20: 00 a3 07 f6  			 mov r1, #256	
-     a24: c4 09 c0 fd  			 calla #2500
-     a28: 5f a7 07 fb  			 rdlong r3, #351	
-     a2c: 28 02 64 fd  			 setq #1
-     a30: 5f a1 07 fb  			 rdlong r0, #351	
-     a34: 2e 00 64 fd  			 reta	
+00000f44 <fclose>:
+     f44: 28 0a 64 fd  			 setq #5
+     f48: 61 a1 67 fc  			 wrlong r0, #353
+     f4c: 00 a0 5f f2  			 cmps r0, #0	wcz
+     f50: 6c 00 90 ad  		if_z	 jmp #108
+     f54: d0 a3 03 f6  			 mov r1, r0	
+     f58: 18 a2 07 f1  			 add r1, #24	
+     f5c: d1 a7 03 fb  			 rdlong r3, r1	
+     f60: 00 a6 5f f2  			 cmps r3, #0	wcz
+     f64: 58 00 90 ad  		if_z	 jmp #88
+     f68: d0 a5 03 f6  			 mov r2, r0	
+     f6c: 0c a4 07 f1  			 add r2, #12	
+     f70: d2 a9 03 fb  			 rdlong r4, r2	
+     f74: d4 ab 03 f6  			 mov r5, r4	
+     f78: 83 aa 07 f5  			 and r5, #131	
+     f7c: 00 aa 5f f2  			 cmps r5, #0	wcz
+     f80: 04 00 90 5d  		if_nz	 jmp #4
+     f84: 38 00 90 fd  			 jmp #56
+     f88: 02 a8 07 f5  			 and r4, #2	
+     f8c: 00 a8 5f f2  			 cmps r4, #0	wcz
+     f90: 08 00 90 ad  		if_z	 jmp #8
+     f94: 74 10 c0 fd  			 calla #4212
+     f98: d1 a7 03 fb  			 rdlong r3, r1	
+     f9c: 08 a6 07 f1  			 add r3, #8	
+     fa0: d3 a7 03 fb  			 rdlong r3, r3	
+     fa4: 00 a6 5f f2  			 cmps r3, #0	wcz
+     fa8: 34 00 90 ad  		if_z	 jmp #52
+     fac: 2e a6 63 fd  			 calla r3	
+     fb0: 00 de 5f f2  			 cmps r31, #0	wcz
+     fb4: 01 a6 07 56  		if_nz	 mov r3, #1	
+     fb8: 00 a6 07 a6  		if_z	 mov r3, #0	
+     fbc: 24 00 90 fd  			 jmp #36
+     fc0: 0f 00 00 ff  			 augs #15
+     fc4: 50 a0 07 f6  			 mov r0, #80	
+     fc8: d0 a1 03 fb  			 rdlong r0, r0	
+     fcc: 08 a0 07 f1  			 add r0, #8	
+     fd0: d0 0b 68 fc  			 wrlong #5, r0
+     fd4: ff ff 7f ff  			 augs #8388607
+     fd8: ff a7 07 f6  			 mov r3, #511	
+     fdc: 30 00 90 fd  			 jmp #48
+     fe0: 00 a6 07 f6  			 mov r3, #0	
+     fe4: d0 a9 03 f6  			 mov r4, r0	
+     fe8: 04 a8 07 f1  			 add r4, #4	
+     fec: d4 01 68 fc  			 wrlong #0, r4
+     ff0: d1 01 68 fc  			 wrlong #0, r1
+     ff4: d0 a3 03 f6  			 mov r1, r0	
+     ff8: 08 a2 07 f1  			 add r1, #8	
+     ffc: d1 01 68 fc  			 wrlong #0, r1
+    1000: d2 01 68 fc  			 wrlong #0, r2
+    1004: 10 a0 07 f1  			 add r0, #16	
+    1008: d0 01 68 fc  			 wrlong #0, r0
+    100c: 00 a6 67 f7  			 signx r3, #0	
+    1010: d3 df 03 f6  			 mov r31, r3	
+    1014: 28 0a 64 fd  			 setq #5
+    1018: 5f a1 07 fb  			 rdlong r0, #351	
+    101c: 2e 00 64 fd  			 reta	
 
-00000a38 <_locknew>:
-     a38: 04 de 63 fd  			 locknew r31	
-     a3c: 2e 00 64 fd  			 reta	
+00001020 <_do_stdio_cleanup>:
+    1020: 28 0a 64 fd  			 setq #5
+    1024: 61 a1 67 fc  			 wrlong r0, #353
+    1028: 00 a2 07 f6  			 mov r1, #0	
+    102c: d1 a1 03 f6  			 mov r0, r1	
+    1030: 74 10 c0 fd  			 calla #4212
+    1034: 34 a4 07 f6  			 mov r2, #52	
+    1038: 0f 00 00 ff  			 augs #15
+    103c: 64 a6 07 f6  			 mov r3, #100	
+    1040: d1 a9 03 f6  			 mov r4, r1	
+    1044: d2 a3 03 fd  			 qmul r1, r2
+    1048: 18 aa 63 fd  			 getqx r5	
+    104c: d3 a1 03 f6  			 mov r0, r3	
+    1050: d5 a1 03 f1  			 add r0, r5	
+    1054: 44 0f c0 fd  			 calla #3908
+    1058: 01 a8 07 f1  			 add r4, #1	
+    105c: 07 a2 1f f2  			 cmp r1, #7	wcz
+    1060: d4 a3 03 f6  			 mov r1, r4	
+    1064: dc ff 9f cd  		if_c	 jmp #-36
+    1068: 28 0a 64 fd  			 setq #5
+    106c: 5f a1 07 fb  			 rdlong r0, #351	
+    1070: 2e 00 64 fd  			 reta	
 
-00000a40 <_lockret>:
-     a40: 05 a0 63 fd  			 lockret r0
-     a44: 2e 00 64 fd  			 reta	
+00001074 <fflush>:
+    1074: 28 0c 64 fd  			 setq #6
+    1078: 61 a1 67 fc  			 wrlong r0, #353
+    107c: 00 a0 5f f2  			 cmps r0, #0	wcz
+    1080: 04 00 90 5d  		if_nz	 jmp #4
+    1084: 0c 00 90 fd  			 jmp #12
+    1088: e0 10 c0 fd  			 calla #4320
+    108c: ef a3 03 f6  			 mov r1, r31	
+    1090: 3c 00 90 fd  			 jmp #60
+    1094: 00 a2 07 f6  			 mov r1, #0	
+    1098: 34 a4 07 f6  			 mov r2, #52	
+    109c: 0f 00 00 ff  			 augs #15
+    10a0: 64 a6 07 f6  			 mov r3, #100	
+    10a4: d1 ab 03 f6  			 mov r5, r1	
+    10a8: d5 a9 03 f6  			 mov r4, r5	
+    10ac: d2 ab 03 fd  			 qmul r5, r2
+    10b0: 18 ac 63 fd  			 getqx r6	
+    10b4: d3 a1 03 f6  			 mov r0, r3	
+    10b8: d6 a1 03 f1  			 add r0, r6	
+    10bc: e0 10 c0 fd  			 calla #4320
+    10c0: 01 a8 07 f1  			 add r4, #1	
+    10c4: 07 aa 1f f2  			 cmp r5, #7	wcz
+    10c8: d4 ab 03 f6  			 mov r5, r4	
+    10cc: dc ff 9f cd  		if_c	 jmp #-36
+    10d0: d1 df 03 f6  			 mov r31, r1	
+    10d4: 28 0c 64 fd  			 setq #6
+    10d8: 5f a1 07 fb  			 rdlong r0, #351	
+    10dc: 2e 00 64 fd  			 reta	
 
-00000a48 <_lock>:
-     a48: 06 a0 73 fd  			 locktry r0	wc
-     a4c: f8 ff 9f 3d  		if_nc	 jmp #-8
-     a50: 2e 00 64 fd  			 reta	
+000010e0 <_fflush>:
+    10e0: 28 12 64 fd  			 setq #9
+    10e4: 61 a1 67 fc  			 wrlong r0, #353
+    10e8: d0 a7 03 f6  			 mov r3, r0	
+    10ec: 00 a6 5f f2  			 cmps r3, #0	wcz
+    10f0: b4 00 90 ad  		if_z	 jmp #180
+    10f4: d3 a9 03 f6  			 mov r4, r3	
+    10f8: 0c a8 07 f1  			 add r4, #12	
+    10fc: d4 ad 03 fb  			 rdlong r6, r4	
+    1100: d6 a1 03 f6  			 mov r0, r6	
+    1104: 83 a0 07 f5  			 and r0, #131	
+    1108: 00 a0 5f f2  			 cmps r0, #0	wcz
+    110c: a0 00 90 ad  		if_z	 jmp #160
+    1110: d3 ab 03 f6  			 mov r5, r3	
+    1114: 14 aa 07 f1  			 add r5, #20	
+    1118: d5 a1 03 fb  			 rdlong r0, r5	
+    111c: 4c 19 c0 fd  			 calla #6476
+    1120: 00 b0 07 f6  			 mov r8, #0	
+    1124: d3 a5 03 fb  			 rdlong r2, r3	
+    1128: 01 a4 5f f2  			 cmps r2, #1	wcz
+    112c: d3 af 03 f6  			 mov r7, r3	
+    1130: 08 ae 07 f1  			 add r7, #8	
+    1134: cc 00 90 cd  		if_c	 jmp #204
+    1138: d6 a1 03 f6  			 mov r0, r6	
+    113c: 02 a0 07 f5  			 and r0, #2	
+    1140: 00 a0 5f f2  			 cmps r0, #0	wcz
+    1144: 04 00 90 ad  		if_z	 jmp #4
+    1148: 70 00 90 fd  			 jmp #112
+    114c: d6 a1 03 f6  			 mov r0, r6	
+    1150: 01 a0 07 f5  			 and r0, #1	
+    1154: 00 a0 5f f2  			 cmps r0, #0	wcz
+    1158: a8 00 90 ad  		if_z	 jmp #168
+    115c: d3 a1 03 f6  			 mov r0, r3	
+    1160: 18 a0 07 f1  			 add r0, #24	
+    1164: d0 a1 03 fb  			 rdlong r0, r0	
+    1168: 14 a0 07 f1  			 add r0, #20	
+    116c: d0 b1 03 fb  			 rdlong r8, r0	
+    1170: d2 a3 63 f6  			 neg r1, r2	
+    1174: 01 a4 07 f6  			 mov r2, #1	
+    1178: d3 a1 03 f6  			 mov r0, r3	
+    117c: 2e b0 63 fd  			 calla r8	
+    1180: ef b1 03 f6  			 mov r8, r31	
+    1184: 1f b0 47 f0  			 shr r8, #31	
+    1188: d6 a1 03 f6  			 mov r0, r6	
+    118c: 08 a0 07 f5  			 and r0, #8	
+    1190: 00 a0 5f f2  			 cmps r0, #0	wcz
+    1194: 01 a0 07 a6  		if_z	 mov r0, #1	
+    1198: 00 a0 07 56  		if_nz	 mov r0, #0	
+    119c: d0 b1 03 f5  			 and r8, r0	
+    11a0: 00 b0 67 f7  			 signx r8, #0	
+    11a4: 5c 00 90 fd  			 jmp #92
+    11a8: 00 b0 07 f6  			 mov r8, #0	
+    11ac: 90 00 90 fd  			 jmp #144
+    11b0: ff ff 7f ff  			 augs #8388607
+    11b4: ff b1 07 f6  			 mov r8, #511	
+    11b8: 84 00 90 fd  			 jmp #132
+    11bc: d3 01 68 fc  			 wrlong #0, r3
+    11c0: d7 a3 03 fb  			 rdlong r1, r7	
+    11c4: d3 a1 03 f6  			 mov r0, r3	
+    11c8: 18 a0 07 f1  			 add r0, #24	
+    11cc: d0 a1 03 fb  			 rdlong r0, r0	
+    11d0: 10 a0 07 f1  			 add r0, #16	
+    11d4: d0 b3 03 fb  			 rdlong r9, r0	
+    11d8: d3 a1 03 f6  			 mov r0, r3	
+    11dc: 2e b2 63 fd  			 calla r9	
+    11e0: d2 df 5b f2  			 cmps r31, r2	wcz
+    11e4: 1c 00 90 ad  		if_z	 jmp #28
+    11e8: d4 a1 03 fb  			 rdlong r0, r4	
+    11ec: 10 00 00 ff  			 augs #16
+    11f0: 00 a2 07 f6  			 mov r1, #0	
+    11f4: d1 a1 43 f5  			 or r0, r1	
+    11f8: d4 a1 63 fc  			 wrlong r0, r4
+    11fc: ff ff 7f ff  			 augs #8388607
+    1200: ff b1 07 f6  			 mov r8, #511	
+    1204: 80 ac 07 f5  			 and r6, #128	
+    1208: 00 ac 5f f2  			 cmps r6, #0	wcz
+    120c: 14 00 90 ad  		if_z	 jmp #20
+    1210: d4 a1 03 fb  			 rdlong r0, r4	
+    1214: ff ff 7f ff  			 augs #8388607
+    1218: fc a3 07 f6  			 mov r1, #508	
+    121c: d1 a1 03 f5  			 and r0, r1	
+    1220: d4 a1 63 fc  			 wrlong r0, r4
+    1224: d7 a1 03 fb  			 rdlong r0, r7	
+    1228: d3 a3 03 f6  			 mov r1, r3	
+    122c: 04 a2 07 f1  			 add r1, #4	
+    1230: d1 a1 63 fc  			 wrlong r0, r1
+    1234: d3 01 68 fc  			 wrlong #0, r3
+    1238: d5 a1 03 fb  			 rdlong r0, r5	
+    123c: 64 19 c0 fd  			 calla #6500
+    1240: d8 df 03 f6  			 mov r31, r8	
+    1244: 28 12 64 fd  			 setq #9
+    1248: 5f a1 07 fb  			 rdlong r0, #351	
+    124c: 2e 00 64 fd  			 reta	
 
-00000a54 <_locktry>:
-     a54: 06 a0 73 fd  			 locktry r0	wc
-     a58: 6c de 63 fd  			 wrc r31
-     a5c: 2e 00 64 fd  			 reta	
+00001250 <fputc>:
+    1250: 28 0e 64 fd  			 setq #7
+    1254: 61 a1 67 fc  			 wrlong r0, #353
+    1258: d0 a7 03 f6  			 mov r3, r0	
+    125c: d1 ab 03 f6  			 mov r5, r1	
+    1260: 0c aa 07 f1  			 add r5, #12	
+    1264: d5 a1 03 fb  			 rdlong r0, r5	
+    1268: d0 a5 03 f6  			 mov r2, r0	
+    126c: 80 a4 07 f5  			 and r2, #128	
+    1270: 00 a4 5f f2  			 cmps r2, #0	wcz
+    1274: 14 00 90 ad  		if_z	 jmp #20
+    1278: f7 ff 7f ff  			 augs #8388599
+    127c: fc a5 07 f6  			 mov r2, #508	
+    1280: d2 a1 03 f5  			 and r0, r2	
+    1284: 02 a0 47 f5  			 or r0, #2	
+    1288: d5 a1 63 fc  			 wrlong r0, r5
+    128c: 18 00 00 ff  			 augs #24
+    1290: 02 a4 07 f6  			 mov r2, #2	
+    1294: d0 a9 03 f6  			 mov r4, r0	
+    1298: d2 a9 03 f5  			 and r4, r2	
+    129c: ff ff 7f ff  			 augs #8388607
+    12a0: ff ad 07 f6  			 mov r6, #511	
+    12a4: 02 a8 5f f2  			 cmps r4, #2	wcz
+    12a8: a8 00 90 5d  		if_nz	 jmp #168
+    12ac: d1 af 03 f6  			 mov r7, r1	
+    12b0: 04 ae 07 f1  			 add r7, #4	
+    12b4: d7 a5 03 fb  			 rdlong r2, r7	
+    12b8: d2 a9 03 f6  			 mov r4, r2	
+    12bc: 01 a8 07 f1  			 add r4, #1	
+    12c0: d7 a9 63 fc  			 wrlong r4, r7
+    12c4: d2 a7 43 fc  			 wrbyte r3, r2
+    12c8: d1 a5 03 fb  			 rdlong r2, r1	
+    12cc: 01 a4 07 f1  			 add r2, #1	
+    12d0: d1 a5 63 fc  			 wrlong r2, r1
+    12d4: d1 a9 03 f6  			 mov r4, r1	
+    12d8: 10 a8 07 f1  			 add r4, #16	
+    12dc: d4 a9 03 fb  			 rdlong r4, r4	
+    12e0: d4 a5 5b f2  			 cmps r2, r4	wcz
+    12e4: 1c 00 90 3d  		if_nc	 jmp #28
+    12e8: 01 00 00 ff  			 augs #1
+    12ec: 00 a8 07 f6  			 mov r4, #0	
+    12f0: d4 a1 03 f5  			 and r0, r4	
+    12f4: 00 a0 5f f2  			 cmps r0, #0	wcz
+    12f8: 5c 00 90 ad  		if_z	 jmp #92
+    12fc: 0a a6 5f f2  			 cmps r3, #10	wcz
+    1300: 54 00 90 5d  		if_nz	 jmp #84
+    1304: d1 a1 03 f6  			 mov r0, r1	
+    1308: 08 a0 07 f1  			 add r0, #8	
+    130c: d0 a9 03 fb  			 rdlong r4, r0	
+    1310: d7 a9 63 fc  			 wrlong r4, r7
+    1314: d1 01 68 fc  			 wrlong #0, r1
+    1318: d1 a1 03 f6  			 mov r0, r1	
+    131c: 18 a0 07 f1  			 add r0, #24	
+    1320: d0 a1 03 fb  			 rdlong r0, r0	
+    1324: 10 a0 07 f1  			 add r0, #16	
+    1328: d0 af 03 fb  			 rdlong r7, r0	
+    132c: d1 a1 03 f6  			 mov r0, r1	
+    1330: d4 a3 03 f6  			 mov r1, r4	
+    1334: 2e ae 63 fd  			 calla r7	
+    1338: d2 df 5b f2  			 cmps r31, r2	wcz
+    133c: 18 00 90 ad  		if_z	 jmp #24
+    1340: d5 a1 03 fb  			 rdlong r0, r5	
+    1344: 10 00 00 ff  			 augs #16
+    1348: 00 a2 07 f6  			 mov r1, #0	
+    134c: d1 a1 43 f5  			 or r0, r1	
+    1350: d5 a1 63 fc  			 wrlong r0, r5
+    1354: d6 a7 03 f6  			 mov r3, r6	
+    1358: d3 df 03 f6  			 mov r31, r3	
+    135c: 28 0e 64 fd  			 setq #7
+    1360: 5f a1 07 fb  			 rdlong r0, #351	
+    1364: 2e 00 64 fd  			 reta	
 
-00000a60 <_unlock>:
-     a60: 07 a0 63 fd  			 lockrel r0	
-     a64: 2e 00 64 fd  			 reta	
-
-00000a68 <_rev>:
-     a68: 69 a0 63 fd  			 rev r0
-     a6c: d0 df 03 f6  			 mov r31, r0	
-     a70: 2e 00 64 fd  			 reta	
-
-00000a74 <_uart_init>:
-     a74: 28 04 64 fd  			 setq #2
-     a78: 61 a3 67 fc  			 wrlong r1, #353
-     a7c: 38 a6 07 f6  			 mov r3, #56	
-     a80: d3 a1 63 fc  			 wrlong r0, r3
-     a84: 34 a6 07 f6  			 mov r3, #52	
-     a88: d3 a3 63 fc  			 wrlong r1, r3
-     a8c: 40 a0 63 fd  			 dirl r0	
-     a90: 40 a2 63 fd  			 dirl r1	
-     a94: 2c a6 07 f6  			 mov r3, #44	
-     a98: d3 a5 63 fc  			 wrlong r2, r3
-     a9c: 24 a6 07 f6  			 mov r3, #36	
-     aa0: d3 a7 03 fb  			 rdlong r3, r3	
-     aa4: d2 a7 13 fd  			 qdiv r3, r2
-     aa8: 18 a4 63 fd  			 getqx r2	
-     aac: 30 a6 07 f6  			 mov r3, #48	
-     ab0: d3 a5 63 fc  			 wrlong r2, r3
-     ab4: 7c a6 07 f6  			 mov r3, #124	
-     ab8: d1 a7 03 fc  			 wrpin r3, r1
-     abc: 10 a4 67 f0  			 shl r2, #16	
-     ac0: 07 a4 47 f5  			 or r2, #7	
-     ac4: d1 a5 13 fc  			 wxpin r2, r1
-     ac8: 41 a2 63 fd  			 dirh r1	
-     acc: 3e a2 07 f6  			 mov r1, #62	
-     ad0: d0 a3 03 fc  			 wrpin r1, r0
-     ad4: d0 a5 13 fc  			 wxpin r2, r0
-     ad8: 41 a0 63 fd  			 dirh r0	
-     adc: 28 04 64 fd  			 setq #2
-     ae0: 5f a3 07 fb  			 rdlong r1, #351	
-     ae4: 2e 00 64 fd  			 reta	
-
-00000ae8 <_uart_putc>:
-     ae8: 28 02 64 fd  			 setq #1
-     aec: 61 a1 67 fc  			 wrlong r0, #353
-     af0: 34 a2 07 f6  			 mov r1, #52	
-     af4: d1 a3 03 fb  			 rdlong r1, r1	
-     af8: d1 a1 23 fc  			 wypin r0, r1
-     afc: 30 a0 07 f6  			 mov r0, #48	
-     b00: d0 a1 03 fb  			 rdlong r0, r0	
-     b04: 0a a2 07 f6  			 mov r1, #10	
-     b08: d1 a1 03 fd  			 qmul r0, r1
-     b0c: 18 a0 63 fd  			 getqx r0	
-     b10: 1f a0 63 fd  			 waitx r0
-     b14: 28 02 64 fd  			 setq #1
-     b18: 5f a1 07 fb  			 rdlong r0, #351	
-     b1c: 2e 00 64 fd  			 reta	
-
-00000b20 <_uart_getc>:
-     b20: 28 02 64 fd  			 setq #1
-     b24: 61 a1 67 fc  			 wrlong r0, #353
-     b28: 38 a0 07 f6  			 mov r0, #56	
-     b2c: d0 a1 03 fb  			 rdlong r0, r0	
-     b30: 40 a0 73 fd  			 testp r0	wc
-     b34: 6c a2 63 fd  			 wrc r1
-     b38: 00 a2 5f f2  			 cmps r1, #0	wcz
-     b3c: 0c 00 90 ad  		if_z	 jmp #12
-     b40: d0 a1 8b fa  			 rdpin r0, r0	
-     b44: 18 a0 c7 f0  			 sar r0, #24	
-     b48: 08 00 90 fd  			 jmp #8
-     b4c: ff ff 7f ff  			 augs #8388607
-     b50: ff a1 07 f6  			 mov r0, #511	
-     b54: d0 df 03 f6  			 mov r31, r0	
-     b58: 28 02 64 fd  			 setq #1
-     b5c: 5f a1 07 fb  			 rdlong r0, #351	
-     b60: 2e 00 64 fd  			 reta	
-
-00000b64 <__cxa_pure_virtual>:
-     b64: fc ff 9f fd  			 jmp #-4
-
-00000b68 <_cstd_init>:
-     b68: 61 a1 67 fc  			 wrlong r0, #353
-     b6c: 38 0a c0 fd  			 calla #2616
-     b70: 0c 00 00 ff  			 augs #12
-     b74: 00 a1 07 f6  			 mov r0, #256	
-     b78: d0 df 63 fc  			 wrlong r31, r0
-     b7c: 38 0a c0 fd  			 calla #2616
-     b80: 0d 00 00 ff  			 augs #13
-     b84: a4 a0 07 f6  			 mov r0, #164	
-     b88: d0 df 63 fc  			 wrlong r31, r0
-     b8c: 80 17 c0 fd  			 calla #6016
-     b90: 5f a1 07 fb  			 rdlong r0, #351	
-     b94: 2e 00 64 fd  			 reta	
-
-00000b98 <_malloc>:
-     b98: 28 0c 64 fd  			 setq #6
-     b9c: 61 a1 67 fc  			 wrlong r0, #353
-     ba0: d0 a5 03 f6  			 mov r2, r0	
-     ba4: 0c 00 00 ff  			 augs #12
-     ba8: 00 ab 07 f6  			 mov r5, #256	
-     bac: d5 a1 03 fb  			 rdlong r0, r5	
-     bb0: 48 0a c0 fd  			 calla #2632
-     bb4: 07 a2 07 f1  			 add r1, #7	
-     bb8: 03 a2 47 f0  			 shr r1, #3	
-     bbc: d1 a7 03 f6  			 mov r3, r1	
-     bc0: 01 a6 07 f1  			 add r3, #1	
-     bc4: d2 a1 03 f6  			 mov r0, r2	
-     bc8: 04 a0 07 f1  			 add r0, #4	
-     bcc: d0 a9 03 fb  			 rdlong r4, r0	
-     bd0: 00 a8 5f f2  			 cmps r4, #0	wcz
-     bd4: 5c 00 90 ad  		if_z	 jmp #92
-     bd8: d4 a1 03 f6  			 mov r0, r4	
-     bdc: 04 a0 07 f1  			 add r0, #4	
-     be0: d0 a1 03 fb  			 rdlong r0, r0	
-     be4: d1 a1 1b f2  			 cmp r0, r1	wcz
-     be8: 04 00 90 1d  	if_nc_and_nz	 jmp #4
-     bec: 08 00 90 fd  			 jmp #8
-     bf0: 04 a4 07 f1  			 add r2, #4	
-     bf4: 28 00 90 fd  			 jmp #40
-     bf8: d4 ad 03 f6  			 mov r6, r4	
-     bfc: d6 a9 03 fb  			 rdlong r4, r6	
-     c00: 00 a8 5f f2  			 cmps r4, #0	wcz
-     c04: 2c 00 90 ad  		if_z	 jmp #44
-     c08: d4 a1 03 f6  			 mov r0, r4	
-     c0c: 04 a0 07 f1  			 add r0, #4	
-     c10: d0 a1 03 fb  			 rdlong r0, r0	
-     c14: d1 a1 1b f2  			 cmp r0, r1	wcz
-     c18: dc ff 9f ed  	if_c_or_z	 jmp #-36
-     c1c: d6 a5 03 f6  			 mov r2, r6	
-     c20: d3 a1 5b f2  			 cmps r0, r3	wcz
-     c24: 3c 00 90 5d  		if_nz	 jmp #60
-     c28: d4 a1 03 fb  			 rdlong r0, r4	
-     c2c: d2 a1 63 fc  			 wrlong r0, r2
-     c30: 54 00 90 fd  			 jmp #84
-     c34: d2 a3 03 fb  			 rdlong r1, r2	
-     c38: d3 a1 03 f6  			 mov r0, r3	
-     c3c: 03 a0 67 f0  			 shl r0, #3	
-     c40: 2e a2 63 fd  			 calla r1	
-     c44: ef a9 03 f6  			 mov r4, r31	
-     c48: d5 a1 03 fb  			 rdlong r0, r5	
-     c4c: 60 0a c0 fd  			 calla #2656
-     c50: 00 a8 5f f2  			 cmps r4, #0	wcz
-     c54: 04 00 90 ad  		if_z	 jmp #4
-     c58: 34 00 90 fd  			 jmp #52
-     c5c: 00 a8 07 f6  			 mov r4, #0	
-     c60: 48 00 90 fd  			 jmp #72
-     c64: d3 a1 83 f1  			 sub r0, r3	
-     c68: d4 a3 03 f6  			 mov r1, r4	
-     c6c: 04 a2 07 f1  			 add r1, #4	
-     c70: d1 a1 63 fc  			 wrlong r0, r1
-     c74: 03 a0 67 f0  			 shl r0, #3	
-     c78: d0 a9 03 f1  			 add r4, r0	
-     c7c: d4 a1 03 f6  			 mov r0, r4	
-     c80: 04 a0 07 f1  			 add r0, #4	
-     c84: d0 a7 63 fc  			 wrlong r3, r0
-     c88: d5 a1 03 fb  			 rdlong r0, r5	
-     c8c: 60 0a c0 fd  			 calla #2656
-     c90: d4 a1 03 f6  			 mov r0, r4	
-     c94: 04 a0 07 f1  			 add r0, #4	
-     c98: d0 a7 63 fc  			 wrlong r3, r0
-     c9c: 08 05 00 ff  			 augs #1288
-     ca0: 0c a1 07 f6  			 mov r0, #268	
-     ca4: d4 a1 63 fc  			 wrlong r0, r4
-     ca8: 08 a8 07 f1  			 add r4, #8	
-     cac: d4 df 03 f6  			 mov r31, r4	
-     cb0: 28 0c 64 fd  			 setq #6
-     cb4: 5f a1 07 fb  			 rdlong r0, #351	
-     cb8: 2e 00 64 fd  			 reta	
-
-00000cbc <malloc>:
-     cbc: 28 02 64 fd  			 setq #1
-     cc0: 61 a1 67 fc  			 wrlong r0, #353
-     cc4: d0 a3 03 f6  			 mov r1, r0	
-     cc8: 0c 00 00 ff  			 augs #12
-     ccc: 38 a0 07 f6  			 mov r0, #56	
-     cd0: 98 0b c0 fd  			 calla #2968
-     cd4: 28 02 64 fd  			 setq #1
-     cd8: 5f a1 07 fb  			 rdlong r0, #351	
-     cdc: 2e 00 64 fd  			 reta	
-
-00000ce0 <free>:
-     ce0: 28 14 64 fd  			 setq #10
-     ce4: 61 a1 67 fc  			 wrlong r0, #353
-     ce8: d0 a3 03 f6  			 mov r1, r0	
-     cec: d1 a7 03 f6  			 mov r3, r1	
-     cf0: f8 a7 07 f1  			 add r3, #504	
-     cf4: d3 a1 03 fb  			 rdlong r0, r3	
-     cf8: 08 05 00 ff  			 augs #1288
-     cfc: 0c a5 07 f6  			 mov r2, #268	
-     d00: d2 a1 5b f2  			 cmps r0, r2	wcz
-     d04: 04 00 90 5d  		if_nz	 jmp #4
-     d08: 0c 00 90 fd  			 jmp #12
-     d0c: 28 14 64 fd  			 setq #10
-     d10: 5f a1 07 fb  			 rdlong r0, #351	
-     d14: 2e 00 64 fd  			 reta	
-     d18: d1 a5 03 f6  			 mov r2, r1	
-     d1c: 08 a4 87 f1  			 sub r2, #8	
-     d20: d2 01 68 fc  			 wrlong #0, r2
-     d24: 0c 00 00 ff  			 augs #12
-     d28: 00 a9 07 f6  			 mov r4, #256	
-     d2c: d4 a1 03 fb  			 rdlong r0, r4	
-     d30: 48 0a c0 fd  			 calla #2632
-     d34: 0c 00 00 ff  			 augs #12
-     d38: 38 ac 07 f6  			 mov r6, #56	
-     d3c: d6 ab 03 f6  			 mov r5, r6	
-     d40: 04 aa 07 f1  			 add r5, #4	
-     d44: d5 a1 03 fb  			 rdlong r0, r5	
-     d48: 00 a0 5f f2  			 cmps r0, #0	wcz
-     d4c: 80 00 90 ad  		if_z	 jmp #128
-     d50: fc a3 07 f1  			 add r1, #508	
-     d54: 00 ac 07 f6  			 mov r6, #0	
-     d58: d0 af 03 f6  			 mov r7, r0	
-     d5c: 04 ae 07 f1  			 add r7, #4	
-     d60: d7 b1 03 fb  			 rdlong r8, r7	
-     d64: d8 b3 03 f6  			 mov r9, r8	
-     d68: 03 b2 67 f0  			 shl r9, #3	
-     d6c: d0 b5 03 f6  			 mov r10, r0	
-     d70: d9 b5 03 f1  			 add r10, r9	
-     d74: d2 b5 5b f2  			 cmps r10, r2	wcz
-     d78: 04 00 90 5d  		if_nz	 jmp #4
-     d7c: 5c 00 90 fd  			 jmp #92
-     d80: d1 af 03 fb  			 rdlong r7, r1	
-     d84: d7 b3 03 f6  			 mov r9, r7	
-     d88: 03 b2 67 f0  			 shl r9, #3	
-     d8c: d2 b5 03 f6  			 mov r10, r2	
-     d90: d9 b5 03 f1  			 add r10, r9	
-     d94: d0 b5 5b f2  			 cmps r10, r0	wcz
-     d98: 04 00 90 5d  		if_nz	 jmp #4
-     d9c: 88 00 90 fd  			 jmp #136
-     da0: d2 a1 1b f2  			 cmp r0, r2	wcz
-     da4: 14 00 90 1d  	if_nc_and_nz	 jmp #20
-     da8: d0 ab 03 f6  			 mov r5, r0	
-     dac: d0 a1 03 fb  			 rdlong r0, r0	
-     db0: 00 a0 5f f2  			 cmps r0, #0	wcz
-     db4: a0 ff 9f 5d  		if_nz	 jmp #-96
-     db8: d6 a1 03 f6  			 mov r0, r6	
-     dbc: d2 a1 63 fc  			 wrlong r0, r2
-     dc0: d5 a5 63 fc  			 wrlong r2, r5
-     dc4: d4 a1 03 fb  			 rdlong r0, r4	
-     dc8: 60 0a c0 fd  			 calla #2656
-     dcc: 3c ff 9f fd  			 jmp #-196
-     dd0: 04 ac 07 f1  			 add r6, #4	
-     dd4: d6 a5 63 fc  			 wrlong r2, r6
-     dd8: 30 ff 9f fd  			 jmp #-208
-     ddc: d1 a3 03 fb  			 rdlong r1, r1	
-     de0: d8 a3 03 f1  			 add r1, r8	
-     de4: d7 a3 63 fc  			 wrlong r1, r7
-     de8: d1 a7 03 f6  			 mov r3, r1	
-     dec: 03 a6 67 f0  			 shl r3, #3	
-     df0: d0 a5 03 f6  			 mov r2, r0	
-     df4: d3 a5 03 f1  			 add r2, r3	
-     df8: d0 a7 03 fb  			 rdlong r3, r0	
-     dfc: d3 a5 5b f2  			 cmps r2, r3	wcz
-     e00: 08 ff 9f 5d  		if_nz	 jmp #-248
-     e04: d2 a7 03 f6  			 mov r3, r2	
-     e08: 04 a6 07 f1  			 add r3, #4	
-     e0c: d3 a7 03 fb  			 rdlong r3, r3	
-     e10: d1 a7 03 f1  			 add r3, r1	
-     e14: d7 a7 63 fc  			 wrlong r3, r7
-     e18: d2 a3 03 fb  			 rdlong r1, r2	
-     e1c: d0 a3 63 fc  			 wrlong r1, r0
-     e20: d2 01 68 fc  			 wrlong #0, r2
-     e24: e4 fe 9f fd  			 jmp #-284
-     e28: d5 a5 63 fc  			 wrlong r2, r5
-     e2c: d8 af 03 f1  			 add r7, r8	
-     e30: d0 a1 03 fb  			 rdlong r0, r0	
-     e34: d1 af 63 fc  			 wrlong r7, r1
-     e38: d3 a1 63 fc  			 wrlong r0, r3
-     e3c: cc fe 9f fd  			 jmp #-308
-
-00000e40 <sbrk>:
-     e40: 28 04 64 fd  			 setq #2
-     e44: 61 a3 67 fc  			 wrlong r1, #353
-     e48: 0c 00 00 ff  			 augs #12
-     e4c: 40 a2 07 f6  			 mov r1, #64	
-     e50: d1 a5 03 fb  			 rdlong r2, r1	
-     e54: d2 a7 03 f6  			 mov r3, r2	
-     e58: d0 a7 03 f1  			 add r3, r0	
-     e5c: d1 a7 63 fc  			 wrlong r3, r1
-     e60: d2 df 03 f6  			 mov r31, r2	
-     e64: 28 04 64 fd  			 setq #2
-     e68: 5f a3 07 fb  			 rdlong r1, #351	
-     e6c: 2e 00 64 fd  			 reta	
-
-00000e70 <__fopen_driver>:
-     e70: 28 12 64 fd  			 setq #9
-     e74: 61 a1 67 fc  			 wrlong r0, #353
-     e78: d1 a9 03 f6  			 mov r4, r1	
-     e7c: 0c 00 00 ff  			 augs #12
-     e80: 48 a2 07 f6  			 mov r1, #72	
-     e84: d1 a3 03 fb  			 rdlong r1, r1	
-     e88: 00 a2 5f f2  			 cmps r1, #0	wcz
-     e8c: 6c 01 90 ad  		if_z	 jmp #364
-     e90: d3 a3 c3 fa  			 rdbyte r1, r3	
-     e94: 61 a2 5f f2  			 cmps r1, #97	wcz
-     e98: 20 00 00 ff  			 augs #32
-     e9c: 00 aa 07 f6  			 mov r5, #0	
-     ea0: 2c 00 90 ad  		if_z	 jmp #44
-     ea4: 77 a2 5f f2  			 cmps r1, #119	wcz
-     ea8: 24 00 90 ad  		if_z	 jmp #36
-     eac: 72 a2 5f f2  			 cmps r1, #114	wcz
-     eb0: 4c 00 90 5d  		if_nz	 jmp #76
-     eb4: d3 a3 03 f6  			 mov r1, r3	
-     eb8: 01 a2 07 f1  			 add r1, #1	
-     ebc: d1 a3 c3 fa  			 rdbyte r1, r1	
-     ec0: 2b a2 5f f2  			 cmps r1, #43	wcz
-     ec4: 80 ac 07 a6  		if_z	 mov r6, #128	
-     ec8: 01 ac 07 56  		if_nz	 mov r6, #1	
-     ecc: 34 00 90 fd  			 jmp #52
-     ed0: d3 ad 03 f6  			 mov r6, r3	
-     ed4: 01 ac 07 f1  			 add r6, #1	
-     ed8: d6 ad c3 fa  			 rdbyte r6, r6	
-     edc: 2b ac 5f f2  			 cmps r6, #43	wcz
-     ee0: 80 ae 07 a6  		if_z	 mov r7, #128	
-     ee4: 02 ae 07 56  		if_nz	 mov r7, #2	
-     ee8: d7 ad 03 f6  			 mov r6, r7	
-     eec: d5 ad 43 f5  			 or r6, r5	
-     ef0: 61 a2 5f f2  			 cmps r1, #97	wcz
-     ef4: d6 ad 03 a6  		if_z	 mov r6, r6	
-     ef8: d7 ad 03 56  		if_nz	 mov r6, r7	
-     efc: 04 00 90 fd  			 jmp #4
-     f00: 00 ac 07 f6  			 mov r6, #0	
-     f04: d0 af 03 f6  			 mov r7, r0	
-     f08: 0c ae 07 f1  			 add r7, #12	
-     f0c: d7 ad 63 fc  			 wrlong r6, r7
-     f10: d0 b1 03 f6  			 mov r8, r0	
-     f14: 08 b0 07 f1  			 add r8, #8	
-     f18: d8 01 68 fc  			 wrlong #0, r8
-     f1c: d4 a3 03 f6  			 mov r1, r4	
-     f20: 04 a2 07 f1  			 add r1, #4	
-     f24: d1 b3 03 fb  			 rdlong r9, r1	
-     f28: 00 b2 5f f2  			 cmps r9, #0	wcz
-     f2c: d6 a3 03 f6  			 mov r1, r6	
-     f30: 30 00 90 ad  		if_z	 jmp #48
-     f34: d2 a3 03 f6  			 mov r1, r2	
-     f38: d3 a5 03 f6  			 mov r2, r3	
-     f3c: 2e b2 63 fd  			 calla r9	
-     f40: ff ff 7f ff  			 augs #8388607
-     f44: ff a3 07 f6  			 mov r1, #511	
-     f48: d1 df 5b f2  			 cmps r31, r1	wcz
-     f4c: 04 00 90 1d  	if_nc_and_nz	 jmp #4
-     f50: 80 00 90 fd  			 jmp #128
-     f54: d8 a3 03 fb  			 rdlong r1, r8	
-     f58: 00 a2 5f f2  			 cmps r1, #0	wcz
-     f5c: 2c 00 90 5d  		if_nz	 jmp #44
-     f60: d7 a3 03 fb  			 rdlong r1, r7	
-     f64: 01 00 00 ff  			 augs #1
-     f68: 00 a4 07 f6  			 mov r2, #0	
-     f6c: d2 a3 43 f5  			 or r1, r2	
-     f70: d7 a3 63 fc  			 wrlong r1, r7
-     f74: d0 a3 03 f6  			 mov r1, r0	
-     f78: 1c a2 07 f1  			 add r1, #28	
-     f7c: d8 a3 63 fc  			 wrlong r1, r8
-     f80: d0 a5 03 f6  			 mov r2, r0	
-     f84: 10 a4 07 f1  			 add r2, #16	
-     f88: d2 11 68 fc  			 wrlong #8, r2
-     f8c: d0 a5 03 f6  			 mov r2, r0	
-     f90: 18 a4 07 f1  			 add r2, #24	
-     f94: d2 a9 63 fc  			 wrlong r4, r2
-     f98: d0 a5 03 f6  			 mov r2, r0	
-     f9c: 04 a4 07 f1  			 add r2, #4	
-     fa0: d2 a3 63 fc  			 wrlong r1, r2
-     fa4: d0 01 68 fc  			 wrlong #0, r0
-     fa8: d5 ad 03 f5  			 and r6, r5	
-     fac: 00 ac 5f f2  			 cmps r6, #0	wcz
-     fb0: 4c 00 90 ad  		if_z	 jmp #76
-     fb4: 14 a8 07 f1  			 add r4, #20	
-     fb8: d4 a7 03 fb  			 rdlong r3, r4	
-     fbc: 00 a6 5f f2  			 cmps r3, #0	wcz
-     fc0: 3c 00 90 ad  		if_z	 jmp #60
-     fc4: 00 a2 07 f6  			 mov r1, #0	
-     fc8: 02 a4 07 f6  			 mov r2, #2	
-     fcc: 2e a6 63 fd  			 calla r3	
-     fd0: 2c 00 90 fd  			 jmp #44
-     fd4: d0 a3 03 f6  			 mov r1, r0	
-     fd8: 04 a2 07 f1  			 add r1, #4	
-     fdc: d1 01 68 fc  			 wrlong #0, r1
-     fe0: d0 a3 03 f6  			 mov r1, r0	
-     fe4: 18 a2 07 f1  			 add r1, #24	
-     fe8: d1 01 68 fc  			 wrlong #0, r1
-     fec: d8 01 68 fc  			 wrlong #0, r8
-     ff0: d7 01 68 fc  			 wrlong #0, r7
-     ff4: 10 a0 07 f1  			 add r0, #16	
-     ff8: d0 01 68 fc  			 wrlong #0, r0
-     ffc: 00 a0 07 f6  			 mov r0, #0	
-    1000: d0 df 03 f6  			 mov r31, r0	
-    1004: 28 12 64 fd  			 setq #9
-    1008: 5f a1 07 fb  			 rdlong r0, #351	
-    100c: 2e 00 64 fd  			 reta	
-
-00001010 <fclose>:
-    1010: 28 0a 64 fd  			 setq #5
-    1014: 61 a1 67 fc  			 wrlong r0, #353
-    1018: 00 a0 5f f2  			 cmps r0, #0	wcz
-    101c: 6c 00 90 ad  		if_z	 jmp #108
-    1020: d0 a3 03 f6  			 mov r1, r0	
-    1024: 18 a2 07 f1  			 add r1, #24	
-    1028: d1 a7 03 fb  			 rdlong r3, r1	
-    102c: 00 a6 5f f2  			 cmps r3, #0	wcz
-    1030: 58 00 90 ad  		if_z	 jmp #88
-    1034: d0 a5 03 f6  			 mov r2, r0	
-    1038: 0c a4 07 f1  			 add r2, #12	
-    103c: d2 a9 03 fb  			 rdlong r4, r2	
-    1040: d4 ab 03 f6  			 mov r5, r4	
-    1044: 83 aa 07 f5  			 and r5, #131	
-    1048: 00 aa 5f f2  			 cmps r5, #0	wcz
-    104c: 04 00 90 5d  		if_nz	 jmp #4
-    1050: 38 00 90 fd  			 jmp #56
-    1054: 02 a8 07 f5  			 and r4, #2	
-    1058: 00 a8 5f f2  			 cmps r4, #0	wcz
-    105c: 08 00 90 ad  		if_z	 jmp #8
-    1060: a0 15 c0 fd  			 calla #5536
-    1064: d1 a7 03 fb  			 rdlong r3, r1	
-    1068: 08 a6 07 f1  			 add r3, #8	
-    106c: d3 a7 03 fb  			 rdlong r3, r3	
-    1070: 00 a6 5f f2  			 cmps r3, #0	wcz
-    1074: 34 00 90 ad  		if_z	 jmp #52
-    1078: 2e a6 63 fd  			 calla r3	
-    107c: 00 de 5f f2  			 cmps r31, #0	wcz
-    1080: 01 a6 07 56  		if_nz	 mov r3, #1	
-    1084: 00 a6 07 a6  		if_z	 mov r3, #0	
-    1088: 24 00 90 fd  			 jmp #36
-    108c: 0c 00 00 ff  			 augs #12
-    1090: f8 a0 07 f6  			 mov r0, #248	
-    1094: d0 a1 03 fb  			 rdlong r0, r0	
-    1098: 08 a0 07 f1  			 add r0, #8	
-    109c: d0 0b 68 fc  			 wrlong #5, r0
-    10a0: ff ff 7f ff  			 augs #8388607
-    10a4: ff a7 07 f6  			 mov r3, #511	
-    10a8: 30 00 90 fd  			 jmp #48
-    10ac: 00 a6 07 f6  			 mov r3, #0	
-    10b0: d0 a9 03 f6  			 mov r4, r0	
-    10b4: 04 a8 07 f1  			 add r4, #4	
-    10b8: d4 01 68 fc  			 wrlong #0, r4
-    10bc: d1 01 68 fc  			 wrlong #0, r1
-    10c0: d0 a3 03 f6  			 mov r1, r0	
-    10c4: 08 a2 07 f1  			 add r1, #8	
-    10c8: d1 01 68 fc  			 wrlong #0, r1
-    10cc: d2 01 68 fc  			 wrlong #0, r2
-    10d0: 10 a0 07 f1  			 add r0, #16	
-    10d4: d0 01 68 fc  			 wrlong #0, r0
-    10d8: 00 a6 67 f7  			 signx r3, #0	
-    10dc: d3 df 03 f6  			 mov r31, r3	
-    10e0: 28 0a 64 fd  			 setq #5
-    10e4: 5f a1 07 fb  			 rdlong r0, #351	
-    10e8: 2e 00 64 fd  			 reta	
-
-000010ec <_do_stdio_cleanup>:
-    10ec: 28 0a 64 fd  			 setq #5
-    10f0: 61 a1 67 fc  			 wrlong r0, #353
-    10f4: 00 a2 07 f6  			 mov r1, #0	
-    10f8: d1 a1 03 f6  			 mov r0, r1	
-    10fc: a0 15 c0 fd  			 calla #5536
-    1100: 34 a4 07 f6  			 mov r2, #52	
-    1104: 0c 00 00 ff  			 augs #12
-    1108: 04 a7 07 f6  			 mov r3, #260	
-    110c: d1 a9 03 f6  			 mov r4, r1	
-    1110: d2 a3 03 fd  			 qmul r1, r2
-    1114: 18 aa 63 fd  			 getqx r5	
-    1118: d3 a1 03 f6  			 mov r0, r3	
-    111c: d5 a1 03 f1  			 add r0, r5	
-    1120: 10 10 c0 fd  			 calla #4112
-    1124: 01 a8 07 f1  			 add r4, #1	
-    1128: 07 a2 1f f2  			 cmp r1, #7	wcz
-    112c: d4 a3 03 f6  			 mov r1, r4	
-    1130: dc ff 9f cd  		if_c	 jmp #-36
-    1134: 28 0a 64 fd  			 setq #5
-    1138: 5f a1 07 fb  			 rdlong r0, #351	
-    113c: 2e 00 64 fd  			 reta	
-
-00001140 <SimpleSerialExit>:
-    1140: 2e 00 64 fd  			 reta	
-
-00001144 <_serial_fopen>:
-    1144: 28 0c 64 fd  			 setq #6
-    1148: 61 a1 67 fc  			 wrlong r0, #353
-    114c: d0 a5 03 f6  			 mov r2, r0	
-    1150: 38 a0 07 f6  			 mov r0, #56	
-    1154: d0 a7 03 fb  			 rdlong r3, r0	
-    1158: 34 a0 07 f6  			 mov r0, #52	
-    115c: d0 a9 03 fb  			 rdlong r4, r0	
-    1160: 2c a0 07 f6  			 mov r0, #44	
-    1164: d0 ab 03 fb  			 rdlong r5, r0	
-    1168: 00 a2 5f f2  			 cmps r1, #0	wcz
-    116c: 80 00 90 ad  		if_z	 jmp #128
-    1170: d1 ad c3 fa  			 rdbyte r6, r1	
-    1174: 00 ac 5f f2  			 cmps r6, #0	wcz
-    1178: 74 00 90 ad  		if_z	 jmp #116
-    117c: d1 a1 03 f6  			 mov r0, r1	
-    1180: ac 12 c0 fd  			 calla #4780
-    1184: ef ab 03 f6  			 mov r5, r31	
-    1188: ff ac 07 f5  			 and r6, #255	
-    118c: 00 ac 5f f2  			 cmps r6, #0	wcz
-    1190: 5c 00 90 ad  		if_z	 jmp #92
-    1194: 2c ac 5f f2  			 cmps r6, #44	wcz
-    1198: 18 00 90 ad  		if_z	 jmp #24
-    119c: d1 a1 03 f6  			 mov r0, r1	
-    11a0: 01 a0 07 f1  			 add r0, #1	
-    11a4: 01 a2 07 f1  			 add r1, #1	
-    11a8: d1 ad c3 fa  			 rdbyte r6, r1	
-    11ac: d0 a3 03 f6  			 mov r1, r0	
-    11b0: d4 ff 9f fd  			 jmp #-44
-    11b4: 01 a2 07 f1  			 add r1, #1	
-    11b8: d1 a1 03 f6  			 mov r0, r1	
-    11bc: ac 12 c0 fd  			 calla #4780
-    11c0: ef a7 03 f6  			 mov r3, r31	
-    11c4: d1 a1 c3 fa  			 rdbyte r0, r1	
-    11c8: 00 a0 5f f2  			 cmps r0, #0	wcz
-    11cc: 20 00 90 ad  		if_z	 jmp #32
-    11d0: 2c a0 5f f2  			 cmps r0, #44	wcz
-    11d4: 08 00 90 ad  		if_z	 jmp #8
-    11d8: 01 a2 07 f1  			 add r1, #1	
-    11dc: e4 ff 9f fd  			 jmp #-28
-    11e0: 01 a2 07 f1  			 add r1, #1	
-    11e4: d1 a1 03 f6  			 mov r0, r1	
-    11e8: ac 12 c0 fd  			 calla #4780
-    11ec: ef a9 03 f6  			 mov r4, r31	
-    11f0: d2 a1 03 f6  			 mov r0, r2	
-    11f4: 2c a0 07 f1  			 add r0, #44	
-    11f8: d0 ab 63 fc  			 wrlong r5, r0
-    11fc: d2 a1 03 f6  			 mov r0, r2	
-    1200: 28 a0 07 f1  			 add r0, #40	
-    1204: d0 a9 63 fc  			 wrlong r4, r0
-    1208: d2 a1 03 f6  			 mov r0, r2	
-    120c: 24 a0 07 f1  			 add r0, #36	
-    1210: d0 a7 63 fc  			 wrlong r3, r0
-    1214: d2 a1 03 f6  			 mov r0, r2	
-    1218: 0c a0 07 f1  			 add r0, #12	
-    121c: d0 a3 03 fb  			 rdlong r1, r0	
-    1220: 08 a2 47 f5  			 or r1, #8	
-    1224: d0 a3 63 fc  			 wrlong r1, r0
-    1228: 14 a4 07 f1  			 add r2, #20	
-    122c: 38 0a c0 fd  			 calla #2616
-    1230: d2 df 63 fc  			 wrlong r31, r2
-    1234: 00 de 07 f6  			 mov r31, #0	
-    1238: 28 0c 64 fd  			 setq #6
-    123c: 5f a1 07 fb  			 rdlong r0, #351	
-    1240: 2e 00 64 fd  			 reta	
-
-00001244 <_serial_getbyte>:
-    1244: 61 a1 67 fc  			 wrlong r0, #353
-    1248: 0d a0 07 f1  			 add r0, #13	
-    124c: d0 a1 c3 fa  			 rdbyte r0, r0	
-    1250: 80 a0 07 f5  			 and r0, #128	
-    1254: 00 a0 5f f2  			 cmps r0, #0	wcz
-    1258: 18 00 90 5d  		if_nz	 jmp #24
-    125c: ff ff 7f ff  			 augs #8388607
-    1260: ff a1 07 f6  			 mov r0, #511	
-    1264: 20 0b c0 fd  			 calla #2848
-    1268: d0 df 5b f2  			 cmps r31, r0	wcz
-    126c: f4 ff 9f ad  		if_z	 jmp #-12
-    1270: 04 00 90 fd  			 jmp #4
-    1274: 20 0b c0 fd  			 calla #2848
-    1278: ef a1 03 f6  			 mov r0, r31	
-    127c: d0 df 03 f6  			 mov r31, r0	
-    1280: 5f a1 07 fb  			 rdlong r0, #351	
-    1284: 2e 00 64 fd  			 reta	
-
-00001288 <_serial_putbyte>:
-    1288: 28 02 64 fd  			 setq #1
-    128c: 61 a1 67 fc  			 wrlong r0, #353
-    1290: d0 a3 03 f6  			 mov r1, r0	
-    1294: 07 a0 67 f7  			 signx r0, #7	
-    1298: e8 0a c0 fd  			 calla #2792
-    129c: d1 df 03 f6  			 mov r31, r1	
-    12a0: 28 02 64 fd  			 setq #1
-    12a4: 5f a1 07 fb  			 rdlong r0, #351	
-    12a8: 2e 00 64 fd  			 reta	
-
-000012ac <atol>:
-    12ac: 28 10 64 fd  			 setq #8
-    12b0: 61 a1 67 fc  			 wrlong r0, #353
-    12b4: 0c 00 00 ff  			 augs #12
-    12b8: 74 a4 07 f6  			 mov r2, #116	
-    12bc: d0 a7 03 f6  			 mov r3, r0	
-    12c0: d3 a3 c3 fa  			 rdbyte r1, r3	
-    12c4: 07 a2 67 f7  			 signx r1, #7	
-    12c8: 80 a2 1f f2  			 cmp r1, #128	wcz
-    12cc: d1 a9 03 e6  	if_c_or_z	 mov r4, r1	
-    12d0: 80 a8 07 16  	if_nc_and_nz	 mov r4, #128	
-    12d4: d2 ab 03 f6  			 mov r5, r2	
-    12d8: d4 ab 03 f1  			 add r5, r4	
-    12dc: 01 a0 07 f1  			 add r0, #1	
-    12e0: d5 a9 c3 fa  			 rdbyte r4, r5	
-    12e4: 10 a8 07 f5  			 and r4, #16	
-    12e8: 00 a8 5f f2  			 cmps r4, #0	wcz
-    12ec: cc ff 9f 5d  		if_nz	 jmp #-52
-    12f0: 2d a2 5f f2  			 cmps r1, #45	wcz
-    12f4: 01 a0 07 a6  		if_z	 mov r0, #1	
-    12f8: 00 a0 07 56  		if_nz	 mov r0, #0	
-    12fc: d0 a7 03 f1  			 add r3, r0	
-    1300: d3 a1 c3 fa  			 rdbyte r0, r3	
-    1304: 07 a0 67 f7  			 signx r0, #7	
-    1308: 80 a0 1f f2  			 cmp r0, #128	wcz
-    130c: d0 a9 03 e6  	if_c_or_z	 mov r4, r0	
-    1310: 80 a8 07 16  	if_nc_and_nz	 mov r4, #128	
-    1314: d2 ab 03 f6  			 mov r5, r2	
-    1318: d4 ab 03 f1  			 add r5, r4	
-    131c: d5 a9 c3 fa  			 rdbyte r4, r5	
-    1320: 02 a8 07 f5  			 and r4, #2	
-    1324: 00 a8 5f f2  			 cmps r4, #0	wcz
-    1328: 04 00 90 ad  		if_z	 jmp #4
-    132c: 08 00 90 fd  			 jmp #8
-    1330: 00 a8 07 f6  			 mov r4, #0	
-    1334: 4c 00 90 fd  			 jmp #76
-    1338: 00 a8 07 f6  			 mov r4, #0	
-    133c: 0a aa 07 f6  			 mov r5, #10	
-    1340: d5 a9 03 fd  			 qmul r4, r5
-    1344: 18 a8 63 fd  			 getqx r4	
-    1348: 01 a6 07 f1  			 add r3, #1	
-    134c: d3 ad c3 fa  			 rdbyte r6, r3	
-    1350: 07 ac 67 f7  			 signx r6, #7	
-    1354: 80 ac 1f f2  			 cmp r6, #128	wcz
-    1358: d6 af 03 e6  	if_c_or_z	 mov r7, r6	
-    135c: 80 ae 07 16  	if_nc_and_nz	 mov r7, #128	
-    1360: d2 b1 03 f6  			 mov r8, r2	
-    1364: d7 b1 03 f1  			 add r8, r7	
-    1368: d0 a9 03 f1  			 add r4, r0	
-    136c: 30 a8 87 f1  			 sub r4, #48	
-    1370: d8 a1 c3 fa  			 rdbyte r0, r8	
-    1374: 02 a0 07 f5  			 and r0, #2	
-    1378: 00 a0 5f f2  			 cmps r0, #0	wcz
-    137c: d6 a1 03 f6  			 mov r0, r6	
-    1380: bc ff 9f 5d  		if_nz	 jmp #-68
-    1384: d4 a1 63 f6  			 neg r0, r4	
-    1388: 2d a2 5f f2  			 cmps r1, #45	wcz
-    138c: d0 a1 03 a6  		if_z	 mov r0, r0	
-    1390: d4 a1 03 56  		if_nz	 mov r0, r4	
-    1394: d0 df 03 f6  			 mov r31, r0	
-    1398: 28 10 64 fd  			 setq #8
-    139c: 5f a1 07 fb  			 rdlong r0, #351	
-    13a0: 2e 00 64 fd  			 reta	
-
-000013a4 <_term_write>:
-    13a4: 28 02 64 fd  			 setq #1
-    13a8: 61 a1 67 fc  			 wrlong r0, #353
-    13ac: 28 08 64 fd  			 setq #4
-    13b0: 61 a7 67 fc  			 wrlong r3, #353
-    13b4: d1 a7 03 f6  			 mov r3, r1	
-    13b8: d0 a3 03 f6  			 mov r1, r0	
-    13bc: 00 a0 07 f6  			 mov r0, #0	
-    13c0: d1 a9 03 f6  			 mov r4, r1	
-    13c4: 18 a8 07 f1  			 add r4, #24	
-    13c8: d4 a9 03 fb  			 rdlong r4, r4	
-    13cc: 20 a8 07 f1  			 add r4, #32	
-    13d0: d4 ad 03 fb  			 rdlong r6, r4	
-    13d4: 00 ac 5f f2  			 cmps r6, #0	wcz
-    13d8: 40 00 90 ad  		if_z	 jmp #64
-    13dc: 01 a4 5f f2  			 cmps r2, #1	wcz
-    13e0: 38 00 90 cd  		if_c	 jmp #56
-    13e4: 00 ae 07 f6  			 mov r7, #0	
-    13e8: 0d a8 07 f6  			 mov r4, #13	
-    13ec: d3 ab c3 fa  			 rdbyte r5, r3	
-    13f0: 0a aa 5f f2  			 cmps r5, #10	wcz
-    13f4: 08 00 90 5d  		if_nz	 jmp #8
+00001368 <_InitIO>:
+    1368: 28 0a 64 fd  			 setq #5
+    136c: 61 a1 67 fc  			 wrlong r0, #353
+    1370: 0e 00 00 ff  			 augs #14
+    1374: a0 ab 07 f6  			 mov r5, #416	
+    1378: d5 a3 03 fb  			 rdlong r1, r5	
+    137c: 0f 00 00 ff  			 augs #15
+    1380: 64 a8 07 f6  			 mov r4, #100	
+    1384: 0e 00 00 ff  			 augs #14
+    1388: 95 a5 07 f6  			 mov r2, #405	
+    138c: 0e 00 00 ff  			 augs #14
+    1390: 93 a7 07 f6  			 mov r3, #403	
+    1394: d4 a1 03 f6  			 mov r0, r4	
+    1398: a4 0d c0 fd  			 calla #3492
+    139c: 08 a0 07 f1  			 add r0, #8	
+    13a0: 10 00 00 ff  			 augs #16
+    13a4: 08 a2 07 f6  			 mov r1, #8	
+    13a8: d0 a3 63 fc  			 wrlong r1, r0
+    13ac: d4 a1 03 f6  			 mov r0, r4	
+    13b0: 04 a0 07 f1  			 add r0, #4	
+    13b4: d0 a3 63 fc  			 wrlong r1, r0
+    13b8: d4 a1 03 f6  			 mov r0, r4	
+    13bc: 0c a0 07 f1  			 add r0, #12	
+    13c0: d0 a3 03 fb  			 rdlong r1, r0	
+    13c4: 10 a2 47 f5  			 or r1, #16	
+    13c8: d0 a3 63 fc  			 wrlong r1, r0
+    13cc: d4 a1 03 f6  			 mov r0, r4	
+    13d0: 10 a0 07 f1  			 add r0, #16	
+    13d4: d0 a1 68 fc  			 wrlong #80, r0
+    13d8: d5 a3 03 fb  			 rdlong r1, r5	
+    13dc: d4 a1 03 f6  			 mov r0, r4	
+    13e0: 34 a0 07 f1  			 add r0, #52	
+    13e4: 0e 00 00 ff  			 augs #14
+    13e8: 7c a7 07 f6  			 mov r3, #380	
+    13ec: a4 0d c0 fd  			 calla #3492
+    13f0: 68 a8 07 f1  			 add r4, #104	
+    13f4: d5 a3 03 fb  			 rdlong r1, r5	
     13f8: d4 a1 03 f6  			 mov r0, r4	
-    13fc: 2e ac 63 fd  			 calla r6	
-    1400: 01 a6 07 f1  			 add r3, #1	
-    1404: d5 a1 03 f6  			 mov r0, r5	
-    1408: 2e ac 63 fd  			 calla r6	
-    140c: 01 ae 07 f1  			 add r7, #1	
-    1410: d2 af 5b f2  			 cmps r7, r2	wcz
-    1414: d4 ff 9f cd  		if_c	 jmp #-44
-    1418: d2 a1 03 f6  			 mov r0, r2	
-    141c: d0 df 03 f6  			 mov r31, r0	
-    1420: 28 08 64 fd  			 setq #4
-    1424: 5f a7 07 fb  			 rdlong r3, #351	
-    1428: 28 02 64 fd  			 setq #1
-    142c: 5f a1 07 fb  			 rdlong r0, #351	
-    1430: 2e 00 64 fd  			 reta	
+    13fc: a4 0d c0 fd  			 calla #3492
+    1400: 28 0a 64 fd  			 setq #5
+    1404: 5f a1 07 fb  			 rdlong r0, #351	
+    1408: 2e 00 64 fd  			 reta	
 
-00001434 <_term_read>:
-    1434: 28 22 64 fd  			 setq #17
-    1438: 61 a1 67 fc  			 wrlong r0, #353
-    143c: d1 ad 03 f6  			 mov r6, r1	
-    1440: d0 a3 03 f6  			 mov r1, r0	
-    1444: 00 be 07 f6  			 mov r15, #0	
-    1448: 18 a0 07 f1  			 add r0, #24	
-    144c: d0 a1 03 fb  			 rdlong r0, r0	
-    1450: d0 a7 03 f6  			 mov r3, r0	
-    1454: 20 a6 07 f1  			 add r3, #32	
-    1458: d3 af 03 fb  			 rdlong r7, r3	
-    145c: 00 ae 5f f2  			 cmps r7, #0	wcz
-    1460: 2c 01 90 ad  		if_z	 jmp #300
-    1464: 1c a0 07 f1  			 add r0, #28	
-    1468: d0 b1 03 fb  			 rdlong r8, r0	
-    146c: 00 b0 5f f2  			 cmps r8, #0	wcz
-    1470: 1c 01 90 ad  		if_z	 jmp #284
-    1474: d1 a1 03 f6  			 mov r0, r1	
-    1478: 0c a0 07 f1  			 add r0, #12	
-    147c: d0 b3 03 fb  			 rdlong r9, r0	
-    1480: 00 b4 07 f6  			 mov r10, #0	
-    1484: 02 00 00 ff  			 augs #2
-    1488: 00 a0 07 f6  			 mov r0, #0	
-    148c: d9 b7 03 f6  			 mov r11, r9	
-    1490: d0 b7 03 f5  			 and r11, r0	
-    1494: 10 b2 07 f5  			 and r9, #16	
-    1498: 00 b2 5f f2  			 cmps r9, #0	wcz
-    149c: d2 a5 03 56  		if_nz	 mov r2, r2	
-    14a0: 01 a4 07 a6  		if_z	 mov r2, #1	
-    14a4: ff ff 7f ff  			 augs #8388607
-    14a8: ff b9 07 f6  			 mov r12, #511	
-    14ac: 0d a6 07 f6  			 mov r3, #13	
-    14b0: 0a ba 07 f6  			 mov r13, #10	
-    14b4: 08 a8 07 f6  			 mov r4, #8	
-    14b8: 20 aa 07 f6  			 mov r5, #32	
-    14bc: da bf 03 f6  			 mov r15, r10	
-    14c0: df bd 03 f6  			 mov r14, r15	
-    14c4: d2 bd 5b f2  			 cmps r14, r2	wcz
-    14c8: c0 00 90 3d  		if_nc	 jmp #192
-    14cc: d1 a1 03 f6  			 mov r0, r1	
-    14d0: 2e b0 63 fd  			 calla r8	
-    14d4: dc df 5b f2  			 cmps r31, r12	wcz
-    14d8: b0 00 90 ad  		if_z	 jmp #176
-    14dc: 00 b2 5f f2  			 cmps r9, #0	wcz
-    14e0: 1c 00 90 ad  		if_z	 jmp #28
-    14e4: 0d de 5f f2  			 cmps r31, #13	wcz
-    14e8: ef c1 03 f6  			 mov r16, r31	
-    14ec: 14 00 90 5d  		if_nz	 jmp #20
-    14f0: d3 a1 03 f6  			 mov r0, r3	
-    14f4: 2e ae 63 fd  			 calla r7	
-    14f8: dd c1 03 f6  			 mov r16, r13	
-    14fc: 04 00 90 fd  			 jmp #4
-    1500: ef c1 03 f6  			 mov r16, r31	
-    1504: d6 a1 03 f6  			 mov r0, r6	
-    1508: de a1 03 f1  			 add r0, r14	
-    150c: d0 c1 43 fc  			 wrbyte r16, r0
-    1510: de bf 03 f6  			 mov r15, r14	
-    1514: 01 be 07 f1  			 add r15, #1	
-    1518: 00 b2 5f f2  			 cmps r9, #0	wcz
-    151c: 60 00 90 ad  		if_z	 jmp #96
-    1520: 7f c0 5f f2  			 cmps r16, #127	wcz
-    1524: 01 a0 07 56  		if_nz	 mov r0, #1	
-    1528: 00 a0 07 a6  		if_z	 mov r0, #0	
-    152c: 08 c0 5f f2  			 cmps r16, #8	wcz
-    1530: 01 c2 07 56  		if_nz	 mov r17, #1	
-    1534: 00 c2 07 a6  		if_z	 mov r17, #0	
-    1538: d0 c3 03 f5  			 and r17, r0	
-    153c: 38 00 90 fd  			 jmp #56
-    1540: 00 b6 5f f2  			 cmps r11, #0	wcz
-    1544: e0 a1 03 f6  			 mov r0, r16	
-    1548: 30 00 90 5d  		if_nz	 jmp #48
-    154c: 01 bc 5f f2  			 cmps r14, #1	wcz
-    1550: da bf 03 f6  			 mov r15, r10	
-    1554: 28 00 90 cd  		if_c	 jmp #40
-    1558: d4 a1 03 f6  			 mov r0, r4	
-    155c: 2e ae 63 fd  			 calla r7	
-    1560: d5 a1 03 f6  			 mov r0, r5	
-    1564: 2e ae 63 fd  			 calla r7	
-    1568: 01 bc 87 f1  			 sub r14, #1	
-    156c: d4 a1 03 f6  			 mov r0, r4	
-    1570: de bf 03 f6  			 mov r15, r14	
-    1574: 04 00 90 fd  			 jmp #4
-    1578: e0 a1 03 f6  			 mov r0, r16	
-    157c: 2e ae 63 fd  			 calla r7	
-    1580: 0a c0 5f f2  			 cmps r16, #10	wcz
-    1584: 38 ff 9f 5d  		if_nz	 jmp #-200
-    1588: 04 00 90 fd  			 jmp #4
-    158c: de bf 03 f6  			 mov r15, r14	
-    1590: df df 03 f6  			 mov r31, r15	
-    1594: 28 22 64 fd  			 setq #17
-    1598: 5f a1 07 fb  			 rdlong r0, #351	
-    159c: 2e 00 64 fd  			 reta	
+0000140c <SimpleSerialExit>:
+    140c: 2e 00 64 fd  			 reta	
 
-000015a0 <fflush>:
-    15a0: 28 0c 64 fd  			 setq #6
-    15a4: 61 a1 67 fc  			 wrlong r0, #353
-    15a8: 00 a0 5f f2  			 cmps r0, #0	wcz
-    15ac: 04 00 90 5d  		if_nz	 jmp #4
-    15b0: 0c 00 90 fd  			 jmp #12
-    15b4: 0c 16 c0 fd  			 calla #5644
-    15b8: ef a3 03 f6  			 mov r1, r31	
-    15bc: 3c 00 90 fd  			 jmp #60
-    15c0: 00 a2 07 f6  			 mov r1, #0	
-    15c4: 34 a4 07 f6  			 mov r2, #52	
-    15c8: 0c 00 00 ff  			 augs #12
-    15cc: 04 a7 07 f6  			 mov r3, #260	
-    15d0: d1 ab 03 f6  			 mov r5, r1	
-    15d4: d5 a9 03 f6  			 mov r4, r5	
-    15d8: d2 ab 03 fd  			 qmul r5, r2
-    15dc: 18 ac 63 fd  			 getqx r6	
-    15e0: d3 a1 03 f6  			 mov r0, r3	
-    15e4: d6 a1 03 f1  			 add r0, r6	
-    15e8: 0c 16 c0 fd  			 calla #5644
-    15ec: 01 a8 07 f1  			 add r4, #1	
-    15f0: 07 aa 1f f2  			 cmp r5, #7	wcz
-    15f4: d4 ab 03 f6  			 mov r5, r4	
-    15f8: dc ff 9f cd  		if_c	 jmp #-36
-    15fc: d1 df 03 f6  			 mov r31, r1	
-    1600: 28 0c 64 fd  			 setq #6
-    1604: 5f a1 07 fb  			 rdlong r0, #351	
-    1608: 2e 00 64 fd  			 reta	
+00001410 <_serial_fopen>:
+    1410: 28 0c 64 fd  			 setq #6
+    1414: 61 a1 67 fc  			 wrlong r0, #353
+    1418: d0 a5 03 f6  			 mov r2, r0	
+    141c: 38 a0 07 f6  			 mov r0, #56	
+    1420: d0 a7 03 fb  			 rdlong r3, r0	
+    1424: 34 a0 07 f6  			 mov r0, #52	
+    1428: d0 a9 03 fb  			 rdlong r4, r0	
+    142c: 2c a0 07 f6  			 mov r0, #44	
+    1430: d0 ab 03 fb  			 rdlong r5, r0	
+    1434: 00 a2 5f f2  			 cmps r1, #0	wcz
+    1438: 80 00 90 ad  		if_z	 jmp #128
+    143c: d1 ad c3 fa  			 rdbyte r6, r1	
+    1440: 00 ac 5f f2  			 cmps r6, #0	wcz
+    1444: 74 00 90 ad  		if_z	 jmp #116
+    1448: d1 a1 03 f6  			 mov r0, r1	
+    144c: 78 15 c0 fd  			 calla #5496
+    1450: ef ab 03 f6  			 mov r5, r31	
+    1454: ff ac 07 f5  			 and r6, #255	
+    1458: 00 ac 5f f2  			 cmps r6, #0	wcz
+    145c: 5c 00 90 ad  		if_z	 jmp #92
+    1460: 2c ac 5f f2  			 cmps r6, #44	wcz
+    1464: 18 00 90 ad  		if_z	 jmp #24
+    1468: d1 a1 03 f6  			 mov r0, r1	
+    146c: 01 a0 07 f1  			 add r0, #1	
+    1470: 01 a2 07 f1  			 add r1, #1	
+    1474: d1 ad c3 fa  			 rdbyte r6, r1	
+    1478: d0 a3 03 f6  			 mov r1, r0	
+    147c: d4 ff 9f fd  			 jmp #-44
+    1480: 01 a2 07 f1  			 add r1, #1	
+    1484: d1 a1 03 f6  			 mov r0, r1	
+    1488: 78 15 c0 fd  			 calla #5496
+    148c: ef a7 03 f6  			 mov r3, r31	
+    1490: d1 a1 c3 fa  			 rdbyte r0, r1	
+    1494: 00 a0 5f f2  			 cmps r0, #0	wcz
+    1498: 20 00 90 ad  		if_z	 jmp #32
+    149c: 2c a0 5f f2  			 cmps r0, #44	wcz
+    14a0: 08 00 90 ad  		if_z	 jmp #8
+    14a4: 01 a2 07 f1  			 add r1, #1	
+    14a8: e4 ff 9f fd  			 jmp #-28
+    14ac: 01 a2 07 f1  			 add r1, #1	
+    14b0: d1 a1 03 f6  			 mov r0, r1	
+    14b4: 78 15 c0 fd  			 calla #5496
+    14b8: ef a9 03 f6  			 mov r4, r31	
+    14bc: d2 a1 03 f6  			 mov r0, r2	
+    14c0: 2c a0 07 f1  			 add r0, #44	
+    14c4: d0 ab 63 fc  			 wrlong r5, r0
+    14c8: d2 a1 03 f6  			 mov r0, r2	
+    14cc: 28 a0 07 f1  			 add r0, #40	
+    14d0: d0 a9 63 fc  			 wrlong r4, r0
+    14d4: d2 a1 03 f6  			 mov r0, r2	
+    14d8: 24 a0 07 f1  			 add r0, #36	
+    14dc: d0 a7 63 fc  			 wrlong r3, r0
+    14e0: d2 a1 03 f6  			 mov r0, r2	
+    14e4: 0c a0 07 f1  			 add r0, #12	
+    14e8: d0 a3 03 fb  			 rdlong r1, r0	
+    14ec: 08 a2 47 f5  			 or r1, #8	
+    14f0: d0 a3 63 fc  			 wrlong r1, r0
+    14f4: 14 a4 07 f1  			 add r2, #20	
+    14f8: 3c 19 c0 fd  			 calla #6460
+    14fc: d2 df 63 fc  			 wrlong r31, r2
+    1500: 00 de 07 f6  			 mov r31, #0	
+    1504: 28 0c 64 fd  			 setq #6
+    1508: 5f a1 07 fb  			 rdlong r0, #351	
+    150c: 2e 00 64 fd  			 reta	
 
-0000160c <_fflush>:
-    160c: 28 12 64 fd  			 setq #9
-    1610: 61 a1 67 fc  			 wrlong r0, #353
-    1614: d0 a7 03 f6  			 mov r3, r0	
-    1618: 00 a6 5f f2  			 cmps r3, #0	wcz
-    161c: b4 00 90 ad  		if_z	 jmp #180
-    1620: d3 a9 03 f6  			 mov r4, r3	
-    1624: 0c a8 07 f1  			 add r4, #12	
-    1628: d4 ad 03 fb  			 rdlong r6, r4	
-    162c: d6 a1 03 f6  			 mov r0, r6	
-    1630: 83 a0 07 f5  			 and r0, #131	
-    1634: 00 a0 5f f2  			 cmps r0, #0	wcz
-    1638: a0 00 90 ad  		if_z	 jmp #160
-    163c: d3 ab 03 f6  			 mov r5, r3	
-    1640: 14 aa 07 f1  			 add r5, #20	
-    1644: d5 a1 03 fb  			 rdlong r0, r5	
-    1648: 48 0a c0 fd  			 calla #2632
-    164c: 00 b0 07 f6  			 mov r8, #0	
-    1650: d3 a5 03 fb  			 rdlong r2, r3	
-    1654: 01 a4 5f f2  			 cmps r2, #1	wcz
-    1658: d3 af 03 f6  			 mov r7, r3	
-    165c: 08 ae 07 f1  			 add r7, #8	
-    1660: cc 00 90 cd  		if_c	 jmp #204
-    1664: d6 a1 03 f6  			 mov r0, r6	
-    1668: 02 a0 07 f5  			 and r0, #2	
-    166c: 00 a0 5f f2  			 cmps r0, #0	wcz
-    1670: 04 00 90 ad  		if_z	 jmp #4
-    1674: 70 00 90 fd  			 jmp #112
-    1678: d6 a1 03 f6  			 mov r0, r6	
-    167c: 01 a0 07 f5  			 and r0, #1	
-    1680: 00 a0 5f f2  			 cmps r0, #0	wcz
-    1684: a8 00 90 ad  		if_z	 jmp #168
-    1688: d3 a1 03 f6  			 mov r0, r3	
-    168c: 18 a0 07 f1  			 add r0, #24	
-    1690: d0 a1 03 fb  			 rdlong r0, r0	
-    1694: 14 a0 07 f1  			 add r0, #20	
-    1698: d0 b1 03 fb  			 rdlong r8, r0	
-    169c: d2 a3 63 f6  			 neg r1, r2	
-    16a0: 01 a4 07 f6  			 mov r2, #1	
-    16a4: d3 a1 03 f6  			 mov r0, r3	
-    16a8: 2e b0 63 fd  			 calla r8	
-    16ac: ef b1 03 f6  			 mov r8, r31	
-    16b0: 1f b0 47 f0  			 shr r8, #31	
-    16b4: d6 a1 03 f6  			 mov r0, r6	
-    16b8: 08 a0 07 f5  			 and r0, #8	
-    16bc: 00 a0 5f f2  			 cmps r0, #0	wcz
-    16c0: 01 a0 07 a6  		if_z	 mov r0, #1	
-    16c4: 00 a0 07 56  		if_nz	 mov r0, #0	
-    16c8: d0 b1 03 f5  			 and r8, r0	
-    16cc: 00 b0 67 f7  			 signx r8, #0	
-    16d0: 5c 00 90 fd  			 jmp #92
-    16d4: 00 b0 07 f6  			 mov r8, #0	
-    16d8: 90 00 90 fd  			 jmp #144
-    16dc: ff ff 7f ff  			 augs #8388607
-    16e0: ff b1 07 f6  			 mov r8, #511	
-    16e4: 84 00 90 fd  			 jmp #132
-    16e8: d3 01 68 fc  			 wrlong #0, r3
-    16ec: d7 a3 03 fb  			 rdlong r1, r7	
-    16f0: d3 a1 03 f6  			 mov r0, r3	
-    16f4: 18 a0 07 f1  			 add r0, #24	
-    16f8: d0 a1 03 fb  			 rdlong r0, r0	
-    16fc: 10 a0 07 f1  			 add r0, #16	
-    1700: d0 b3 03 fb  			 rdlong r9, r0	
-    1704: d3 a1 03 f6  			 mov r0, r3	
-    1708: 2e b2 63 fd  			 calla r9	
-    170c: d2 df 5b f2  			 cmps r31, r2	wcz
-    1710: 1c 00 90 ad  		if_z	 jmp #28
-    1714: d4 a1 03 fb  			 rdlong r0, r4	
-    1718: 10 00 00 ff  			 augs #16
-    171c: 00 a2 07 f6  			 mov r1, #0	
-    1720: d1 a1 43 f5  			 or r0, r1	
-    1724: d4 a1 63 fc  			 wrlong r0, r4
-    1728: ff ff 7f ff  			 augs #8388607
-    172c: ff b1 07 f6  			 mov r8, #511	
-    1730: 80 ac 07 f5  			 and r6, #128	
-    1734: 00 ac 5f f2  			 cmps r6, #0	wcz
-    1738: 14 00 90 ad  		if_z	 jmp #20
-    173c: d4 a1 03 fb  			 rdlong r0, r4	
-    1740: ff ff 7f ff  			 augs #8388607
-    1744: fc a3 07 f6  			 mov r1, #508	
-    1748: d1 a1 03 f5  			 and r0, r1	
-    174c: d4 a1 63 fc  			 wrlong r0, r4
-    1750: d7 a1 03 fb  			 rdlong r0, r7	
-    1754: d3 a3 03 f6  			 mov r1, r3	
-    1758: 04 a2 07 f1  			 add r1, #4	
-    175c: d1 a1 63 fc  			 wrlong r0, r1
-    1760: d3 01 68 fc  			 wrlong #0, r3
-    1764: d5 a1 03 fb  			 rdlong r0, r5	
-    1768: 60 0a c0 fd  			 calla #2656
-    176c: d8 df 03 f6  			 mov r31, r8	
-    1770: 28 12 64 fd  			 setq #9
-    1774: 5f a1 07 fb  			 rdlong r0, #351	
-    1778: 2e 00 64 fd  			 reta	
+00001510 <_serial_getbyte>:
+    1510: 61 a1 67 fc  			 wrlong r0, #353
+    1514: 0d a0 07 f1  			 add r0, #13	
+    1518: d0 a1 c3 fa  			 rdbyte r0, r0	
+    151c: 80 a0 07 f5  			 and r0, #128	
+    1520: 00 a0 5f f2  			 cmps r0, #0	wcz
+    1524: 18 00 90 5d  		if_nz	 jmp #24
+    1528: ff ff 7f ff  			 augs #8388607
+    152c: ff a1 07 f6  			 mov r0, #511	
+    1530: 24 1a c0 fd  			 calla #6692
+    1534: d0 df 5b f2  			 cmps r31, r0	wcz
+    1538: f4 ff 9f ad  		if_z	 jmp #-12
+    153c: 04 00 90 fd  			 jmp #4
+    1540: 24 1a c0 fd  			 calla #6692
+    1544: ef a1 03 f6  			 mov r0, r31	
+    1548: d0 df 03 f6  			 mov r31, r0	
+    154c: 5f a1 07 fb  			 rdlong r0, #351	
+    1550: 2e 00 64 fd  			 reta	
 
-0000177c <dummy>:
-    177c: 2e 00 64 fd  			 reta	
+00001554 <_serial_putbyte>:
+    1554: 28 02 64 fd  			 setq #1
+    1558: 61 a1 67 fc  			 wrlong r0, #353
+    155c: d0 a3 03 f6  			 mov r1, r0	
+    1560: 07 a0 67 f7  			 signx r0, #7	
+    1564: ec 19 c0 fd  			 calla #6636
+    1568: d1 df 03 f6  			 mov r31, r1	
+    156c: 28 02 64 fd  			 setq #1
+    1570: 5f a1 07 fb  			 rdlong r0, #351	
+    1574: 2e 00 64 fd  			 reta	
 
-00001780 <_InitIO>:
-    1780: 28 0a 64 fd  			 setq #5
-    1784: 61 a1 67 fc  			 wrlong r0, #353
-    1788: 0c 00 00 ff  			 augs #12
-    178c: 48 aa 07 f6  			 mov r5, #72	
-    1790: d5 a3 03 fb  			 rdlong r1, r5	
-    1794: 0c 00 00 ff  			 augs #12
-    1798: 04 a9 07 f6  			 mov r4, #260	
-    179c: 0c 00 00 ff  			 augs #12
-    17a0: 36 a4 07 f6  			 mov r2, #54	
-    17a4: 0c 00 00 ff  			 augs #12
-    17a8: 34 a6 07 f6  			 mov r3, #52	
-    17ac: d4 a1 03 f6  			 mov r0, r4	
-    17b0: 70 0e c0 fd  			 calla #3696
-    17b4: 08 a0 07 f1  			 add r0, #8	
-    17b8: 0d 00 00 ff  			 augs #13
-    17bc: 4c a3 07 f6  			 mov r1, #332	
-    17c0: d0 a3 63 fc  			 wrlong r1, r0
-    17c4: d4 a1 03 f6  			 mov r0, r4	
-    17c8: 04 a0 07 f1  			 add r0, #4	
-    17cc: d0 a3 63 fc  			 wrlong r1, r0
-    17d0: d4 a1 03 f6  			 mov r0, r4	
-    17d4: 0c a0 07 f1  			 add r0, #12	
-    17d8: d0 a3 03 fb  			 rdlong r1, r0	
-    17dc: 10 a2 47 f5  			 or r1, #16	
-    17e0: d0 a3 63 fc  			 wrlong r1, r0
-    17e4: d4 a1 03 f6  			 mov r0, r4	
-    17e8: 10 a0 07 f1  			 add r0, #16	
-    17ec: d0 a1 68 fc  			 wrlong #80, r0
-    17f0: d5 a3 03 fb  			 rdlong r1, r5	
-    17f4: d4 a1 03 f6  			 mov r0, r4	
-    17f8: 34 a0 07 f1  			 add r0, #52	
-    17fc: 0c 00 00 ff  			 augs #12
-    1800: 32 a6 07 f6  			 mov r3, #50	
-    1804: 70 0e c0 fd  			 calla #3696
-    1808: 68 a8 07 f1  			 add r4, #104	
-    180c: d5 a3 03 fb  			 rdlong r1, r5	
-    1810: d4 a1 03 f6  			 mov r0, r4	
-    1814: 70 0e c0 fd  			 calla #3696
-    1818: 28 0a 64 fd  			 setq #5
-    181c: 5f a1 07 fb  			 rdlong r0, #351	
-    1820: 2e 00 64 fd  			 reta	
+00001578 <atol>:
+    1578: 28 10 64 fd  			 setq #8
+    157c: 61 a1 67 fc  			 wrlong r0, #353
+    1580: 0e 00 00 ff  			 augs #14
+    1584: a8 a5 07 f6  			 mov r2, #424	
+    1588: d0 a7 03 f6  			 mov r3, r0	
+    158c: d3 a3 c3 fa  			 rdbyte r1, r3	
+    1590: 07 a2 67 f7  			 signx r1, #7	
+    1594: 80 a2 1f f2  			 cmp r1, #128	wcz
+    1598: d1 a9 03 e6  	if_c_or_z	 mov r4, r1	
+    159c: 80 a8 07 16  	if_nc_and_nz	 mov r4, #128	
+    15a0: d2 ab 03 f6  			 mov r5, r2	
+    15a4: d4 ab 03 f1  			 add r5, r4	
+    15a8: 01 a0 07 f1  			 add r0, #1	
+    15ac: d5 a9 c3 fa  			 rdbyte r4, r5	
+    15b0: 10 a8 07 f5  			 and r4, #16	
+    15b4: 00 a8 5f f2  			 cmps r4, #0	wcz
+    15b8: cc ff 9f 5d  		if_nz	 jmp #-52
+    15bc: 2d a2 5f f2  			 cmps r1, #45	wcz
+    15c0: 01 a0 07 a6  		if_z	 mov r0, #1	
+    15c4: 00 a0 07 56  		if_nz	 mov r0, #0	
+    15c8: d0 a7 03 f1  			 add r3, r0	
+    15cc: d3 a1 c3 fa  			 rdbyte r0, r3	
+    15d0: 07 a0 67 f7  			 signx r0, #7	
+    15d4: 80 a0 1f f2  			 cmp r0, #128	wcz
+    15d8: d0 a9 03 e6  	if_c_or_z	 mov r4, r0	
+    15dc: 80 a8 07 16  	if_nc_and_nz	 mov r4, #128	
+    15e0: d2 ab 03 f6  			 mov r5, r2	
+    15e4: d4 ab 03 f1  			 add r5, r4	
+    15e8: d5 a9 c3 fa  			 rdbyte r4, r5	
+    15ec: 02 a8 07 f5  			 and r4, #2	
+    15f0: 00 a8 5f f2  			 cmps r4, #0	wcz
+    15f4: 04 00 90 ad  		if_z	 jmp #4
+    15f8: 08 00 90 fd  			 jmp #8
+    15fc: 00 a8 07 f6  			 mov r4, #0	
+    1600: 4c 00 90 fd  			 jmp #76
+    1604: 00 a8 07 f6  			 mov r4, #0	
+    1608: 0a aa 07 f6  			 mov r5, #10	
+    160c: d5 a9 03 fd  			 qmul r4, r5
+    1610: 18 a8 63 fd  			 getqx r4	
+    1614: 01 a6 07 f1  			 add r3, #1	
+    1618: d3 ad c3 fa  			 rdbyte r6, r3	
+    161c: 07 ac 67 f7  			 signx r6, #7	
+    1620: 80 ac 1f f2  			 cmp r6, #128	wcz
+    1624: d6 af 03 e6  	if_c_or_z	 mov r7, r6	
+    1628: 80 ae 07 16  	if_nc_and_nz	 mov r7, #128	
+    162c: d2 b1 03 f6  			 mov r8, r2	
+    1630: d7 b1 03 f1  			 add r8, r7	
+    1634: d0 a9 03 f1  			 add r4, r0	
+    1638: 30 a8 87 f1  			 sub r4, #48	
+    163c: d8 a1 c3 fa  			 rdbyte r0, r8	
+    1640: 02 a0 07 f5  			 and r0, #2	
+    1644: 00 a0 5f f2  			 cmps r0, #0	wcz
+    1648: d6 a1 03 f6  			 mov r0, r6	
+    164c: bc ff 9f 5d  		if_nz	 jmp #-68
+    1650: d4 a1 63 f6  			 neg r0, r4	
+    1654: 2d a2 5f f2  			 cmps r1, #45	wcz
+    1658: d0 a1 03 a6  		if_z	 mov r0, r0	
+    165c: d4 a1 03 56  		if_nz	 mov r0, r4	
+    1660: d0 df 03 f6  			 mov r31, r0	
+    1664: 28 10 64 fd  			 setq #8
+    1668: 5f a1 07 fb  			 rdlong r0, #351	
+    166c: 2e 00 64 fd  			 reta	
+
+00001670 <_term_write>:
+    1670: 28 02 64 fd  			 setq #1
+    1674: 61 a1 67 fc  			 wrlong r0, #353
+    1678: 28 08 64 fd  			 setq #4
+    167c: 61 a7 67 fc  			 wrlong r3, #353
+    1680: d1 a7 03 f6  			 mov r3, r1	
+    1684: d0 a3 03 f6  			 mov r1, r0	
+    1688: 00 a0 07 f6  			 mov r0, #0	
+    168c: d1 a9 03 f6  			 mov r4, r1	
+    1690: 18 a8 07 f1  			 add r4, #24	
+    1694: d4 a9 03 fb  			 rdlong r4, r4	
+    1698: 20 a8 07 f1  			 add r4, #32	
+    169c: d4 ad 03 fb  			 rdlong r6, r4	
+    16a0: 00 ac 5f f2  			 cmps r6, #0	wcz
+    16a4: 40 00 90 ad  		if_z	 jmp #64
+    16a8: 01 a4 5f f2  			 cmps r2, #1	wcz
+    16ac: 38 00 90 cd  		if_c	 jmp #56
+    16b0: 00 ae 07 f6  			 mov r7, #0	
+    16b4: 0d a8 07 f6  			 mov r4, #13	
+    16b8: d3 ab c3 fa  			 rdbyte r5, r3	
+    16bc: 0a aa 5f f2  			 cmps r5, #10	wcz
+    16c0: 08 00 90 5d  		if_nz	 jmp #8
+    16c4: d4 a1 03 f6  			 mov r0, r4	
+    16c8: 2e ac 63 fd  			 calla r6	
+    16cc: 01 a6 07 f1  			 add r3, #1	
+    16d0: d5 a1 03 f6  			 mov r0, r5	
+    16d4: 2e ac 63 fd  			 calla r6	
+    16d8: 01 ae 07 f1  			 add r7, #1	
+    16dc: d2 af 5b f2  			 cmps r7, r2	wcz
+    16e0: d4 ff 9f cd  		if_c	 jmp #-44
+    16e4: d2 a1 03 f6  			 mov r0, r2	
+    16e8: d0 df 03 f6  			 mov r31, r0	
+    16ec: 28 08 64 fd  			 setq #4
+    16f0: 5f a7 07 fb  			 rdlong r3, #351	
+    16f4: 28 02 64 fd  			 setq #1
+    16f8: 5f a1 07 fb  			 rdlong r0, #351	
+    16fc: 2e 00 64 fd  			 reta	
+
+00001700 <_term_read>:
+    1700: 28 22 64 fd  			 setq #17
+    1704: 61 a1 67 fc  			 wrlong r0, #353
+    1708: d1 ad 03 f6  			 mov r6, r1	
+    170c: d0 a3 03 f6  			 mov r1, r0	
+    1710: 00 be 07 f6  			 mov r15, #0	
+    1714: 18 a0 07 f1  			 add r0, #24	
+    1718: d0 a1 03 fb  			 rdlong r0, r0	
+    171c: d0 a7 03 f6  			 mov r3, r0	
+    1720: 20 a6 07 f1  			 add r3, #32	
+    1724: d3 af 03 fb  			 rdlong r7, r3	
+    1728: 00 ae 5f f2  			 cmps r7, #0	wcz
+    172c: 2c 01 90 ad  		if_z	 jmp #300
+    1730: 1c a0 07 f1  			 add r0, #28	
+    1734: d0 b1 03 fb  			 rdlong r8, r0	
+    1738: 00 b0 5f f2  			 cmps r8, #0	wcz
+    173c: 1c 01 90 ad  		if_z	 jmp #284
+    1740: d1 a1 03 f6  			 mov r0, r1	
+    1744: 0c a0 07 f1  			 add r0, #12	
+    1748: d0 b3 03 fb  			 rdlong r9, r0	
+    174c: 00 b4 07 f6  			 mov r10, #0	
+    1750: 02 00 00 ff  			 augs #2
+    1754: 00 a0 07 f6  			 mov r0, #0	
+    1758: d9 b7 03 f6  			 mov r11, r9	
+    175c: d0 b7 03 f5  			 and r11, r0	
+    1760: 10 b2 07 f5  			 and r9, #16	
+    1764: 00 b2 5f f2  			 cmps r9, #0	wcz
+    1768: d2 a5 03 56  		if_nz	 mov r2, r2	
+    176c: 01 a4 07 a6  		if_z	 mov r2, #1	
+    1770: ff ff 7f ff  			 augs #8388607
+    1774: ff b9 07 f6  			 mov r12, #511	
+    1778: 0d a6 07 f6  			 mov r3, #13	
+    177c: 0a ba 07 f6  			 mov r13, #10	
+    1780: 08 a8 07 f6  			 mov r4, #8	
+    1784: 20 aa 07 f6  			 mov r5, #32	
+    1788: da bf 03 f6  			 mov r15, r10	
+    178c: df bd 03 f6  			 mov r14, r15	
+    1790: d2 bd 5b f2  			 cmps r14, r2	wcz
+    1794: c0 00 90 3d  		if_nc	 jmp #192
+    1798: d1 a1 03 f6  			 mov r0, r1	
+    179c: 2e b0 63 fd  			 calla r8	
+    17a0: dc df 5b f2  			 cmps r31, r12	wcz
+    17a4: b0 00 90 ad  		if_z	 jmp #176
+    17a8: 00 b2 5f f2  			 cmps r9, #0	wcz
+    17ac: 1c 00 90 ad  		if_z	 jmp #28
+    17b0: 0d de 5f f2  			 cmps r31, #13	wcz
+    17b4: ef c1 03 f6  			 mov r16, r31	
+    17b8: 14 00 90 5d  		if_nz	 jmp #20
+    17bc: d3 a1 03 f6  			 mov r0, r3	
+    17c0: 2e ae 63 fd  			 calla r7	
+    17c4: dd c1 03 f6  			 mov r16, r13	
+    17c8: 04 00 90 fd  			 jmp #4
+    17cc: ef c1 03 f6  			 mov r16, r31	
+    17d0: d6 a1 03 f6  			 mov r0, r6	
+    17d4: de a1 03 f1  			 add r0, r14	
+    17d8: d0 c1 43 fc  			 wrbyte r16, r0
+    17dc: de bf 03 f6  			 mov r15, r14	
+    17e0: 01 be 07 f1  			 add r15, #1	
+    17e4: 00 b2 5f f2  			 cmps r9, #0	wcz
+    17e8: 60 00 90 ad  		if_z	 jmp #96
+    17ec: 7f c0 5f f2  			 cmps r16, #127	wcz
+    17f0: 01 a0 07 56  		if_nz	 mov r0, #1	
+    17f4: 00 a0 07 a6  		if_z	 mov r0, #0	
+    17f8: 08 c0 5f f2  			 cmps r16, #8	wcz
+    17fc: 01 c2 07 56  		if_nz	 mov r17, #1	
+    1800: 00 c2 07 a6  		if_z	 mov r17, #0	
+    1804: d0 c3 03 f5  			 and r17, r0	
+    1808: 38 00 90 fd  			 jmp #56
+    180c: 00 b6 5f f2  			 cmps r11, #0	wcz
+    1810: e0 a1 03 f6  			 mov r0, r16	
+    1814: 30 00 90 5d  		if_nz	 jmp #48
+    1818: 01 bc 5f f2  			 cmps r14, #1	wcz
+    181c: da bf 03 f6  			 mov r15, r10	
+    1820: 28 00 90 cd  		if_c	 jmp #40
+    1824: d4 a1 03 f6  			 mov r0, r4	
+    1828: 2e ae 63 fd  			 calla r7	
+    182c: d5 a1 03 f6  			 mov r0, r5	
+    1830: 2e ae 63 fd  			 calla r7	
+    1834: 01 bc 87 f1  			 sub r14, #1	
+    1838: d4 a1 03 f6  			 mov r0, r4	
+    183c: de bf 03 f6  			 mov r15, r14	
+    1840: 04 00 90 fd  			 jmp #4
+    1844: e0 a1 03 f6  			 mov r0, r16	
+    1848: 2e ae 63 fd  			 calla r7	
+    184c: 0a c0 5f f2  			 cmps r16, #10	wcz
+    1850: 38 ff 9f 5d  		if_nz	 jmp #-200
+    1854: 04 00 90 fd  			 jmp #4
+    1858: de bf 03 f6  			 mov r15, r14	
+    185c: df df 03 f6  			 mov r31, r15	
+    1860: 28 22 64 fd  			 setq #17
+    1864: 5f a1 07 fb  			 rdlong r0, #351	
+    1868: 2e 00 64 fd  			 reta	
+
+0000186c <dummy>:
+    186c: 2e 00 64 fd  			 reta	
+
+00001870 <_cnt>:
+    1870: 1a de 63 fd  			 getct r31	
+    1874: 2e 00 64 fd  			 reta	
+
+00001878 <_waitcnt>:
+    1878: 00 a0 67 fa  			 addct1 r0, #0
+    187c: 24 22 60 fd  			 waitct1	
+    1880: 2e 00 64 fd  			 reta	
+
+00001884 <_clkset>:
+    1884: 28 04 64 fd  			 setq #2
+    1888: 61 a1 67 fc  			 wrlong r0, #353
+    188c: f0 a4 07 f6  			 mov r2, #240	
+    1890: 00 a4 63 fd  			 hubset r2
+    1894: 28 a4 07 f6  			 mov r2, #40	
+    1898: d2 a1 63 fc  			 wrlong r0, r2
+    189c: 24 a4 07 f6  			 mov r2, #36	
+    18a0: d2 a3 63 fc  			 wrlong r1, r2
+    18a4: 00 a0 63 fd  			 hubset r0
+    18a8: 86 01 00 ff  			 augs #390
+    18ac: 40 a3 07 f6  			 mov r1, #320	
+    18b0: 1f a2 63 fd  			 waitx r1
+    18b4: 03 a0 47 f5  			 or r0, #3	
+    18b8: 00 a0 63 fd  			 hubset r0
+    18bc: 28 04 64 fd  			 setq #2
+    18c0: 5f a1 07 fb  			 rdlong r0, #351	
+    18c4: 2e 00 64 fd  			 reta	
+
+000018c8 <_coginit>:
+    18c8: 28 04 64 fd  			 setq #2
+    18cc: 61 a1 67 fc  			 wrlong r0, #353
+    18d0: 28 a4 63 fd  			 setq r2
+    18d4: d1 a1 f3 fc  			 coginit r0, r1	wc
+    18d8: 6c a2 63 fd  			 wrc r1
+    18dc: ff ff 7f ff  			 augs #8388607
+    18e0: ff a5 07 f6  			 mov r2, #511	
+    18e4: 00 a2 5f f2  			 cmps r1, #0	wcz
+    18e8: d0 a1 03 a6  		if_z	 mov r0, r0	
+    18ec: d2 a1 03 56  		if_nz	 mov r0, r2	
+    18f0: d0 df 03 f6  			 mov r31, r0	
+    18f4: 28 04 64 fd  			 setq #2
+    18f8: 5f a1 07 fb  			 rdlong r0, #351	
+    18fc: 2e 00 64 fd  			 reta	
+
+00001900 <cogstart>:
+    1900: 28 02 64 fd  			 setq #1
+    1904: 61 a1 67 fc  			 wrlong r0, #353
+    1908: 61 a7 67 fc  			 wrlong r3, #353
+    190c: d2 a7 03 f6  			 mov r3, r2	
+    1910: 04 a6 07 f1  			 add r3, #4	
+    1914: d3 a3 63 fc  			 wrlong r1, r3
+    1918: d2 a1 63 fc  			 wrlong r0, r2
+    191c: 10 a0 07 f6  			 mov r0, #16	
+    1920: 00 00 00 ff  			 augs #0
+    1924: 00 a3 07 f6  			 mov r1, #256	
+    1928: c8 18 c0 fd  			 calla #6344
+    192c: 5f a7 07 fb  			 rdlong r3, #351	
+    1930: 28 02 64 fd  			 setq #1
+    1934: 5f a1 07 fb  			 rdlong r0, #351	
+    1938: 2e 00 64 fd  			 reta	
+
+0000193c <_locknew>:
+    193c: 04 de 63 fd  			 locknew r31	
+    1940: 2e 00 64 fd  			 reta	
+
+00001944 <_lockret>:
+    1944: 05 a0 63 fd  			 lockret r0
+    1948: 2e 00 64 fd  			 reta	
+
+0000194c <_lock>:
+    194c: 06 a0 73 fd  			 locktry r0	wc
+    1950: f8 ff 9f 3d  		if_nc	 jmp #-8
+    1954: 2e 00 64 fd  			 reta	
+
+00001958 <_locktry>:
+    1958: 06 a0 73 fd  			 locktry r0	wc
+    195c: 6c de 63 fd  			 wrc r31
+    1960: 2e 00 64 fd  			 reta	
+
+00001964 <_unlock>:
+    1964: 07 a0 63 fd  			 lockrel r0	
+    1968: 2e 00 64 fd  			 reta	
+
+0000196c <_rev>:
+    196c: 69 a0 63 fd  			 rev r0
+    1970: d0 df 03 f6  			 mov r31, r0	
+    1974: 2e 00 64 fd  			 reta	
+
+00001978 <_uart_init>:
+    1978: 28 04 64 fd  			 setq #2
+    197c: 61 a3 67 fc  			 wrlong r1, #353
+    1980: 38 a6 07 f6  			 mov r3, #56	
+    1984: d3 a1 63 fc  			 wrlong r0, r3
+    1988: 34 a6 07 f6  			 mov r3, #52	
+    198c: d3 a3 63 fc  			 wrlong r1, r3
+    1990: 40 a0 63 fd  			 dirl r0	
+    1994: 40 a2 63 fd  			 dirl r1	
+    1998: 2c a6 07 f6  			 mov r3, #44	
+    199c: d3 a5 63 fc  			 wrlong r2, r3
+    19a0: 24 a6 07 f6  			 mov r3, #36	
+    19a4: d3 a7 03 fb  			 rdlong r3, r3	
+    19a8: d2 a7 13 fd  			 qdiv r3, r2
+    19ac: 18 a4 63 fd  			 getqx r2	
+    19b0: 30 a6 07 f6  			 mov r3, #48	
+    19b4: d3 a5 63 fc  			 wrlong r2, r3
+    19b8: 7c a6 07 f6  			 mov r3, #124	
+    19bc: d1 a7 03 fc  			 wrpin r3, r1
+    19c0: 10 a4 67 f0  			 shl r2, #16	
+    19c4: 07 a4 47 f5  			 or r2, #7	
+    19c8: d1 a5 13 fc  			 wxpin r2, r1
+    19cc: 41 a2 63 fd  			 dirh r1	
+    19d0: 3e a2 07 f6  			 mov r1, #62	
+    19d4: d0 a3 03 fc  			 wrpin r1, r0
+    19d8: d0 a5 13 fc  			 wxpin r2, r0
+    19dc: 41 a0 63 fd  			 dirh r0	
+    19e0: 28 04 64 fd  			 setq #2
+    19e4: 5f a3 07 fb  			 rdlong r1, #351	
+    19e8: 2e 00 64 fd  			 reta	
+
+000019ec <_uart_putc>:
+    19ec: 28 02 64 fd  			 setq #1
+    19f0: 61 a1 67 fc  			 wrlong r0, #353
+    19f4: 34 a2 07 f6  			 mov r1, #52	
+    19f8: d1 a3 03 fb  			 rdlong r1, r1	
+    19fc: d1 a1 23 fc  			 wypin r0, r1
+    1a00: 30 a0 07 f6  			 mov r0, #48	
+    1a04: d0 a1 03 fb  			 rdlong r0, r0	
+    1a08: 0a a2 07 f6  			 mov r1, #10	
+    1a0c: d1 a1 03 fd  			 qmul r0, r1
+    1a10: 18 a0 63 fd  			 getqx r0	
+    1a14: 1f a0 63 fd  			 waitx r0
+    1a18: 28 02 64 fd  			 setq #1
+    1a1c: 5f a1 07 fb  			 rdlong r0, #351	
+    1a20: 2e 00 64 fd  			 reta	
+
+00001a24 <_uart_getc>:
+    1a24: 28 02 64 fd  			 setq #1
+    1a28: 61 a1 67 fc  			 wrlong r0, #353
+    1a2c: 38 a0 07 f6  			 mov r0, #56	
+    1a30: d0 a1 03 fb  			 rdlong r0, r0	
+    1a34: 40 a0 73 fd  			 testp r0	wc
+    1a38: 6c a2 63 fd  			 wrc r1
+    1a3c: 00 a2 5f f2  			 cmps r1, #0	wcz
+    1a40: 0c 00 90 ad  		if_z	 jmp #12
+    1a44: d0 a1 8b fa  			 rdpin r0, r0	
+    1a48: 18 a0 c7 f0  			 sar r0, #24	
+    1a4c: 08 00 90 fd  			 jmp #8
+    1a50: ff ff 7f ff  			 augs #8388607
+    1a54: ff a1 07 f6  			 mov r0, #511	
+    1a58: d0 df 03 f6  			 mov r31, r0	
+    1a5c: 28 02 64 fd  			 setq #1
+    1a60: 5f a1 07 fb  			 rdlong r0, #351	
+    1a64: 2e 00 64 fd  			 reta	
+
+00001a68 <__cxa_pure_virtual>:
+    1a68: fc ff 9f fd  			 jmp #-4
+
+00001a6c <_cstd_init>:
+    1a6c: 61 a1 67 fc  			 wrlong r0, #353
+    1a70: 3c 19 c0 fd  			 calla #6460
+    1a74: 10 00 00 ff  			 augs #16
+    1a78: fc a0 07 f6  			 mov r0, #252	
+    1a7c: d0 df 63 fc  			 wrlong r31, r0
+    1a80: 3c 19 c0 fd  			 calla #6460
+    1a84: 10 00 00 ff  			 augs #16
+    1a88: 04 a0 07 f6  			 mov r0, #4	
+    1a8c: d0 df 63 fc  			 wrlong r31, r0
+    1a90: 68 13 c0 fd  			 calla #4968
+    1a94: 5f a1 07 fb  			 rdlong r0, #351	
+    1a98: 2e 00 64 fd  			 reta	
+
+00001a9c <_malloc>:
+    1a9c: 28 0c 64 fd  			 setq #6
+    1aa0: 61 a1 67 fc  			 wrlong r0, #353
+    1aa4: d0 a5 03 f6  			 mov r2, r0	
+    1aa8: 10 00 00 ff  			 augs #16
+    1aac: fc aa 07 f6  			 mov r5, #252	
+    1ab0: d5 a1 03 fb  			 rdlong r0, r5	
+    1ab4: 4c 19 c0 fd  			 calla #6476
+    1ab8: 07 a2 07 f1  			 add r1, #7	
+    1abc: 03 a2 47 f0  			 shr r1, #3	
+    1ac0: d1 a7 03 f6  			 mov r3, r1	
+    1ac4: 01 a6 07 f1  			 add r3, #1	
+    1ac8: d2 a1 03 f6  			 mov r0, r2	
+    1acc: 04 a0 07 f1  			 add r0, #4	
+    1ad0: d0 a9 03 fb  			 rdlong r4, r0	
+    1ad4: 00 a8 5f f2  			 cmps r4, #0	wcz
+    1ad8: 5c 00 90 ad  		if_z	 jmp #92
+    1adc: d4 a1 03 f6  			 mov r0, r4	
+    1ae0: 04 a0 07 f1  			 add r0, #4	
+    1ae4: d0 a1 03 fb  			 rdlong r0, r0	
+    1ae8: d1 a1 1b f2  			 cmp r0, r1	wcz
+    1aec: 04 00 90 1d  	if_nc_and_nz	 jmp #4
+    1af0: 08 00 90 fd  			 jmp #8
+    1af4: 04 a4 07 f1  			 add r2, #4	
+    1af8: 28 00 90 fd  			 jmp #40
+    1afc: d4 ad 03 f6  			 mov r6, r4	
+    1b00: d6 a9 03 fb  			 rdlong r4, r6	
+    1b04: 00 a8 5f f2  			 cmps r4, #0	wcz
+    1b08: 2c 00 90 ad  		if_z	 jmp #44
+    1b0c: d4 a1 03 f6  			 mov r0, r4	
+    1b10: 04 a0 07 f1  			 add r0, #4	
+    1b14: d0 a1 03 fb  			 rdlong r0, r0	
+    1b18: d1 a1 1b f2  			 cmp r0, r1	wcz
+    1b1c: dc ff 9f ed  	if_c_or_z	 jmp #-36
+    1b20: d6 a5 03 f6  			 mov r2, r6	
+    1b24: d3 a1 5b f2  			 cmps r0, r3	wcz
+    1b28: 3c 00 90 5d  		if_nz	 jmp #60
+    1b2c: d4 a1 03 fb  			 rdlong r0, r4	
+    1b30: d2 a1 63 fc  			 wrlong r0, r2
+    1b34: 54 00 90 fd  			 jmp #84
+    1b38: d2 a3 03 fb  			 rdlong r1, r2	
+    1b3c: d3 a1 03 f6  			 mov r0, r3	
+    1b40: 03 a0 67 f0  			 shl r0, #3	
+    1b44: 2e a2 63 fd  			 calla r1	
+    1b48: ef a9 03 f6  			 mov r4, r31	
+    1b4c: d5 a1 03 fb  			 rdlong r0, r5	
+    1b50: 64 19 c0 fd  			 calla #6500
+    1b54: 00 a8 5f f2  			 cmps r4, #0	wcz
+    1b58: 04 00 90 ad  		if_z	 jmp #4
+    1b5c: 34 00 90 fd  			 jmp #52
+    1b60: 00 a8 07 f6  			 mov r4, #0	
+    1b64: 48 00 90 fd  			 jmp #72
+    1b68: d3 a1 83 f1  			 sub r0, r3	
+    1b6c: d4 a3 03 f6  			 mov r1, r4	
+    1b70: 04 a2 07 f1  			 add r1, #4	
+    1b74: d1 a1 63 fc  			 wrlong r0, r1
+    1b78: 03 a0 67 f0  			 shl r0, #3	
+    1b7c: d0 a9 03 f1  			 add r4, r0	
+    1b80: d4 a1 03 f6  			 mov r0, r4	
+    1b84: 04 a0 07 f1  			 add r0, #4	
+    1b88: d0 a7 63 fc  			 wrlong r3, r0
+    1b8c: d5 a1 03 fb  			 rdlong r0, r5	
+    1b90: 64 19 c0 fd  			 calla #6500
+    1b94: d4 a1 03 f6  			 mov r0, r4	
+    1b98: 04 a0 07 f1  			 add r0, #4	
+    1b9c: d0 a7 63 fc  			 wrlong r3, r0
+    1ba0: 08 05 00 ff  			 augs #1288
+    1ba4: 0c a1 07 f6  			 mov r0, #268	
+    1ba8: d4 a1 63 fc  			 wrlong r0, r4
+    1bac: 08 a8 07 f1  			 add r4, #8	
+    1bb0: d4 df 03 f6  			 mov r31, r4	
+    1bb4: 28 0c 64 fd  			 setq #6
+    1bb8: 5f a1 07 fb  			 rdlong r0, #351	
+    1bbc: 2e 00 64 fd  			 reta	
+
+00001bc0 <malloc>:
+    1bc0: 28 02 64 fd  			 setq #1
+    1bc4: 61 a1 67 fc  			 wrlong r0, #353
+    1bc8: d0 a3 03 f6  			 mov r1, r0	
+    1bcc: 0f 00 00 ff  			 augs #15
+    1bd0: 58 a0 07 f6  			 mov r0, #88	
+    1bd4: 9c 1a c0 fd  			 calla #6812
+    1bd8: 28 02 64 fd  			 setq #1
+    1bdc: 5f a1 07 fb  			 rdlong r0, #351	
+    1be0: 2e 00 64 fd  			 reta	
+
+00001be4 <free>:
+    1be4: 28 14 64 fd  			 setq #10
+    1be8: 61 a1 67 fc  			 wrlong r0, #353
+    1bec: d0 a3 03 f6  			 mov r1, r0	
+    1bf0: d1 a7 03 f6  			 mov r3, r1	
+    1bf4: f8 a7 07 f1  			 add r3, #504	
+    1bf8: d3 a1 03 fb  			 rdlong r0, r3	
+    1bfc: 08 05 00 ff  			 augs #1288
+    1c00: 0c a5 07 f6  			 mov r2, #268	
+    1c04: d2 a1 5b f2  			 cmps r0, r2	wcz
+    1c08: 04 00 90 5d  		if_nz	 jmp #4
+    1c0c: 0c 00 90 fd  			 jmp #12
+    1c10: 28 14 64 fd  			 setq #10
+    1c14: 5f a1 07 fb  			 rdlong r0, #351	
+    1c18: 2e 00 64 fd  			 reta	
+    1c1c: d1 a5 03 f6  			 mov r2, r1	
+    1c20: 08 a4 87 f1  			 sub r2, #8	
+    1c24: d2 01 68 fc  			 wrlong #0, r2
+    1c28: 10 00 00 ff  			 augs #16
+    1c2c: fc a8 07 f6  			 mov r4, #252	
+    1c30: d4 a1 03 fb  			 rdlong r0, r4	
+    1c34: 4c 19 c0 fd  			 calla #6476
+    1c38: 0f 00 00 ff  			 augs #15
+    1c3c: 58 ac 07 f6  			 mov r6, #88	
+    1c40: d6 ab 03 f6  			 mov r5, r6	
+    1c44: 04 aa 07 f1  			 add r5, #4	
+    1c48: d5 a1 03 fb  			 rdlong r0, r5	
+    1c4c: 00 a0 5f f2  			 cmps r0, #0	wcz
+    1c50: 80 00 90 ad  		if_z	 jmp #128
+    1c54: fc a3 07 f1  			 add r1, #508	
+    1c58: 00 ac 07 f6  			 mov r6, #0	
+    1c5c: d0 af 03 f6  			 mov r7, r0	
+    1c60: 04 ae 07 f1  			 add r7, #4	
+    1c64: d7 b1 03 fb  			 rdlong r8, r7	
+    1c68: d8 b3 03 f6  			 mov r9, r8	
+    1c6c: 03 b2 67 f0  			 shl r9, #3	
+    1c70: d0 b5 03 f6  			 mov r10, r0	
+    1c74: d9 b5 03 f1  			 add r10, r9	
+    1c78: d2 b5 5b f2  			 cmps r10, r2	wcz
+    1c7c: 04 00 90 5d  		if_nz	 jmp #4
+    1c80: 5c 00 90 fd  			 jmp #92
+    1c84: d1 af 03 fb  			 rdlong r7, r1	
+    1c88: d7 b3 03 f6  			 mov r9, r7	
+    1c8c: 03 b2 67 f0  			 shl r9, #3	
+    1c90: d2 b5 03 f6  			 mov r10, r2	
+    1c94: d9 b5 03 f1  			 add r10, r9	
+    1c98: d0 b5 5b f2  			 cmps r10, r0	wcz
+    1c9c: 04 00 90 5d  		if_nz	 jmp #4
+    1ca0: 88 00 90 fd  			 jmp #136
+    1ca4: d2 a1 1b f2  			 cmp r0, r2	wcz
+    1ca8: 14 00 90 1d  	if_nc_and_nz	 jmp #20
+    1cac: d0 ab 03 f6  			 mov r5, r0	
+    1cb0: d0 a1 03 fb  			 rdlong r0, r0	
+    1cb4: 00 a0 5f f2  			 cmps r0, #0	wcz
+    1cb8: a0 ff 9f 5d  		if_nz	 jmp #-96
+    1cbc: d6 a1 03 f6  			 mov r0, r6	
+    1cc0: d2 a1 63 fc  			 wrlong r0, r2
+    1cc4: d5 a5 63 fc  			 wrlong r2, r5
+    1cc8: d4 a1 03 fb  			 rdlong r0, r4	
+    1ccc: 64 19 c0 fd  			 calla #6500
+    1cd0: 3c ff 9f fd  			 jmp #-196
+    1cd4: 04 ac 07 f1  			 add r6, #4	
+    1cd8: d6 a5 63 fc  			 wrlong r2, r6
+    1cdc: 30 ff 9f fd  			 jmp #-208
+    1ce0: d1 a3 03 fb  			 rdlong r1, r1	
+    1ce4: d8 a3 03 f1  			 add r1, r8	
+    1ce8: d7 a3 63 fc  			 wrlong r1, r7
+    1cec: d1 a7 03 f6  			 mov r3, r1	
+    1cf0: 03 a6 67 f0  			 shl r3, #3	
+    1cf4: d0 a5 03 f6  			 mov r2, r0	
+    1cf8: d3 a5 03 f1  			 add r2, r3	
+    1cfc: d0 a7 03 fb  			 rdlong r3, r0	
+    1d00: d3 a5 5b f2  			 cmps r2, r3	wcz
+    1d04: 08 ff 9f 5d  		if_nz	 jmp #-248
+    1d08: d2 a7 03 f6  			 mov r3, r2	
+    1d0c: 04 a6 07 f1  			 add r3, #4	
+    1d10: d3 a7 03 fb  			 rdlong r3, r3	
+    1d14: d1 a7 03 f1  			 add r3, r1	
+    1d18: d7 a7 63 fc  			 wrlong r3, r7
+    1d1c: d2 a3 03 fb  			 rdlong r1, r2	
+    1d20: d0 a3 63 fc  			 wrlong r1, r0
+    1d24: d2 01 68 fc  			 wrlong #0, r2
+    1d28: e4 fe 9f fd  			 jmp #-284
+    1d2c: d5 a5 63 fc  			 wrlong r2, r5
+    1d30: d8 af 03 f1  			 add r7, r8	
+    1d34: d0 a1 03 fb  			 rdlong r0, r0	
+    1d38: d1 af 63 fc  			 wrlong r7, r1
+    1d3c: d3 a1 63 fc  			 wrlong r0, r3
+    1d40: cc fe 9f fd  			 jmp #-308
+
+00001d44 <sbrk>:
+    1d44: 28 04 64 fd  			 setq #2
+    1d48: 61 a3 67 fc  			 wrlong r1, #353
+    1d4c: 0f 00 00 ff  			 augs #15
+    1d50: 60 a2 07 f6  			 mov r1, #96	
+    1d54: d1 a5 03 fb  			 rdlong r2, r1	
+    1d58: d2 a7 03 f6  			 mov r3, r2	
+    1d5c: d0 a7 03 f1  			 add r3, r0	
+    1d60: d1 a7 63 fc  			 wrlong r3, r1
+    1d64: d2 df 03 f6  			 mov r31, r2	
+    1d68: 28 04 64 fd  			 setq #2
+    1d6c: 5f a3 07 fb  			 rdlong r1, #351	
+    1d70: 2e 00 64 fd  			 reta	

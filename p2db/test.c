@@ -4,20 +4,31 @@
 #include <sys/p2es_clock.h>
 #include <stdio.h>
 
-#define RX_PIN 63
-#define TX_PIN 62
+unsigned stack[32];
+
+void blink(void *p) {
+    brk(DEBUG_CODE_INIT);
+
+    dirh(60);
+
+    while(1) {
+        outnot(60);
+    }
+}
 
 int main() {
     _clkset(_SETFREQ, _CLOCKFREQ);
-    _uart_init(RX_PIN, TX_PIN, 3000000);
-
+    _uart_init(DBG_UART_RX_PIN, DBG_UART_TX_PIN, 3000000);
     brk(DEBUG_CODE_INIT);
 
-    volatile int p = 57;
-    dirh(p);
+    // hubset(DEBUG_INT_EN | DEBUG_COG0);
+
+    // cogstart(blink, NULL, (int*)stack, sizeof(stack));
+
+    dirh(61);
 
     while(1) {
-        outnot(p);
+        outnot(61);
     }
 
     return 0;

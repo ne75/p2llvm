@@ -3,6 +3,7 @@
  */
 
 #include "propeller2.h"
+#include "debug.h"
 
 typedef void (*func_ptr)(void);
 
@@ -32,7 +33,7 @@ __attribute__ ((cogmain, noreturn)) void __entry() {
     // this function might get overwritten later by hub params (clkfreq, clkmode, etc), so DO NOT try to restart the code with coginit #0, #0
 
     // before we start the routine, enable debugging for cog 0. any other cogs that want to be debugged should be enabled by the application
-    hubset(0x20000001);
+    hubset(DEBUG_INT_EN | DEBUG_COG0);
     asm("coginit #0, #0x100");
 }
 
@@ -52,6 +53,9 @@ void __start() {
 
     // initialize the stack
     PTRA = (unsigned int)&__stack;
+
+    // init the debug lock
+    _dbg_lock = _locknew();
 
     // setup c standard library
     _cstd_init();

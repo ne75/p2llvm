@@ -4,6 +4,9 @@
 #include "smartpins.h"
 #include "streamer.h"
 
+#define DBG_UART_RX_PIN 63
+#define DBG_UART_TX_PIN 62
+
 // assembly macros
 
 // High level and misc
@@ -62,6 +65,8 @@
 #define _uart_clock_per_bit (*((int*)0x30))
 #define _uart_tx_pin (*((int*)0x34))
 #define _uart_rx_pin (*((int*)0x38))
+
+#define _dbg_lock (*((int*)0x3c))
 
 register volatile int R0 asm ("r0");
 register volatile int R1 asm ("r1");

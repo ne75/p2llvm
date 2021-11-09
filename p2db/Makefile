@@ -8,7 +8,7 @@ LOAD = /opt/p2llvm/bin/loadp2
 
 OBJDIR = build
 
-CFLAGS = -Os -fdata-sections -fno-jump-tables --target=p2 #-mllvm -debug
+CFLAGS = -Os -fdata-sections -fno-jump-tables --target=p2 -Dprintf=__simple_printf #-mllvm -debug
 LFLAGS = --target=p2
 LOADFLAGS = -v -ZERO -b 3000000 -FIFO 1024 -t
 
