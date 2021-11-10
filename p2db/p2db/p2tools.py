@@ -82,7 +82,7 @@ def get_objdump_data(elf_file):
     {
         ".cog<__start>": {
             "section_addr": 0
-            "0": ["f6 03 a1 f8", "mov r0, ptra"]
+            0: ["f6 03 a1 f8", "mov r0, ptra"]
         }
     }
 
@@ -132,3 +132,28 @@ def get_objdump_data(elf_file):
             output_dict[current_section_key][int(inst_match.group(1), 16)] = [' '.join(inst_encoding), inst_match.group(4).strip()]
 
     return output_dict
+
+def get_inst(data, pc):
+    '''
+    get the instruction at the given pc in data
+
+    if no such instruction exists, return None
+    '''
+
+    for s in data:
+        for i in data[s]:
+            if isinstance(i, int) and i == pc:
+                return data[s][i]
+
+    return None
+
+def get_section(data, addr) -> str:
+    '''
+    get the section name for a given address
+    '''
+
+    for s in data:
+        if data[s]["section_addr"] == addr:
+            return s
+
+    return ""

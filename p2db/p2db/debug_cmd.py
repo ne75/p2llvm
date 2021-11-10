@@ -2,7 +2,7 @@ import cmd
 import p2info
 from colorama import Fore
 import io
-import time
+import p2tools
 
 class CogPacket():
 
@@ -68,8 +68,10 @@ class P2DBPrompt(cmd.Cmd):
     use_rawinput = False
     ruler = u'\x1b(0q\x1b(B'
 
-    def init(self, ser):
+    def init(self, ser, objdata):
         self.ser = ser
+        self.obj_data = objdata 
+
         self.ri = p2info.P2RegInfo()
         self.status = [None]*8
         self.active = [False]*8
@@ -238,6 +240,10 @@ class P2DBPrompt(cmd.Cmd):
             f.write("cmd: " + str(cmd) + "\n")
         self.ser.write(cmd) 
 
+    def step(self):
+        self.send_cmd(b'b', self.current_cog, 1)
+        self.update()
+
     def do_s(self, arg):
         '''
         Alias for step
@@ -254,9 +260,33 @@ class P2DBPrompt(cmd.Cmd):
             self.stdout.write(Fore.RED + "*** No connection to cog\n" + Fore.RESET)
             return
 
-        self.send_cmd(b'b', self.current_cog, 1)
-        self.update()
-    
+        i = p2tools.get_inst(self.obj_data, self.get_status().pc)
+        if 'call' in i[1]:
+            addr = self.status[self.current_cog].pc + 4 
+            self.do_break("{:x}".format(addr))
+        else:
+            self.step()
+
+    def do_i(self, arg):
+        '''
+        Alias for stepin
+        '''
+        self.do_stepin(arg)
+
+    def do_stepin(self, arg):
+        '''
+        step into a function call
+        '''
+        if not self.get_status():
+            self.stdout.write(Fore.RED + "*** No connection to cog\n" + Fore.RESET)
+
+        i = p2tools.get_inst(self.obj_data, self.get_status().pc)
+        if 'call' in i[1]:
+            self.step()
+        else:
+            self.stdout.write("Can't step in: not a call* instruction\n")
+
+
     def do_break(self, arg):
         '''
         break <addr>
@@ -270,25 +300,6 @@ class P2DBPrompt(cmd.Cmd):
         addr = int(arg, 16)
         self.send_cmd(b'b', self.current_cog, (addr << 12) + (1 << 10))
         self.update()
-
-    def do_o(self, arg):
-        '''
-        alias for stepover
-        '''
-        self.do_stepover(arg)
-
-    def do_stepover(self, arg):
-        '''
-        stepover
-        
-        step over the next instruction, useful for skipping calls
-        '''
-        if not self.get_status():
-            self.stdout.write(Fore.RED + "*** No connection to cog\n" + Fore.RESET)
-            return
-
-        addr = self.status[self.current_cog].pc + 4
-        self.do_break("{:x}".format(addr))
 
     def do_reset(self, arg):
         '''

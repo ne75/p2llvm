@@ -2,6 +2,8 @@ from codecs import decode
 from blessed import Terminal
 from io import StringIO 
 import readline
+import p2tools
+import re
 
 from debug_cmd import P2DBPrompt
 
@@ -270,14 +272,26 @@ class InstructionWindow(Window):
 
             with self.term.location(self.x+10, self.y+5):
                 for i in range(len(self.inst_to_render)): 
+                    # draw calls in green
+                    if 'call' in self.inst_to_render[i][2]:
+                        print(self.term.lightgreen, end='')
+
                     if self.pc == self.inst_to_render[i][0]:
                         print(self.term.bold_cyan, end='')
                         print(self.term.move_left(5), end='')
                         print("---> ", end='')
 
-                    print("{:x}: {}\t\t{}".format(self.inst_to_render[i][0], self.inst_to_render[i][1], self.inst_to_render[i][2]))  
+                    print("{:x}: {}\t\t{}".format(self.inst_to_render[i][0], self.inst_to_render[i][1], self.inst_to_render[i][2]), end='')  
+
+                    if 'calla' in self.inst_to_render[i][2]:    # only draw the address for calla since those correspond to an explicit function that has a section
+                        pat = r'^(.*?) #([0-9a-f]+)(.*?)$' # pattern to get the address of a call instruction
+                        call_addr = re.search(pat, self.inst_to_render[i][2]).group(2)
+
+                        call_dest_name = p2tools.get_section(self.obj_data, int(call_addr))
+                        print("\t" + call_dest_name)
+
                     print(self.term.normal, end='')
-                    print(self.term.move_x(self.x+10), end='')
+                    print(self.term.move_xy(self.x+10, self.y+5+i), end='')
 
         super().render()
 
@@ -295,6 +309,7 @@ class InstructionWindow(Window):
         for sec in self.obj_data:
             if pc in self.obj_data[sec]:
                 self.section_to_render = sec
+                
 
         sec = self.section_to_render
 
@@ -324,7 +339,7 @@ class Screen():
 
         self.strout = StringIO()
         self.cmd = P2DBPrompt(stdout=self.strout)
-        self.cmd.init(ser)
+        self.cmd.init(ser, obj_data)
 
         if (STAT_WINDOW_W < 1):
             STAT_WINDOW_W = int(STAT_WINDOW_W*self.term.width)
