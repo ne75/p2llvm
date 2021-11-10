@@ -72,6 +72,7 @@ class P2DBPrompt(cmd.Cmd):
         self.ser = ser
         self.ri = p2info.P2RegInfo()
         self.status = [None]*8
+        self.active = [False]*8
         self.dira = 0
         self.dirb = 0
         self.ina = 0
@@ -103,7 +104,7 @@ class P2DBPrompt(cmd.Cmd):
             while data_stream.tell() < l:
                 char = data_stream.read(1)
 
-                if char == b'~':
+                if char == b'\xdb':
                     header = data_stream.read(2)
                     packet_buffer += header
 
@@ -114,20 +115,24 @@ class P2DBPrompt(cmd.Cmd):
                     if (n != 0):
                         msg_data = data_stream.read(n)
 
-                        if len(msg_data) == n:
-                            packet_buffer += msg_data
-                            packets.append(CogPacket(packet_buffer))
-                            packet_buffer = b''
-                        else:
-                            packet_buffer = b''
-                            with open("log.txt", 'a') as f:
-                                if (data):
-                                    f.write("*** fragmented data in buffer\n")
+                        while len(msg_data) != n:
+                            in_waiting = self.ser.in_waiting
+                            data_stream.write(self.ser.read(in_waiting))
+                            data_stream.seek(-in_waiting, 2)
+
+                            msg_frag = data_stream.read(n-len(msg_data))
+                            msg_data += msg_frag
+
+                        packet_buffer += msg_data
+                        packets.append(CogPacket(packet_buffer))
+                        packet_buffer = b''
+
                     else:
                         with open("log.txt", 'a') as f:
-                            if (data):
-                                f.write("*** unknown response: {}".format(msg_id) + "\n")
+                            f.write("*** unknown response: {}".format(msg_id) + "\n")
                         packet_buffer = b''
+                else:
+                    self.stdout.write(Fore.LIGHTGREEN_EX + char.decode('ascii') + Fore.RESET)
 
         return packets
 
@@ -148,6 +153,7 @@ class P2DBPrompt(cmd.Cmd):
             for p in packets:
                 if (p.type == CogPacket.STATUS):
                     self.status[p.cog] = p.get_value()
+                    self.active[p.cog] = True
                 elif (p.type != CogPacket.UNKNOWN):
                     r_packet = p
 
@@ -169,6 +175,7 @@ class P2DBPrompt(cmd.Cmd):
             for p in packets:
                 if (p.type == CogPacket.STATUS):
                     self.status[p.cog] = p.get_value()
+                    self.active[p.cog] = True
                     done = True
 
 
@@ -209,12 +216,12 @@ class P2DBPrompt(cmd.Cmd):
         '''
         get the status of the pin registers for the current cog 
         '''
-        # self.dira = self.getreg(self.ri.getRegAddr("dira"))
-        # self.dirb = self.getreg(self.ri.getRegAddr("dirb"))
-        # self.outa = self.getreg(self.ri.getRegAddr("outa"))
-        # self.outb = self.getreg(self.ri.getRegAddr("outb"))
-        # self.ina = self.getreg(self.ri.getRegAddr("ina"))
-        # self.inb = self.getreg(self.ri.getRegAddr("inb"))
+        self.dira = self.getreg(self.ri.getRegAddr("dira"))
+        self.dirb = self.getreg(self.ri.getRegAddr("dirb"))
+        self.outa = self.getreg(self.ri.getRegAddr("outa"))
+        self.outb = self.getreg(self.ri.getRegAddr("outb"))
+        self.ina = self.getreg(self.ri.getRegAddr("ina"))
+        self.inb = self.getreg(self.ri.getRegAddr("inb"))
 
     def update(self):
         self.process_status()
@@ -226,7 +233,7 @@ class P2DBPrompt(cmd.Cmd):
         cog: int with cog number to send to
         val: int with value to send
         '''
-        cmd = b'$' + command + cog.to_bytes(1, 'little') + val.to_bytes(4, 'little')
+        cmd = b'\xdb' + command + cog.to_bytes(1, 'little') + val.to_bytes(4, 'little')
         with open("log.txt", 'a') as f:
             f.write("cmd: " + str(cmd) + "\n")
         self.ser.write(cmd) 

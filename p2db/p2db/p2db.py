@@ -6,7 +6,6 @@ import p2tools
 
 verbose = False
 
-    
 def main():
     parser = argparse.ArgumentParser(description='P2DB Debugger')
     parser.add_argument('port', type=str)
@@ -19,7 +18,7 @@ def main():
 
     ser = serial.Serial()
     ser.baudrate = 3000000
-    ser.timeout = 0.1
+    ser.timeout = 0.05
     ser.port = args.port
     ser.open()
 

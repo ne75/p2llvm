@@ -11,7 +11,7 @@
  * hub address 0xfe420..0xfe418 will be used for the 6 byte rx array
  * 
  */
-__attribute__ ((cogmain, noreturn)) void __dbg_run() {
+__attribute__ ((section (".debug"), cogmain, noreturn)) void __dbg_run() {
     asm(    
             // r0 will hold the address of stat.
             "augs #0x7f2\n"      
@@ -37,9 +37,9 @@ __attribute__ ((cogmain, noreturn)) void __dbg_run() {
             "locktry %4 wc\n"
     "if_nc   jmp #.Llock\n"
 
-            // set up by writing '~' and 'g' to our stat array
+            // set up by writing '0xdb' and 'g' to our stat array
             "mov $r2, $r0\n"
-            "wrbyte #0x7e, $r2\n"   
+            "wrbyte #0xdb, $r2\n"   
             "add $r2, #1\n"
             "wrbyte #0x67, $r2\n"
 
@@ -80,18 +80,18 @@ __attribute__ ((cogmain, noreturn)) void __dbg_run() {
 
             // check if there's already data waiting. if there is, jump to process it
             "rdbyte $r2, $r1\n"
-            "cmp $r2, #0x24 wz\n"
+            "cmp $r2, #0xdb wz\n"
     "if_z   jmp #.Lprocess_cmd\n"
 
     ".Lrx_begin:"
             // get a byte, if we didn't get a '$', jump back to the start of the routine
             "call #.Lser_rx\n"
-            "cmp $r31, #0x24 wz\n"      
+            "cmp $r31, #0xdb wz\n"      
     "if_nz  jmp #.Lrx_begin\n"        
             
             // read in 6 bytes
             "mov $r2, $r1\n"    
-            "wrbyte #0x24, $r2\n" // write the $ first to mark that we have a command
+            "wrbyte #0xdb, $r2\n" // write the start character first to mark that we have a command
             "add $r2, #1\n"
 
             "mov $r3, #6\n"

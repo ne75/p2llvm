@@ -6,7 +6,7 @@ ENTRY(__entry)
 }*/
 
 STACK_SIZE = 0xc000;
-HEAP_SIZE = 0xBFFC;
+HEAP_SIZE = 0xc000;
 
 SECTIONS {
     . = 0x00000;
@@ -62,6 +62,13 @@ SECTIONS {
     .stack (NOLOAD) : {
         . = ALIGN(4);
         . = . + STACK_SIZE - 4;
+    }
+    
+    .debug : {
+        . = 0x7c800;
+        KEEP(*(.debug));
+        . = 0x7fc00;
+        KEEP(*(.debug_isr));
     }
 
     _end = . ;

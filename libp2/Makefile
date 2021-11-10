@@ -5,7 +5,7 @@ AR = $(LLVM)/bin/llvm-ar
 
 OBJDIR = build
 
-CFLAGS = -Os -ffunction-sections -fdata-sections -fno-jump-tables --target=p2 -I./include/ #-mllvm -debug-only=p2-asm-backend,p2-asm-printer
+CFLAGS = -Os -ffunction-sections -fdata-sections -fno-jump-tables --target=p2 -I./include/
 
 LIBTARGET = libp2
 LIBNAME = p2
@@ -17,10 +17,13 @@ all: setup $(OBJDIR)/$(LIBTARGET).a
 setup:
 	mkdir -p $(OBJDIR)
 
-OBJS = crt0.o propeller2.o
+OBJS = crt0.o propeller2.o p2db.o p2db_isr.o
 
 $(OBJDIR)/$(LIBTARGET).a: $(addprefix $(OBJDIR)/, $(OBJS))
-		$(AR) rcs $@ $^
+		$(AR) rc $@ $^
+
+$(OBJDIR)/p2db_isr.o: lib/p2db_isr.c
+		$(CC) $(CFLAGS) -falign-functions=128 -o $@ -c $<
 
 $(OBJDIR)/%.o: lib/%.c
 		$(CC) $(CFLAGS) -o $@ -c $<

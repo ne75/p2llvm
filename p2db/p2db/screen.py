@@ -1,7 +1,7 @@
 from codecs import decode
 from blessed import Terminal
 from io import StringIO 
-import time
+import readline
 
 from debug_cmd import P2DBPrompt
 
@@ -96,7 +96,9 @@ class CommandWindow(Window):
         self.render()
 
         with self.term.location(self.x+1, self.y+1):
+            print(self.term.normal_cursor, end='');
             cmd = input("(p2db) ")
+            print(self.term.hide_cursor, end='');
 
         with self.term.location(self.x+1, self.y+1):
             print(' '*(self.w - 2))
@@ -134,7 +136,8 @@ class StatusWindow(Window):
     def __init__(self, term, x, y, w, h) -> None:
         super().__init__(term, x, y, w, h, "Status")
 
-        self.lines = []
+        self.stat_lines = []
+        self.conn_lines = []
         self.porta_str = 0
         self.portb_str = 0
 
@@ -145,13 +148,15 @@ class StatusWindow(Window):
 
         if self.render_empty:
             with self.term.location(self.x+5, self.y+2):
-                print(self.term.magenta + "No connection to cog" + self.term.normal)
+                print(self.term.orange + self.term.bold + "No connection to cog" + self.term.normal)
         else:
+            # draw status lines
             with self.term.location(self.x+2, self.y+2):
-                for i in range(len(self.lines)):
-                    print(self.lines[i])
+                for i in range(len(self.stat_lines)):
+                    print(self.stat_lines[i])
                     print(self.term.move_x(self.x+2), end='')
-
+            
+            # draw pin status
             with self.term.location(self.x+3, self.y + self.h - 6):
                 for i in range(32):
                     print("{0: <3}".format(i), end="")
@@ -165,9 +170,16 @@ class StatusWindow(Window):
                 for i in range(32):
                     print("{0: <3}".format(i+32), end="")
 
+            # draw cog status
+            with self.term.location(self.x+self.w-13, self.y+2):
+                for i in range(len(self.conn_lines)):
+                    print(self.conn_lines[i])
+                    print(self.term.move_x(self.x+self.w-13), end='')
+
         super().render()
 
-    def update(self, status, dira, dirb, ina, inb) -> None:
+    def update(self, status, conn, current_cog, dira, dirb, ina, inb) -> None:
+        # create status table
         if status == None:
             self.render_empty = True
             self.render()
@@ -175,27 +187,18 @@ class StatusWindow(Window):
 
         self.render_empty = False
 
-        self.lines = []
+        self.stat_lines = []
         stat_dict = vars(status)
 
         for k in stat_dict:
-            if k == 'pc':
-                self.lines.append("{}: {:#02x}".format(k, stat_dict[k]))
-            elif k.startswith('_'):
+            if k.startswith('_'):
                 pass
+            elif k == 'pc':
+                self.stat_lines.append("{: <22}{: >#8x}".format(k, stat_dict[k]))
             else:
-                self.lines.append("{}: {}".format(k, stat_dict[k]))
+                self.stat_lines.append("{: <22}{!s: >8}".format(k, stat_dict[k]))
 
-        if len(self.lines) > self.h-2:
-            self.lines = self.lines[-(self.h-2):]
-
-        # the pin status  should be drawn as: 
-        #     0   1   2   3 ... 31  32
-        #     X   L   H ...
-        # x is not defined (for whatever reason)
-        # L/H for low high state, red if output, blue if input
-        # 
-
+        # create pin table
         self.porta_str = ''
         self.portb_str = ''
         for i in range(32):
@@ -224,6 +227,24 @@ class StatusWindow(Window):
             
             self.portb_str += color + "{0: <3}".format(bit) + self.term.normal
 
+        # create connection table
+        self.conn_lines = []
+
+        for i in range(8):
+            fmt = ''
+            marker = ''
+            if conn[i]:
+                fmt = self.term.green
+            else:
+                fmt = self.term.red
+
+            if i == current_cog:
+                fmt += self.term.bold
+                marker = '*'
+
+            self.conn_lines.append(fmt + '{: >10}'.format('{} Cog {}'.format(marker, i)) + self.term.normal)
+
+
         self.render()
 
 class InstructionWindow(Window):
@@ -242,7 +263,7 @@ class InstructionWindow(Window):
 
         if self.render_empty:
             with self.term.location(self.x+5, self.y+2):
-                print(self.term.magenta + "---" + self.term.normal)
+                print(self.term.orange + self.term.bold + "---" + self.term.normal)
         else:
             with self.term.location(self.x+5, self.y+2):
                 print(self.section_to_render)
@@ -251,6 +272,8 @@ class InstructionWindow(Window):
                 for i in range(len(self.inst_to_render)): 
                     if self.pc == self.inst_to_render[i][0]:
                         print(self.term.bold_cyan, end='')
+                        print(self.term.move_left(5), end='')
+                        print("---> ", end='')
 
                     print("{:x}: {}\t\t{}".format(self.inst_to_render[i][0], self.inst_to_render[i][1], self.inst_to_render[i][2]))  
                     print(self.term.normal, end='')
@@ -316,10 +339,10 @@ class Screen():
         
         self.cmd.preloop()
 
-        with self.term.fullscreen():
+        with self.term.fullscreen(), self.term.hidden_cursor():
             while not self.done:
                 stat = self.cmd.get_status()
-                self.stat_window.update(stat, self.cmd.dira, self.cmd.dirb, self.cmd.ina, self.cmd.inb)
+                self.stat_window.update(stat, self.cmd.active, self.cmd.current_cog, self.cmd.dira, self.cmd.dirb, self.cmd.ina, self.cmd.inb)
                 self.log_window.update()
 
                 if stat == None:

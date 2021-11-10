@@ -26,13 +26,14 @@ int main() {
 
     hubset(DEBUG_INT_EN | DEBUG_COG0 | DEBUG_COG1 | DEBUG_COG2 | DEBUG_COG3);
 
-    cogstart(blink, 58, (int*)stack1, sizeof(stack1));
-    cogstart(blink, 59, (int*)stack2, sizeof(stack2));
-    cogstart(blink, 60, (int*)stack3, sizeof(stack3));
+    // cogstart(blink, 58, (int*)stack1, sizeof(stack1));
+    // cogstart(blink, 59, (int*)stack2, sizeof(stack2));
+    // cogstart(blink, 60, (int*)stack3, sizeof(stack3));
 
     dirh(61);
 
     while(1) {
+        printf("hello world!\n");
         outnot(61);
     }
 

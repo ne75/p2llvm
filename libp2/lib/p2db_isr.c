@@ -10,7 +10,7 @@
 
 #define STR(s) #s
 
-#define BASE_ISR(cog, save_addr) __attribute__ ((noreturn, cogtext)) void __dbg_isr##cog() {  \
+#define BASE_ISR(cog, save_addr) __attribute__ ((section (".debug_isr"), noreturn, cogtext)) void __dbg_isr##cog() {  \
     asm(        \
         "nop\n" \
         "nop\n" \
@@ -41,11 +41,6 @@
         "augs    #" STR(save_addr) "\n"                                             \
         "rdlong  $0xf0, #0\n"                                                       \
         "jmp     /#0x1fd\n"                                                         \
-        "nop\n"                                                                     \
-        "nop\n"                                                                     \
-        "nop\n"                                                                     \
-        "nop\n"                                                                     \
-        "nop\n"                                                                     \
     );                                                                              \
 }
 

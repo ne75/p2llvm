@@ -19,7 +19,7 @@ def load(port, app, baud, verbose=False, retries=3):
         args.append(port)
         args[2] = str(baud)
 
-        args.append('@0={},@fc800=../build/p2db.bin,@ffc00=../build/p2db_isr.bin'.format(app))
+        args.append('{}'.format(app))
 
         p = subprocess.Popen([load_cmd] + args, stdout=subprocess.PIPE)
 

@@ -32,17 +32,19 @@ These are notes on what I will implement, formal docs to come
 
 ## Protocol 
 
-Each command has the following format: `$<command><value>` in binary format. Value is always 4 bytes long, so each command string is 6 bytes long
+Each command has the following format: `\xdb<command><value>` in binary format. Value is always 4 bytes long, so each command string is 6 bytes long
 - `command` is a single byte for what the code should do
     - `b`: execute `brk <value>` 
     - `r`: get value at ram address <value>
     - `h`: get value at hub address <value>
 
-Each response has the following format: `~<code><values>`
+Each response has the following format: `\xdb<code><values>`
 - `code` is what values contains
     - `g`: 3 longs with the values from getbrk
     - `r`: 1 long from cog or lut ram
     - `h`: 1 byte from hub ram
+
+A non-ascii start character is used so that printf statements that might be using the same serial pipe are not confused for debug messages
 
 ## The main debug image
 

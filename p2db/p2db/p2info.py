@@ -14,7 +14,7 @@ class Status:
         self.cog = cog
         self.brk_code = (stat1 >> 24) & 0xff
         self.coginit = ((stat1 >> 23) & 1) == 1
-        self.colorspace_converter_active = ((stat1 >> 22) & 1) == 1
+        self.colorspace_conv_active = ((stat1 >> 22) & 1) == 1
         self.streamer_active = ((stat1 >> 21) & 1) == 1
 
         self.int3_event = (stat1 >> 16) & 0xf
