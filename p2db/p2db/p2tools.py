@@ -7,7 +7,7 @@ import re
 from pprint import pprint
 
 load_cmd = '/opt/p2llvm/bin/loadp2'
-load_args = ['-ZERO', '-l', '0', '-v', '-FIFO', '2048']
+load_args = ['-ZERO', '-l', '0', '-v', '-FIFO', '4096']
 
 def load(port, app, baud, verbose=False, retries=3):
         

@@ -38,11 +38,12 @@ __attribute__ ((cogmain, noreturn)) void __dbg_run() {
     "if_nc   jmp #.Llock\n"
 
             // set up by writing '~' and 'g' to our stat array
-            "wrbyte #0x7e, $r0\n"   
             "mov $r2, $r0\n"
+            "wrbyte #0x7e, $r2\n"   
             "add $r2, #1\n"
             "wrbyte #0x67, $r2\n"
 
+            // get our cogid
             "cogid $r6\n"
             "add $r2, #1\n"
             "wrbyte $r6, $r2\n"
@@ -77,20 +78,23 @@ __attribute__ ((cogmain, noreturn)) void __dbg_run() {
             // main loop. we stay here forever or return from the interrupt
     ".Lmain_loop:\n"
 
-            // check if there's already data waiting. if there is, jump to it
+            // check if there's already data waiting. if there is, jump to process it
             "rdbyte $r2, $r1\n"
             "cmp $r2, #0x24 wz\n"
     "if_z   jmp #.Lprocess_cmd\n"
 
+    ".Lrx_begin:"
             // get a byte, if we didn't get a '$', jump back to the start of the routine
             "call #.Lser_rx\n"
             "cmp $r31, #0x24 wz\n"      
-    "if_nz  jmp #.Lmain_loop\n"        
+    "if_nz  jmp #.Lrx_begin\n"        
             
             // read in 6 bytes
-            "mov $r2, $r1\n"
-            "mov $r3, #6\n"
+            "mov $r2, $r1\n"    
+            "wrbyte #0x24, $r2\n" // write the $ first to mark that we have a command
+            "add $r2, #1\n"
 
+            "mov $r3, #6\n"
     ".Lrx_cmd:"
             "call #.Lser_rx\n"
             "wrbyte $r31, $r2\n"
@@ -100,12 +104,23 @@ __attribute__ ((cogmain, noreturn)) void __dbg_run() {
     ".Lprocess_cmd:"
             // get the command byte
             "mov $r2, $r1\n"
+            "add $r2, #1\n"
             "rdbyte $r3, $r2\n"
             "add $r2, #1\n"
 
-            // skip the cogid byte
+            // get the cogid byte and check if the command is for us
+            "rdbyte $r4, $r2\n"
             "add $r2, #1\n"
+            "cmp $r4, $r6 wz\n"
+    "if_z   jmp #.Lcmd_switch\n"
+            // command is not for us, release the lock so another cog can begin processing,
+            // then, go back to try to re-acquire the lock, but we need to skip sending the status, 
+            // since that should only be sent on isr entry
+            "brk #0\n"
+            "lockrel %4\n"
+            "jmp #.Llock\n"
 
+    ".Lcmd_switch:"
             // switch statement
             "cmp $r3, #0x68 wz\n"   // h
     "if_z   jmp #.Lcase_h\n"
@@ -113,6 +128,9 @@ __attribute__ ((cogmain, noreturn)) void __dbg_run() {
     "if_z   jmp #.Lcase_r\n"
             "cmp $r3, #0x62 wz\n"   // b
     "if_z   jmp #.Lcase_b\n"
+
+            "brk #0\n"          // default
+            "jmp #.Lret\n"
 
     // h command case
     ".Lcase_h:"
@@ -204,6 +222,6 @@ __attribute__ ((cogmain, noreturn)) void __dbg_run() {
 
         : // outputs
         : "i"(DEBUG_BRK), "r"(_uart_tx_pin), "r"(_uart_rx_pin), "r"(DEBUG_MAP_INx), "r"(_dbg_lock) // inputs
-        : "r0", "r1", "r2", "r3", "r4", "r5", "r6", "r30", "r31" // clobber
+        : "r0", "r1", "r2", "r3", "r4", "r5", "r6", "r7", "r30", "r31" // clobber
     );
 }

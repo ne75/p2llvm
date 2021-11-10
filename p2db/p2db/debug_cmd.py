@@ -1,6 +1,66 @@
 import cmd
 import p2info
 from colorama import Fore
+import io
+import time
+
+class CogPacket():
+
+    UNKNOWN = 0
+    STATUS = 1
+    HUBBYTE = 2
+    REG = 3
+
+    type_dict = {
+        UNKNOWN: "unknown",
+        STATUS: "status",
+        HUBBYTE: "hub byte",
+        REG: "register"
+    }
+
+    def get_response_size(c):
+        if (c == b'g'):
+            return 16
+        
+        if (c == b'r'):
+            return 4
+
+        if (c == b'h'):
+            return 1
+
+        return 0
+
+    def __init__(self, dat) -> None:
+        self.bytes = dat 
+        self.cog = int.from_bytes(dat[1:2], 'little')
+
+        self.msgid = dat[0:1]
+        self.raw = dat[2:]
+
+        if self.msgid == b'h':
+            self.value = int.from_bytes(self.raw, 'little')
+            self.type = CogPacket.HUBBYTE
+        elif self.msgid == b'r':
+            self.value = int.from_bytes(self.raw, 'little')
+            self.type = CogPacket.REG
+        elif self.msgid == b'g':
+            self.value = p2info.Status(self.raw, self.cog)
+            self.type = CogPacket.STATUS
+        else:
+            self.type = CogPacket.UNKNOWN
+            self.value = None
+
+    def get_value(self):
+        return self.value
+
+    def get_raw(self):
+        return self.raw
+    
+    def get_bytes(self):
+        return self.bytes
+
+    def __str__(self) -> str:
+        return CogPacket.type_dict[self.type] + ": " + str(self.value) + ", " + str(self.bytes)
 
 class P2DBPrompt(cmd.Cmd):
 
@@ -24,57 +84,101 @@ class P2DBPrompt(cmd.Cmd):
     def get_status(self):
         return self.status[self.current_cog]
 
-    def get_response_size(c):
-        if (c == b'g'):
-            return 16
-        
-        if (c == b'r'):
-            return 4
+    def process_ser_data(self):
+        '''
+        process all current serial data into packets
+        '''
+        data = self.ser.read(self.ser.in_waiting)
 
-        if (c == b'h'):
-            return 1
+        packet_buffer = b''
+        packets = []
 
-        return 0
+        with open("log.txt", 'a') as f:
+            if (data):
+                f.write("buffer: " + str(data) + "\n")
 
-    def get_response(self, raw=False):
-        char = self.ser.read(1)
-        if char == b'~':
-            header = self.ser.read(2)
-            msg_id = header[0:1]
-            cog = int.from_bytes(header[1:2], 'little')
+        l = len(data)
 
-            # print(msg_id, cog)
+        with io.BytesIO(data) as data_stream:
+            while data_stream.tell() < l:
+                char = data_stream.read(1)
 
-            n = P2DBPrompt.get_response_size(msg_id)
+                if char == b'~':
+                    header = data_stream.read(2)
+                    packet_buffer += header
 
-            if n == 0:
-                self.stdout.write("unknown response: {}".format(msg_id) + "\n");
-                return None
-            else:
-                data = self.ser.read(n)
+                    msg_id = header[0:1]
 
-            if msg_id == b'g':
-                if raw:
-                    return data
+                    n = CogPacket.get_response_size(msg_id)
 
-                self.status[cog] = p2info.Status(data, cog)
-                return self.status[cog]
+                    if (n != 0):
+                        msg_data = data_stream.read(n)
 
-            if msg_id == b'h':
-                if raw:
-                    return data
+                        if len(msg_data) == n:
+                            packet_buffer += msg_data
+                            packets.append(CogPacket(packet_buffer))
+                            packet_buffer = b''
+                        else:
+                            packet_buffer = b''
+                            with open("log.txt", 'a') as f:
+                                if (data):
+                                    f.write("*** fragmented data in buffer\n")
+                    else:
+                        with open("log.txt", 'a') as f:
+                            if (data):
+                                f.write("*** unknown response: {}".format(msg_id) + "\n")
+                        packet_buffer = b''
 
-                return int.from_bytes(data, 'little')
+        return packets
 
-            if msg_id == b'r':
-                if raw:
-                    return data
+    def process_response(self):
+        '''
+        get and process serial data, blocking until a response packet is found
+        '''
 
-                return int.from_bytes(data, 'little')
+        r_packet = None
+
+        while r_packet == None:
+            packets = self.process_ser_data()
+
+            if packets:
+                with open("log.txt", 'a') as f:
+                    f.write(str(packets) + "\n")
+
+            for p in packets:
+                if (p.type == CogPacket.STATUS):
+                    self.status[p.cog] = p.get_value()
+                elif (p.type != CogPacket.UNKNOWN):
+                    r_packet = p
+
+        return r_packet
+
+    def process_status(self):
+        '''
+        get and process serial data, blocking until we've received a status packet, which means there's a cog that's ready to accept commands
+        '''
+        done = False
+
+        while not done:
+            packets = self.process_ser_data()
+
+            if packets:
+                with open("log.txt", 'a') as f:
+                    f.write(str(packets) + "\n")
+
+            for p in packets:
+                if (p.type == CogPacket.STATUS):
+                    self.status[p.cog] = p.get_value()
+                    done = True
+
 
     def getbyte(self, addr, raw=False):
         self.send_cmd(b'h', self.current_cog, addr)
-        return self.get_response(raw)
+
+        if raw:
+            return self.process_response().get_raw()
+        else:
+            return self.process_response().get_value()
 
     def getlong(self, addr, raw=False):
         dat = b''
@@ -89,32 +193,31 @@ class P2DBPrompt(cmd.Cmd):
     def getreg(self, addr):
         if (addr <= 0xf):
             # this range was spilled, read it from teh hub instead
-            return self.getlong(0xfff80 + 4*addr)
+            return self.getlong(0xfff80 - 0x80*self.current_cog + 4*addr)
         elif (addr >= 0xf0 and addr <= 0x1f0):
             # this range was spilled, read it from the hub instead
-            return self.getlong(0xfdc00 + 4*(addr - 0xf0))
+            return self.getlong(0xfdc00 - 0x400*self.current_cog + 4*(addr - 0xf0))
         elif (addr > 0x1ff):
             # not a valid register address
             self.stdout.write(Fore.RED + "Invalid register address: " + str(addr) + "\n")
             self.stdout.write("Cog RAM registers address must be less than 0x200" + Fore.RESET + "\n")
         else:
             self.send_cmd(b'r', self.current_cog, addr)
-
-            return self.get_response()
+            return self.process_response().get_value()
 
     def getpins(self):
-        self.dira = self.getreg(self.ri.getRegAddr("dira"))
-        self.dirb = self.getreg(self.ri.getRegAddr("dirb"))
-        self.outa = self.getreg(self.ri.getRegAddr("outa"))
-        self.outb = self.getreg(self.ri.getRegAddr("outb"))
-        self.ina = self.getreg(self.ri.getRegAddr("ina"))
-        self.inb = self.getreg(self.ri.getRegAddr("inb"))
+        '''
+        get the status of the pin registers for the current cog 
+        '''
+        # self.dira = self.getreg(self.ri.getRegAddr("dira"))
+        # self.dirb = self.getreg(self.ri.getRegAddr("dirb"))
+        # self.outa = self.getreg(self.ri.getRegAddr("outa"))
+        # self.outb = self.getreg(self.ri.getRegAddr("outb"))
+        # self.ina = self.getreg(self.ri.getRegAddr("ina"))
+        # self.inb = self.getreg(self.ri.getRegAddr("inb"))
 
     def update(self):
-        # because a step could start a new cog, we want to read out all responses to see connections to any cogs that start up
-        while self.get_response() is not None:
-            pass
-
+        self.process_status()
         self.getpins()
 
     def send_cmd(self, command, cog, val):
@@ -124,6 +227,8 @@ class P2DBPrompt(cmd.Cmd):
         val: int with value to send
         '''
         cmd = b'$' + command + cog.to_bytes(1, 'little') + val.to_bytes(4, 'little')
+        with open("log.txt", 'a') as f:
+            f.write("cmd: " + str(cmd) + "\n")
         self.ser.write(cmd) 
 
     def do_s(self, arg):
@@ -143,7 +248,6 @@ class P2DBPrompt(cmd.Cmd):
             return
 
         self.send_cmd(b'b', self.current_cog, 1)
-
         self.update()
     
     def do_break(self, arg):
@@ -158,7 +262,6 @@ class P2DBPrompt(cmd.Cmd):
 
         addr = int(arg, 16)
         self.send_cmd(b'b', self.current_cog, (addr << 12) + (1 << 10))
-
         self.update()
 
     def do_o(self, arg):
@@ -180,7 +283,6 @@ class P2DBPrompt(cmd.Cmd):
         addr = self.status[self.current_cog].pc + 4
         self.do_break("{:x}".format(addr))
 
-
     def do_reset(self, arg):
         '''
         TODO 
@@ -195,7 +297,7 @@ class P2DBPrompt(cmd.Cmd):
         Get a byte from hub RAM address <addr>. Must be given in hex format
         '''
         if not arg:
-            print("Address argument required")
+            self.stdout.write("Address argument required\n")
             return
 
         if not self.get_status():
@@ -203,7 +305,9 @@ class P2DBPrompt(cmd.Cmd):
             return
 
         addr = int(arg, 16)
-        self.stdout.write("byte @ {:#02x} -> {:#02x}".format(addr, self.getbyte(addr)) + "\n")
+        b = self.getbyte(addr)
+
+        self.stdout.write("byte @ {:#02x} -> {:#02x}".format(addr, b) + "\n")
 
     def do_getlong(self, arg):
         '''
@@ -213,7 +317,7 @@ class P2DBPrompt(cmd.Cmd):
         '''
 
         if not arg:
-            print("Address argument required")
+            self.stdout.write("Address argument required\n")
             return
 
         if not self.get_status():
@@ -236,7 +340,7 @@ class P2DBPrompt(cmd.Cmd):
             return
 
         if not arg:
-            print("Address or name argument required")
+            self.stdout.write("Address or name argument required\n")
             return
 
         named = False
@@ -254,7 +358,7 @@ class P2DBPrompt(cmd.Cmd):
         if named:
             self.stdout.write("{} -> {:#02x}".format(arg, self.getreg(addr)) + "\n")
         else:
-            self.stdout.write("reg @ {:#02x} -> {:#02x}".format(addr, self.getreg(addr)) + "\n")
+            self.stdout.write("reg {:#02x} -> {:#02x}".format(addr, self.getreg(addr)) + "\n")
 
     def do_cog(self, arg):
         '''
@@ -269,7 +373,8 @@ class P2DBPrompt(cmd.Cmd):
         return True
 
     def preloop(self):
-        while (self.status[0] == None):
-            self.get_response()
+        # wait for cog 0 to send a status message and is connected
+        while not self.get_status():
+            self.process_status()
 
         self.getpins()

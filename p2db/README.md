@@ -63,10 +63,10 @@ To make this work with multiple cogs, I think I'll do the following:
 1. ~~change all responses to include which cog is responding, after the response code.~~
 1. ~~in the __entry() routine of crt0, create a debug lock.~~ 
 1. ~~on entry to the debug ISR, lock the debug lock. this prevents any other cog from using debug space. ~~
-1. check for new data
+1. ~~check for new data~~
     - check if there's anything in the rx buffer (by checking the first byte being $). If there is, process that command.
     - if empty, try reading in a command
-1. when a cog processes a command, then check which cog the command was for. 
+1. when a cog processes a command, check which cog the command was for. 
     - If it was for this cog, process it and respond
     - If it was for a different cog, continue
 1. on exit when a command is succesfully processed, clear the first byte of the rx buffer to indicate there is nothing for other cogs to do.
