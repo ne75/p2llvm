@@ -16,12 +16,12 @@ void hub_cog(void *p) {
     printf("cog 1 has the lock\n");
     waitx(CLKFREQ/10);
     _unlock(lock);
-    while(1);
+    busywait();
 }
 
 int main() {
     _clkset(_SETFREQ, _CLOCKFREQ);
-    _uart_init(RX_PIN, TX_PIN, 230400);
+    _uart_init(RX_PIN, TX_PIN, 3000000);
     waitx(CLKFREQ/5);
     printf("$\n"); // start of test character
     waitx(CLKFREQ/10);
@@ -39,6 +39,5 @@ int main() {
     printf("cog 0 has the lock\n");
     printf("~\n"); // end of test character
 
-    while(1);
-    return 0;
+    busywait();
 }

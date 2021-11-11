@@ -10,7 +10,9 @@ class Status:
         stat2 = int.from_bytes(status_bytes[4:8], 'little')
         stat3 = int.from_bytes(status_bytes[8:12], 'little')
         self.pc = int.from_bytes(status_bytes[12:16], 'little') & 0xfffff # the next instruction that will execute
-
+        
+        self._cog_exec_base_addr = -1 # if we are in cogex, this is the base address that was loaded into the cog
+        self.exec_mode = "cogex" if self.pc < 0x400 else "hubex"
         self.cog = cog
         self.brk_code = (stat1 >> 24) & 0xff
         self.coginit = ((stat1 >> 23) & 1) == 1
@@ -69,6 +71,15 @@ class Status:
         self.ct_passed_ct3 = ((stat2 >> 1) & 1) == 1
 
         self.int_occured = (stat2 & 1) == 1
+    
+    def set_cog_addr(self, addr):
+        self._cog_exec_base_addr = addr
+
+    def get_mem_pc(self):
+        if self.exec_mode == "cogex" and self._cog_exec_base_addr != -1:
+            return self.pc*4 + self._cog_exec_base_addr
+        else:
+            return self.pc
 
 class P2RegInfo:
     def __init__(self) -> None:

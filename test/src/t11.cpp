@@ -28,7 +28,7 @@ A s(1, 2, 4);
 
 int main() {
     _clkset(_SETFREQ, _CLOCKFREQ);
-    _uart_init(RX_PIN, TX_PIN, 230400);
+    _uart_init(RX_PIN, TX_PIN, 3000000);
     printf("$\n"); // start of test character
 
     printf("%d %d %d %d\n", s.a, s.b[0], s.b[1], s.c);

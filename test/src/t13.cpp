@@ -14,7 +14,7 @@ int a() {
 
 int main() {
     _clkset(_SETFREQ, _CLOCKFREQ);
-    _uart_init(RX_PIN, TX_PIN, 230400);
+    _uart_init(RX_PIN, TX_PIN, 3000000);
     printf("$\n"); // start of test character
 
     int b = a();

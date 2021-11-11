@@ -23,7 +23,7 @@ int sum(int n, ...) {
 
 int main() {
     _clkset(_SETFREQ, _CLOCKFREQ);
-    _uart_init(RX_PIN, TX_PIN, 230400);
+    _uart_init(RX_PIN, TX_PIN, 3000000);
     printf("$\n"); // start of test character
 
     int i = sum(8, 1, -2, 3, -4, 5, -6, 7, -8);

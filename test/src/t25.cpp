@@ -1,6 +1,7 @@
 #define P2_TARGET_MHZ   300
 #include "propeller.h"
 #include "sys/p2es_clock.h"
+#include <debug.h>
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -12,12 +13,12 @@ unsigned stack[128];
 
 void hub_cog(void *p) {
     printf("%d\n", (int)p);
-    while(1);
+    busywait();
 }
 
 int main() {
     _clkset(_SETFREQ, _CLOCKFREQ);
-    _uart_init(RX_PIN, TX_PIN, 230400);
+    _uart_init(RX_PIN, TX_PIN, 3000000);
     waitx(CLKFREQ/5);
     printf("$\n"); // start of test character
     waitx(CLKFREQ/10);
@@ -27,7 +28,7 @@ int main() {
     waitx(CLKFREQ/5);
     printf("~\n"); // end of test character
 
-    while(1);
+    busywait();
 
     return 0;
 }

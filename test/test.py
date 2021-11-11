@@ -11,7 +11,7 @@ no_opt_build_dir = 'build/no_opt'
 opt_build_dir = 'build/opt'
 
 load_cmd = '/opt/p2llvm/bin/loadp2'
-load_args = ['-ZERO', '-l', '230400', '-v', '-FIFO', '2048']
+load_args = ['-ZERO', '-l', '3000000', '-v', '-FIFO', '1024']
 
 verbose = False
 
@@ -51,7 +51,7 @@ class TestCase:
             return False
 
         ser = serial.Serial()
-        ser.baudrate = 230400
+        ser.baudrate = 3000000
         ser.port = port
         ser.dtr = False
         ser.open()

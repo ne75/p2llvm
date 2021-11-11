@@ -256,9 +256,11 @@ class InstructionWindow(Window):
         self.obj_data = obj_data
         self.inst_to_render = []
         self.section_to_render = ''
+        self.exec_mode_str = ''
         self.pc = 0
 
         self.render_empty = False
+        self.cog_mode = False
 
     def render(self) -> None:
         self.clear()
@@ -266,6 +268,9 @@ class InstructionWindow(Window):
         if self.render_empty:
             with self.term.location(self.x+5, self.y+2):
                 print(self.term.orange + self.term.bold + "---" + self.term.normal)
+        elif self.exec_mode_str:
+            with self.term.location(self.x+5, self.y+2):
+                print(self.exec_mode_str)
         else:
             with self.term.location(self.x+5, self.y+2):
                 print(self.section_to_render)
@@ -295,7 +300,9 @@ class InstructionWindow(Window):
 
         super().render()
 
-    def update(self, pc):
+    def update(self, status):
+        pc = status.get_mem_pc()
+        exec_mode = status.exec_mode
         if pc == None:
             self.render_empty = True
             self.render()
@@ -305,12 +312,17 @@ class InstructionWindow(Window):
 
         self.inst_to_render = []
         self.pc = pc
+        self.cog_mode = exec_mode == "cogex"
+        self.exec_mode_str = ''
+
+        if self.cog_mode:
+            if status._cog_exec_base_addr == -1:
+                self.exec_mode_str = "Cog Execution Mode"
 
         for sec in self.obj_data:
             if pc in self.obj_data[sec]:
                 self.section_to_render = sec
                 
-
         sec = self.section_to_render
 
         section_start = self.obj_data[sec]["section_addr"]
@@ -363,7 +375,7 @@ class Screen():
                 if stat == None:
                     self.inst_window.update(None)
                 else:
-                    self.inst_window.update(self.cmd.get_status().pc)
+                    self.inst_window.update(self.cmd.get_status())
 
                 cmd_str = self.cmd_window.update()
                 if self.cmd.onecmd(cmd_str):

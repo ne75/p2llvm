@@ -83,6 +83,7 @@ class P2DBPrompt(cmd.Cmd):
         self.outb = 0
 
         self.current_cog = 0
+        self.cog_exec_addr = -1
 
     def get_status(self):
         return self.status[self.current_cog]
@@ -155,6 +156,7 @@ class P2DBPrompt(cmd.Cmd):
             for p in packets:
                 if (p.type == CogPacket.STATUS):
                     self.status[p.cog] = p.get_value()
+                    self.status[p.cog].set_cog_addr(self.cog_exec_addr)
                     self.active[p.cog] = True
                 elif (p.type != CogPacket.UNKNOWN):
                     r_packet = p
@@ -177,6 +179,7 @@ class P2DBPrompt(cmd.Cmd):
             for p in packets:
                 if (p.type == CogPacket.STATUS):
                     self.status[p.cog] = p.get_value()
+                    self.status[p.cog].set_cog_addr(self.cog_exec_addr)
                     self.active[p.cog] = True
                     done = True
 
@@ -260,9 +263,9 @@ class P2DBPrompt(cmd.Cmd):
             self.stdout.write(Fore.RED + "*** No connection to cog\n" + Fore.RESET)
             return
 
-        i = p2tools.get_inst(self.obj_data, self.get_status().pc)
-        if 'call' in i[1]:
-            addr = self.status[self.current_cog].pc + 4 
+        i = p2tools.get_inst(self.obj_data, self.get_status().get_mem_pc())
+        if i and 'call' in i[1]:
+            addr = self.status[self.current_cog].get_mem_pc() + 4 
             self.do_break("{:x}".format(addr))
         else:
             self.step()
@@ -280,7 +283,7 @@ class P2DBPrompt(cmd.Cmd):
         if not self.get_status():
             self.stdout.write(Fore.RED + "*** No connection to cog\n" + Fore.RESET)
 
-        i = p2tools.get_inst(self.obj_data, self.get_status().pc)
+        i = p2tools.get_inst(self.obj_data, self.get_status().get_mem_pc())
         if 'call' in i[1]:
             self.step()
         else:
@@ -300,6 +303,18 @@ class P2DBPrompt(cmd.Cmd):
         addr = int(arg, 16)
         self.send_cmd(b'b', self.current_cog, (addr << 12) + (1 << 10))
         self.update()
+
+    def do_cogaddr(self, arg):
+        '''
+        set the base address of this cog's code. only useful if the current cog is in cogex mode. 
+        Value is ignored in hubex mode
+        '''
+        if not self.get_status():
+            self.stdout.write(Fore.RED + "*** No connection to cog\n" + Fore.RESET)
+            return
+        
+        self.cog_exec_addr = int(arg, 16)
+        self.get_status().set_cog_addr(self.cog_exec_addr)
 
     def do_reset(self, arg):
         '''

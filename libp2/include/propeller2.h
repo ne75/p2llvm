@@ -129,7 +129,7 @@ register volatile int IRET1 asm ("iret1");
 
 #define COG_PARAM_TO_OBJ(p, type) ((type*)((int*)p)[0]);
 
-__attribute__ ((section ("cog"))) void __unreachable();
+void __unreachable();
 
 /* type for a volatile lock */
 /* if we change this type, change the definitions of SIG_ATOMIC_{MIN,MAX}
@@ -145,6 +145,11 @@ extern "C" {
 
 #define COGINIT_MODE_COG 0x10
 #define COGINIT_MODE_HUB 0x00
+
+/**
+ * wait indefinitely with waitx to reduce power consumption
+ */
+#define busywait() while(1) waitx(CLKFREQ);
 
 /**
  * run clock configuration to the desired clock mode and clock frequency

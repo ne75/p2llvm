@@ -19,7 +19,7 @@ s_t a(int a, int b, int c, int d, int e) {
 
 int main() {
     _clkset(_SETFREQ, _CLOCKFREQ);
-    _uart_init(RX_PIN, TX_PIN, 230400);
+    _uart_init(RX_PIN, TX_PIN, 3000000);
     printf("$\n"); // start of test character
 
     s_t r = a(1, 2, 3, 4, 5);
