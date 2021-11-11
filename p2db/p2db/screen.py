@@ -2,10 +2,10 @@ from codecs import decode
 from blessed import Terminal
 from io import StringIO 
 import readline
-import p2tools
 import re
 
-from debug_cmd import P2DBPrompt
+from . import p2tools
+from .debug_cmd import P2DBPrompt
 
 class Window():
 

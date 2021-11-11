@@ -1,8 +1,8 @@
 import argparse
 import serial
 
-import screen
-import p2tools
+from . import screen
+from . import p2tools
 
 verbose = False
 

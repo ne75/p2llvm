@@ -1,8 +1,9 @@
 import cmd
-import p2info
 from colorama import Fore
 import io
-import p2tools
+
+from . import p2info
+from . import p2tools
 
 class CogPacket():
 
