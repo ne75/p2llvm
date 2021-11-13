@@ -25,19 +25,15 @@ void _clkset(unsigned clkmode, unsigned clkfreq) {
 }
 
 int _coginit(unsigned mode, void (*f)(void *), void *par) {
-    asm("setq %0\n"
-        "coginit %1, %2 wc"
-        : // no outputs
+    int res;
+    asm("setq %1\n"
+        "coginit %2, %3 wc\n"
+        "wrc %0\n"
+        : "=r"(res)
         : "r"(par), "r"(mode), "r"(f)
         );
-    int res;
-    wrc(res);
 
-    if (res) {
-        return -1;
-    } else {
-        return mode;
-    }
+    return !res;
 }
 
 int cogstart(void (*f)(void *), int par, int *stack, unsigned int stacksize) {

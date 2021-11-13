@@ -19,8 +19,8 @@ add_compile_definitions(__P2_GIT_VERSION__="${version}")
 option(OPTIMIZE "Enable optimization in compiling" OFF)
 
 if(OPTIMIZE)
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Os" CACHE STRING "" FORCE)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Os" CACHE STRING "" FORCE)
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Oz" CACHE STRING "" FORCE)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Oz" CACHE STRING "" FORCE)
 endif()
 
 function (add_executable _name)

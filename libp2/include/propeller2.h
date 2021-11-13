@@ -170,7 +170,7 @@ unsigned int _cnt();
 void _waitcnt(unsigned int cnt);
 
 /**
- * start a new cog dictated by mode
+ * start a new cog dictated by mode. return if start was successful
  */
 int _coginit(unsigned mode, void (*f)(void *), void *par) __attribute__((noinline));
 
