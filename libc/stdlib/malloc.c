@@ -26,7 +26,7 @@ MemHeap _malloc_heap = {
     .free = NULL
 };
 
-atomic_t malloc_lock;
+int malloc_lock;
 
 /* local functions */
 static void _free(MemHeap *heap, void *ptr);

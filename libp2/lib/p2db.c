@@ -11,6 +11,7 @@
  * hub address 0xfe420..0xfe418 will be used for the 6 byte rx array
  * 
  */
+
 __attribute__ ((section (".debug"), cogmain, noreturn)) void __dbg_run() {
     asm(    
             // r0 will hold the address of stat.
@@ -33,6 +34,7 @@ __attribute__ ((section (".debug"), cogmain, noreturn)) void __dbg_run() {
 
     ".Lenter:"
 
+            "mov $r7, #0\n"     // r7 == skip sending stat (0 = don't skip sending stat)
     ".Llock:"
             "locktry %4 wc\n"
     "if_nc   jmp #.Llock\n"
@@ -67,16 +69,16 @@ __attribute__ ((section (".debug"), cogmain, noreturn)) void __dbg_run() {
             "add $r2, #4\n"         
             "wrlong $inb, $r2\n"     // in the debug ISR, inb becomes iret0, the return address of the debug ISR, i.e. the instruction after the breakpoint PC
 
+            "tjnz $r7, #.Lmain_loop\n" // skip dumping stat if this wasn't our first entry into the locked region
     ".Lstat_dump:"
             // dump current data         
             "mov $r3, #19\n"  
             "call #.Ltx_bytes\n"
 
-            // map ina/inb to pins and not interrupts regs
-            "brk %3\n"
-
             // main loop. we stay here forever or return from the interrupt
     ".Lmain_loop:\n"
+            // map ina/inb to pins and not interrupts regs
+            "brk %3\n"
 
             // check if there's already data waiting. if there is, jump to process it
             "rdbyte $r2, $r1\n"
@@ -117,6 +119,7 @@ __attribute__ ((section (".debug"), cogmain, noreturn)) void __dbg_run() {
             // then, go back to try to re-acquire the lock, but we need to skip sending the status, 
             // since that should only be sent on isr entry
             "brk #0\n"
+            "mov $r7, #1\n"
             "lockrel %4\n"
             "jmp #.Llock\n"
 
@@ -221,7 +224,7 @@ __attribute__ ((section (".debug"), cogmain, noreturn)) void __dbg_run() {
             "ret\n"
 
         : // outputs
-        : "i"(DEBUG_BRK), "r"(_uart_tx_pin), "r"(_uart_rx_pin), "r"(DEBUG_MAP_INx), "r"(_dbg_lock) // inputs
+        : "i"(DEBUG_BRK), "r"(DBG_UART_TX_PIN), "r"(DBG_UART_RX_PIN), "r"(DEBUG_MAP_INx), "r"(_dbg_lock) // inputs
         : "r0", "r1", "r2", "r3", "r4", "r5", "r6", "r7", "r30", "r31" // clobber
     );
 }

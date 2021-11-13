@@ -57,9 +57,9 @@ void _lockret(unsigned int l) {
 }
 
 void _lock(unsigned int l) {
-    asm(".L_locktry:");
-    asm("locktry %0 wc" : : "r"(l));
-    asm("if_nc jmp #.L_locktry");
+    asm(".L_locktry%=:\n"
+        "locktry %0 wc\n"
+        "if_nc jmp #.L_locktry%=" : : "r"(l));
 }
 
 int _locktry(unsigned int l) {
@@ -79,15 +79,11 @@ unsigned int _rev(unsigned int x) {
 }
 
 void _uart_init(unsigned rx, unsigned tx, unsigned baud) {
-    _uart_rx_pin = rx;
-    _uart_tx_pin = tx;
     dirl(rx);
     dirl(tx);
 
     // see async mode for explanation of these values
-    _baudrate = baud;
     unsigned int x = _clkfreq/baud;
-    _uart_clock_per_bit = x;
 
     x <<= 16;
     x &= 0xfffffc00;
@@ -102,21 +98,30 @@ void _uart_init(unsigned rx, unsigned tx, unsigned baud) {
     dirh(rx);
 }
 
-void _uart_putc(char c) {
-    wypin(c, _uart_tx_pin);
-    waitx(_uart_clock_per_bit*10); // eventually should be a wait based on the buffer
+void _uart_putc(char c, int p) {
+    if (p == DBG_UART_TX_PIN) {
+        __lock_dbg();
+    }
+    wypin(c, p);
+    waitx(20); // wait a little for pin to be set correctly
+    int done;
+    do {
+        testp(p, done);
+    } while(!done);
+
+    __unlock_dbg();
 }
 
-int _uart_getc() {
-    int has_dat = 0;
+int _uart_checkc(int p) {
+    int have_data = 0;
+    testp(p, have_data);
+    if (have_data) return 1;
+    
+    return 0;
+}
 
-    testp(_uart_rx_pin, has_dat);
-
-    if (has_dat) {
-        int x;
-        rdpin(x, _uart_rx_pin);
-        return (char)(x >> 24);
-    } else {
-        return -1;
-    }
+char _uart_getc(int p) {
+    unsigned x;
+    rdpin(x, p);
+    return (char)(x >> 24);
 }

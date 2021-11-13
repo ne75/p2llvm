@@ -32,8 +32,8 @@ extern unsigned int _baud;
  */
 #ifdef __propeller2__
 static int _serial_putbyte(int c, FILE *fp) {
-    _uart_putc(c);
-    return c;
+		_uart_putc(c, fp->drvarg[1]);
+		return c;
 }
 
 #else
@@ -41,33 +41,33 @@ __attribute__((fcache))
 static int
 _serial_putbyte(int c, FILE *fp)
 {
-  unsigned int txmask = fp->drvarg[1];
-  unsigned int bitcycles = fp->drvarg[3];
-  unsigned int waitcycles;
-  int i, value;
+	unsigned int txmask = fp->drvarg[1];
+	unsigned int bitcycles = fp->drvarg[3];
+	unsigned int waitcycles;
+	int i, value;
 
-  /* set output */
-  _OUTA |= txmask;
-  _DIRA |= txmask;
+	/* set output */
+	_OUTA |= txmask;
+	_DIRA |= txmask;
 
-  value = (c | 256) << 1;
-  waitcycles = getcnt() + bitcycles;
-  for (i = 0; i < 10; i++)
-    {
-      waitcycles = __builtin_propeller_waitcnt(waitcycles, bitcycles);
-      if (value & 1)
-        _OUTA |= txmask;
-      else
-        _OUTA &= ~txmask;
-      value >>= 1;
-    }
-  // if we turn off DIRA, then some boards (like QuickStart) are left with
-  // floating pins and garbage output; if we leave it on, we're left with
-  // a high pin and other cogs cannot produce output on it
-  // the solution is to use FullDuplexSerialDriver instead on applications
-  // with multiple cogs
-  //_DIRA &= ~txmask;
-  return c;
+	value = (c | 256) << 1;
+	waitcycles = getcnt() + bitcycles;
+	for (i = 0; i < 10; i++)
+		{
+			waitcycles = __builtin_propeller_waitcnt(waitcycles, bitcycles);
+			if (value & 1)
+				_OUTA |= txmask;
+			else
+				_OUTA &= ~txmask;
+			value >>= 1;
+		}
+	// if we turn off DIRA, then some boards (like QuickStart) are left with
+	// floating pins and garbage output; if we leave it on, we're left with
+	// a high pin and other cogs cannot produce output on it
+	// the solution is to use FullDuplexSerialDriver instead on applications
+	// with multiple cogs
+	//_DIRA &= ~txmask;
+	return c;
 }
 #endif
 
@@ -75,51 +75,50 @@ _serial_putbyte(int c, FILE *fp)
 /* we need to put it in fcache to get it to work in XMM and CMM modes (P1 only) */
 #ifdef __propeller2__
 static int _serial_getbyte(FILE *fp) {
-    int value;
+	unsigned int rxpin = fp->drvarg[0];
 
-    /* wait for a start bit */
-    if (fp->_flag & _IONONBLOCK) {
-        /* if non-blocking I/O, return immediately if no data */
-        return _uart_getc();
-    } else {
-        do {
-            value = _uart_getc();
-        } while (value == -1);
-        return value;
-    }
+	if (fp->_flag & _IONONBLOCK) {
+	/* if non-blocking I/O, return immediately if no data */
+		if ( 0 != _uart_checkc(rxpin) )
+			return -1;
+	} else {
+		while (_uart_checkc(rxpin));
+	}
+
+	return _uart_getc(rxpin);
 }
 #else
 __attribute__((fcache))
 static int
 _serial_getbyte(FILE *fp)
 {
-  unsigned int rxmask = fp->drvarg[0];
-  unsigned int bitcycles = fp->drvarg[3];
-  unsigned int waitcycles;
-  int value;
-  int i;
+	unsigned int rxmask = fp->drvarg[0];
+	unsigned int bitcycles = fp->drvarg[3];
+	unsigned int waitcycles;
+	int value;
+	int i;
 
-  /* set input */
-  _DIRA &= ~rxmask;
+	/* set input */
+	_DIRA &= ~rxmask;
 
-  /* wait for a start bit */
-  if (fp->_flag & _IONONBLOCK) {
-    /* if non-blocking I/O, return immediately if no data */
-    if ( 0 != (_INA & rxmask) )
-      return -1;
-  } else {
-    __builtin_propeller_waitpeq(0, rxmask);
-  }
-  /* sync for one half bit */
-  waitcycles = getcnt() + (bitcycles>>1) + bitcycles;
-  value = 0;
-  for (i = 0; i < 8; i++) {
-    waitcycles = __builtin_propeller_waitcnt(waitcycles, bitcycles);
-    value = ( (0 != (_INA & rxmask)) << 7) | (value >> 1);
-  }
-  /* wait for the line to go high (as it will when the stop bit arrives) */
-  __builtin_propeller_waitpeq(rxmask, rxmask);
-  return value;
+	/* wait for a start bit */
+	if (fp->_flag & _IONONBLOCK) {
+		/* if non-blocking I/O, return immediately if no data */
+		if ( 0 != (_INA & rxmask) )
+			return -1;
+	} else {
+		__builtin_propeller_waitpeq(0, rxmask);
+	}
+	/* sync for one half bit */
+	waitcycles = getcnt() + (bitcycles>>1) + bitcycles;
+	value = 0;
+	for (i = 0; i < 8; i++) {
+		waitcycles = __builtin_propeller_waitcnt(waitcycles, bitcycles);
+		value = ( (0 != (_INA & rxmask)) << 7) | (value >> 1);
+	}
+	/* wait for the line to go high (as it will when the stop bit arrives) */
+	__builtin_propeller_waitpeq(rxmask, rxmask);
+	return value;
 }
 #endif
 
@@ -134,50 +133,51 @@ _serial_getbyte(FILE *fp)
 
 static int _serial_fopen(FILE *fp, const char *name, const char *mode)
 {
-  #ifdef __propeller2__
-  unsigned int baud = _baudrate;
-  #else
-  unsigned int baud = _baud;
-  #endif
+	#ifdef __propeller2__
+    // these are the default pins
+    unsigned int txpin = DBG_UART_TX_PIN;
+	unsigned int rxpin = DBG_UART_RX_PIN;
+	unsigned int baud = DBG_UART_BAUD;
+	#else
+    unsigned int txpin = _txpin;
+	unsigned int rxpin = _rxpin;
+	unsigned int baud = _baud;
+	#endif
+	
+	if (name && *name) {
+		baud = atoi(name);
+		while (*name && *name != ',') name++;
+		if (*name) {
+			name++;
+			rxpin = atoi(name);
+			while (*name && *name != ',') name++;
+			if (*name)
+				{
+					name++;
+					txpin = atoi(name);
+				}
+		}
+	}
 
-  unsigned int txpin = _uart_tx_pin;
-  unsigned int rxpin = _uart_rx_pin;
+	#if defined(__propeller2__)
+		fp->drvarg[0] = (rxpin);
+		fp->drvarg[1] = (txpin);
+		fp->drvarg[2] = baud;
 
-  if (name && *name) {
-    baud = atoi(name);
-    while (*name && *name != ',') name++;
-    if (*name) {
-      name++;
-      rxpin = atoi(name);
-      while (*name && *name != ',') name++;
-      if (*name)
-        {
-          name++;
-          txpin = atoi(name);
-        }
-    }
-  }
+		_uart_init(rxpin, txpin, baud);
+	#else
+		fp->drvarg[0] = (1U<<rxpin);
+		fp->drvarg[1] = (1U<<txpin);
+		bitcycles = _clkfreq / baud;
+		fp->drvarg[3] = bitcycles;
+	#endif
 
-  #if defined(__propeller2__)
-    // probably don't need this, but save it anyway
-    fp->drvarg[0] = (rxpin);
-    fp->drvarg[1] = (txpin);
-    fp->drvarg[2] = baud;
+	/* mark it as being a terminal */
+	fp->_flag |= _IODEV;
+	fp->_lock = _locknew();
 
-    // _uart_init(rxpin, txpin, baud);
-  #else
-    fp->drvarg[0] = (1U<<rxpin);
-    fp->drvarg[1] = (1U<<txpin);
-    bitcycles = _clkfreq / baud;
-    fp->drvarg[3] = bitcycles;
-  #endif
-
-  /* mark it as being a terminal */
-  fp->_flag |= _IODEV;
-  fp->_lock = _locknew();
-
-  /* all OK */
-  return 0;
+	/* all OK */
+	return 0;
 }
 
 /*
@@ -188,8 +188,8 @@ _DESTRUCTOR
 static void SimpleSerialExit(void)
 {
 #ifndef __PROPELLER2__
-  _OUTA |= (1<<_txpin);
-  _DIRA |= (1<<_txpin);
+	_OUTA |= (1<<_txpin);
+	_DIRA |= (1<<_txpin);
 #endif
 }
 
@@ -200,18 +200,18 @@ static void SimpleSerialExit(void)
 const char _SimpleSerialPrefix[] = "SSER:";
 
 _Driver _SimpleSerialDriver =
-  {
-    _SimpleSerialPrefix,
-    _serial_fopen,
-    NULL,       /* fclose hook, not needed */
-    _term_read,
-    _term_write,
-    NULL,       /* seek, not needed */
-    NULL,       /* remove, not needed */
+	{
+		_SimpleSerialPrefix,
+		_serial_fopen,
+		NULL,       /* fclose hook, not needed */
+		_term_read,
+		_term_write,
+		NULL,       /* seek, not needed */
+		NULL,       /* remove, not needed */
 
-    _serial_getbyte,
-    _serial_putbyte
-  };
+		_serial_getbyte,
+		_serial_putbyte
+	};
 
 /*
 +--------------------------------------------------------------------

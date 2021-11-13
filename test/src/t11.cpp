@@ -1,11 +1,4 @@
-#define P2_TARGET_MHZ   300
-#include "propeller.h"
-#include "sys/p2es_clock.h"
-
 #include <stdio.h>
-
-#define RX_PIN 63
-#define TX_PIN 62
 
 class A {
 public:
@@ -27,8 +20,6 @@ int A::c = 3;
 A s(1, 2, 4);
 
 int main() {
-    _clkset(_SETFREQ, _CLOCKFREQ);
-    _uart_init(RX_PIN, TX_PIN, 3000000);
     printf("$\n"); // start of test character
 
     printf("%d %d %d %d\n", s.a, s.b[0], s.b[1], s.c);

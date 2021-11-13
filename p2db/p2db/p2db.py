@@ -32,7 +32,7 @@ def main():
     if not p2tools.load(args.port, app_bin, ser.baudrate, verbose):
         return
 
-    open("log.txt", 'w').close()
+    open("p2db.log", 'w').close()
 
     main_screen = screen.Screen(ser, objdata)
     main_screen.run()

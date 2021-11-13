@@ -5,7 +5,7 @@ AR = $(LLVM)/bin/llvm-ar
 
 OBJDIR = build
 
-CFLAGS = -Os -ffunction-sections -fdata-sections -fno-jump-tables --target=p2 -I./include/
+CFLAGS = -Os -ffunction-sections -fdata-sections -fno-jump-tables --target=p2 -I./include/ #-mllvm -debug
 
 LIBTARGET = libp2
 LIBNAME = p2

@@ -199,7 +199,7 @@ extern "C" {
   FILE *__string_file(FILE *fp, char *str, const char *mode, size_t len);
 
   /* lock used to let multiple threads work together nicer */
-  extern _atomic_t __stdio_lock;
+  extern int __stdio_lock;
 #define __lock_stdio()   __lock(__stdio_lock)
 #define __unlock_stdio() __unlock(__stdio_lock)
 

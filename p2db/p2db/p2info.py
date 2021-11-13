@@ -75,6 +75,9 @@ class Status:
     def set_cog_addr(self, addr):
         self._cog_exec_base_addr = addr
 
+    def get_cog_addr(self):
+        return self._cog_exec_base_addr
+
     def get_mem_pc(self):
         if self.exec_mode == "cogex" and self._cog_exec_base_addr != -1:
             return self.pc*4 + self._cog_exec_base_addr

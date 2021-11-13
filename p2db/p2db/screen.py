@@ -125,9 +125,7 @@ class LogWindow(Window):
         super().render()
 
     def update(self) -> None:
-        self.lines.extend(self.strout.getvalue().splitlines())
-        self.strout.truncate(0)
-        self.strout.seek(0)
+        self.lines = self.strout.getvalue().splitlines()
 
         if len(self.lines) > self.h-2:
             self.lines = self.lines[-(self.h-2):]
@@ -289,10 +287,19 @@ class InstructionWindow(Window):
                     print("{:x}: {}\t\t{}".format(self.inst_to_render[i][0], self.inst_to_render[i][1], self.inst_to_render[i][2]), end='')  
 
                     if 'calla' in self.inst_to_render[i][2]:    # only draw the address for calla since those correspond to an explicit function that has a section
-                        pat = r'^(.*?) #([0-9a-f]+)(.*?)$' # pattern to get the address of a call instruction
-                        call_addr = re.search(pat, self.inst_to_render[i][2]).group(2)
+                        pat = r'^(.*?) #([0-9]+)(.*?)' # pattern to get the address of a call instruction
+                        with open("p2db.log", 'a') as f:
+                            f.write("call instruction: {}".format(self.inst_to_render[i][2]) + '\n')
 
-                        call_dest_name = p2tools.get_section(self.obj_data, int(call_addr))
+                        r = re.search(pat, self.inst_to_render[i][2])
+
+                        call_addr = r.group(2) if r else 0
+
+                        if call_addr == 0:
+                            call_dest_name = '<indirect function call>'
+                        else:
+                            call_dest_name = p2tools.get_section(self.obj_data, int(call_addr))
+
                         print("\t" + call_dest_name)
 
                     print(self.term.normal, end='')
@@ -301,12 +308,13 @@ class InstructionWindow(Window):
         super().render()
 
     def update(self, status):
-        pc = status.get_mem_pc()
-        exec_mode = status.exec_mode
-        if pc == None:
+        if status == None:
             self.render_empty = True
             self.render()
             return
+
+        pc = status.get_mem_pc()
+        exec_mode = status.exec_mode
 
         self.render_empty = False
 
@@ -372,10 +380,7 @@ class Screen():
                 self.stat_window.update(stat, self.cmd.active, self.cmd.current_cog, self.cmd.dira, self.cmd.dirb, self.cmd.ina, self.cmd.inb)
                 self.log_window.update()
 
-                if stat == None:
-                    self.inst_window.update(None)
-                else:
-                    self.inst_window.update(self.cmd.get_status())
+                self.inst_window.update(stat)
 
                 cmd_str = self.cmd_window.update()
                 if self.cmd.onecmd(cmd_str):

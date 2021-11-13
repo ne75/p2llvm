@@ -13,7 +13,7 @@
 //#include <propeller.h>
 
 /* lock for stdio functions */
-atomic_t __stdio_lock;
+int __stdio_lock;
 
 /* force _InitIO to be linked */
 extern void _InitIO(void);

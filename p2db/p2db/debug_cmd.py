@@ -94,22 +94,48 @@ class P2DBPrompt(cmd.Cmd):
         process all current serial data into packets
         '''
         data = self.ser.read(self.ser.in_waiting)
+        l = len(data)
 
         packet_buffer = b''
         packets = []
 
-        with open("log.txt", 'a') as f:
+        with open("p2db.log", 'a') as f:
             if (data):
-                f.write("buffer: " + str(data) + "\n")
-
-        l = len(data)
+                f.write("buffer: len = {}, ".format(l) + str(data) + "\n")
 
         with io.BytesIO(data) as data_stream:
+            def fill_datastream():
+                '''
+                get more data into the datastream due to message fragmentation
+
+                returns the number of bytes added
+                '''
+                data_frag = self.ser.read(self.ser.in_waiting)
+                data_frag_l = len(data_frag)
+                data_stream.write(data_frag)
+                data_stream.seek(-data_frag_l, 2)
+                with open("p2db.log", 'a') as f:
+                    f.write("*** added to buffer: {}\n".format(str(data_frag)))
+
+                return data_frag_l
+
             while data_stream.tell() < l:
                 char = data_stream.read(1)
 
                 if char == b'\xdb':
+                    with open("p2db.log", 'a') as f:
+                        f.write("*** have start of message at {}\n".format(data_stream.tell()-1))
+                        
                     header = data_stream.read(2)
+
+                    while (len(header) != 2):
+                        # we know more data should come in, so keep trying to read the header
+                        l += fill_datastream()
+                        header += data_stream.read(2-len(header))
+
+                    with open("p2db.log", 'a') as f:
+                        f.write("*** have header: {}\n".format(str(header)))
+
                     packet_buffer += header
 
                     msg_id = header[0:1]
@@ -120,22 +146,25 @@ class P2DBPrompt(cmd.Cmd):
                         msg_data = data_stream.read(n)
 
                         while len(msg_data) != n:
-                            in_waiting = self.ser.in_waiting
-                            data_stream.write(self.ser.read(in_waiting))
-                            data_stream.seek(-in_waiting, 2)
+                            # we know more data should come in, so keep trying to read until we fill the packet
+                            with open("p2db.log", 'a') as f:
+                                f.write("*** fragmented packet. Expecting {}, have {}\n".format(n, len(msg_data)))
 
-                            msg_frag = data_stream.read(n-len(msg_data))
-                            msg_data += msg_frag
+                            l += fill_datastream()
+                            msg_data += data_stream.read(n-len(msg_data))
 
                         packet_buffer += msg_data
                         packets.append(CogPacket(packet_buffer))
                         packet_buffer = b''
 
                     else:
-                        with open("log.txt", 'a') as f:
+                        with open("p2db.log", 'a') as f:
                             f.write("*** unknown response: {}".format(msg_id) + "\n")
+                            
                         packet_buffer = b''
                 else:
+                    with open("p2db.log", 'a') as f:
+                        f.write("non-debeug char {} at {}\n".format(str(char), data_stream.tell()-1))
                     self.stdout.write(Fore.LIGHTGREEN_EX + char.decode('ascii') + Fore.RESET)
 
         return packets
@@ -151,7 +180,7 @@ class P2DBPrompt(cmd.Cmd):
             packets = self.process_ser_data()
 
             if packets:
-                with open("log.txt", 'a') as f:
+                with open("p2db.log", 'a') as f:
                     f.write(str(packets) + "\n")
 
             for p in packets:
@@ -174,7 +203,7 @@ class P2DBPrompt(cmd.Cmd):
             packets = self.process_ser_data()
 
             if packets:
-                with open("log.txt", 'a') as f:
+                with open("p2db.log", 'a') as f:
                     f.write(str(packets) + "\n")
 
             for p in packets:
@@ -231,7 +260,8 @@ class P2DBPrompt(cmd.Cmd):
 
     def update(self):
         self.process_status()
-        self.getpins()
+        if self.active[self.current_cog]:
+            self.getpins()
 
     def send_cmd(self, command, cog, val):
         '''
@@ -240,12 +270,23 @@ class P2DBPrompt(cmd.Cmd):
         val: int with value to send
         '''
         cmd = b'\xdb' + command + cog.to_bytes(1, 'little') + val.to_bytes(4, 'little')
-        with open("log.txt", 'a') as f:
+        with open("p2db.log", 'a') as f:
             f.write("cmd: " + str(cmd) + "\n")
-        self.ser.write(cmd) 
+        self.ser.write(cmd)
+
+    def do_continue(arg):
+        '''
+        continue this cog's execution. will "disconnect from the cog" and not wait for any response
+
+        This cog can be reconnected by on of: 
+        1. the cog's code hiting a hardcoded breakpoint 
+        2. another cog generates an asynchronous breakpoint (not supported to set up right now)
+        '''
+        pass
 
     def step(self):
         self.send_cmd(b'b', self.current_cog, 1)
+        self.active[self.current_cog] = False
         self.update()
 
     def do_s(self, arg):
@@ -260,13 +301,13 @@ class P2DBPrompt(cmd.Cmd):
 
         Step forward by a single instruction
         '''
-        if not self.get_status():
+        if not self.active[self.current_cog]:
             self.stdout.write(Fore.RED + "*** No connection to cog\n" + Fore.RESET)
             return
 
         i = p2tools.get_inst(self.obj_data, self.get_status().get_mem_pc())
         if i and 'call' in i[1]:
-            addr = self.status[self.current_cog].get_mem_pc() + 4 
+            addr = self.status[self.current_cog].get_mem_pc() + 4
             self.do_break("{:x}".format(addr))
         else:
             self.step()
@@ -281,7 +322,7 @@ class P2DBPrompt(cmd.Cmd):
         '''
         step into a function call
         '''
-        if not self.get_status():
+        if not self.active[self.current_cog]:
             self.stdout.write(Fore.RED + "*** No connection to cog\n" + Fore.RESET)
 
         i = p2tools.get_inst(self.obj_data, self.get_status().get_mem_pc())
@@ -297,12 +338,19 @@ class P2DBPrompt(cmd.Cmd):
 
         set a breakpoint at address <addr> and run until then 
         '''
-        if not self.get_status():
+        if not self.active[self.current_cog]:
             self.stdout.write(Fore.RED + "*** No connection to cog\n" + Fore.RESET)
             return
 
         addr = int(arg, 16)
+        s = self.get_status()
+        if s.exec_mode == 'cogex': # convert to a cog address
+            addr -= s.get_cog_addr()
+            addr /= 4
+            addr = int(addr)
+
         self.send_cmd(b'b', self.current_cog, (addr << 12) + (1 << 10))
+        self.active[self.current_cog] = False
         self.update()
 
     def do_cogaddr(self, arg):
@@ -310,7 +358,7 @@ class P2DBPrompt(cmd.Cmd):
         set the base address of this cog's code. only useful if the current cog is in cogex mode. 
         Value is ignored in hubex mode
         '''
-        if not self.get_status():
+        if not self.active[self.current_cog]:
             self.stdout.write(Fore.RED + "*** No connection to cog\n" + Fore.RESET)
             return
         
@@ -330,6 +378,11 @@ class P2DBPrompt(cmd.Cmd):
 
         Get a byte from hub RAM address <addr>. Must be given in hex format
         '''
+
+        if not self.active[self.current_cog]:
+            self.stdout.write(Fore.RED + "*** No connection to cog\n" + Fore.RESET)
+            return
+
         if not arg:
             self.stdout.write("Address argument required\n")
             return
@@ -349,6 +402,9 @@ class P2DBPrompt(cmd.Cmd):
 
         Get a long (4 bytes) from hub RAM address <addr>. Must be given in hex format
         '''
+        if not self.active[self.current_cog]:
+            self.stdout.write(Fore.RED + "*** No connection to cog\n" + Fore.RESET)
+            return
 
         if not arg:
             self.stdout.write("Address argument required\n")

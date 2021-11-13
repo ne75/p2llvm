@@ -57,6 +57,10 @@ void __start() {
     // init the debug lock
     _dbg_lock = _locknew();
 
+    // default clock frequency. Assumes the loader does not try to set a different one.
+    // if we want the loader to be able to configure it, we'll need to pull this number from some shared memory location
+    _clkfreq = 25000000;
+
     // setup c standard library
     _cstd_init();
 

@@ -108,6 +108,7 @@ This is a list of all tests and the feature(s) they each test.
 - `t29`: Default values in function arguments
 - `t30`: Large memory offsets
 - `t31`: Returning structs by value
-- `t32`-`t49`: Reserved for future use
+- `t32`: Collapsing augs/augd instructions
+- `t33`-`t49`: Reserved for future use
 - `t50`: Dyanmic memory allocation (using `new`)
 - `t51`: Linking external objects

@@ -1,12 +1,5 @@
-#define P2_TARGET_MHZ   300
-#include "propeller.h"
-#include "sys/p2es_clock.h"
-
 #include <stdio.h>
 #include <stdarg.h>
-
-#define RX_PIN 63
-#define TX_PIN 62
 
 int sum(int n, ...) {
     va_list args;
@@ -22,8 +15,6 @@ int sum(int n, ...) {
 }
 
 int main() {
-    _clkset(_SETFREQ, _CLOCKFREQ);
-    _uart_init(RX_PIN, TX_PIN, 3000000);
     printf("$\n"); // start of test character
 
     int i = sum(8, 1, -2, 3, -4, 5, -6, 7, -8);
