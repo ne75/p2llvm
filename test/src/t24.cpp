@@ -9,8 +9,8 @@ int main() {
     int end = CNT;
     int t = end - start;
 
-    if (abs(t - CLKFREQ) < 100) 
-        printf("off by < 100\n");
+    if (abs(t - CLKFREQ) < 150) 
+        printf("off by < 150\n");
     else
         printf("off by %d\n", abs(t-CLKFREQ));
 

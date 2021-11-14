@@ -114,7 +114,7 @@ This section describes how a program should be organized in hub memory. Below is
 
 Hub memory 0x00300-0x003ff will be used as stack space for the cog 0 cog, as well as contain the startup code needed (like setting up the UART interface, etc). We put 0x00100 as the startup code because special registers live at 0x00000 (I can't find documentation on what these are, but 0x14 has clock frequency, 0x18 has clock mode, etc). We start the program space at 0x400. Starting a new cog requires setting PTRA (using SETQ) to the start of the stack space to use for that cog. The first stack slot should store the pointer to the function to run, the second stack slot should store an optional parameter that will be the first argument into the function. A new cog should always start by copying the startup code at 0x00100 and executing it.
 
-The re-usable startup code should also contain all the basic libcall functions, like signed mul/div, and other basic and common functions that don't have direct instructions.
+Basic libcall functions, like signed mul/div, and other basic and common functions that don't have direct instructions, are stored in LUT RAM
 
 The end of the memory space (not yet described in detail) will be bss/rodata for static data and heap space for dynamic allocation, but dynamic allocation should be kept to a minimum (as with most embedded systems).
 
