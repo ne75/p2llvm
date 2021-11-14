@@ -7,17 +7,19 @@
 
 typedef void (*func_ptr)(void);
 
-__attribute__ ((section (".stack"))) unsigned int __stack;
+extern unsigned int __stack;
 
 __attribute__ ((section ("cog"), cogmain)) void __start();
-__attribute__ ((section ("cog"), cogtext)) void _init();
-__attribute__ ((section ("cog"), cogtext)) void _fini();
 
-// These are our built-in functions that LLVM can use
-__attribute__ ((section ("cog"), cogtext)) int __sdiv(int a, int b);
-__attribute__ ((section ("cog"), cogtext)) int __srem(int a, int b);
-__attribute__ ((section ("cog"), cogtext)) void *__memcpy(void *dst, const void *src, unsigned n);
-__attribute__ ((section ("cog"), cogtext)) void *__memset(void *str, int c, unsigned n);
+// the relocation for these calls isn't encoded properly since the linker thinks the calls are global calls, not external "libcalls"
+void _init();
+void _fini();
+
+// These are our built-in functions that LLVM can use. Cogtext attribute does nothing, but including it for future use
+__attribute__ ((section ("lut"), cogtext)) int __sdiv(int a, int b);
+__attribute__ ((section ("lut"), cogtext)) int __srem(int a, int b);
+__attribute__ ((section ("lut"), cogtext)) void *__memcpy(void *dst, const void *src, unsigned n);
+__attribute__ ((section ("lut"), cogtext)) void *__memset(void *str, int c, unsigned n);
 
 extern int main();
 extern void _cstd_init();
@@ -25,6 +27,7 @@ extern func_ptr _init_array_start[];
 extern func_ptr _init_array_end[];
 extern func_ptr _fini_array_start[];
 extern func_ptr _fini_array_end[];
+extern unsigned _libcall_start[];
 
 __attribute__ ((cogmain, noreturn)) void __entry() {
     // basic entry code to jump to our resuable startup code. we do this by restarting cog 0, copying in
@@ -34,11 +37,12 @@ __attribute__ ((cogmain, noreturn)) void __entry() {
 
     // before we start the routine, enable debugging for cog 0. any other cogs that want to be debugged should be enabled by the application
     hubset(DEBUG_INT_EN | DEBUG_COG0);
-    asm("coginit #0, #0x100");
+    asm("coginit #0, %0" : : "r"(__start));
 }
 
 void __start() {
     // TODO: figure out how to rewrite this without needing inline asm.
+    INIT_RTLIB;
 
     asm("cogid $r0\n"           // get the current cog ID
         "tjz $r0, #.Linit\n"    // if cog 0, jump to the special cog0 startup code.

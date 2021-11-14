@@ -155,6 +155,10 @@ extern "C" {
 #define __unlock_dbg() _unlock(_dbg_lock)
 
 /**
+ * init the rtlib so that libcalls work (necessary for native cog functions)
+ */
+#define INIT_RTLIB  asm("setq2 #0x1ff\n augs #1\n rdlong $0, #0\n")
+/**
  * run clock configuration to the desired clock mode and clock frequency
  */
 void _clkset(unsigned clkmode, unsigned clkfreq);

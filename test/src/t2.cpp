@@ -3,8 +3,8 @@
 int main() {
     printf("$\n"); // start of test character
 
-    int a = 2;
-    int b = 3;
+    volatile int a = 2;
+    volatile int b = 3;
 
     int c = a + b;
     printf("%d ", c); // 1. expect 5

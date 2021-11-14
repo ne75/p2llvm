@@ -1,19 +1,24 @@
+#include <propeller.h>
+#include <debug.h>
+
 #include <stdio.h>
 #include <stdlib.h>
 
-unsigned stack[128];
+unsigned stack[256];
 
-void hub_cog(void *p) {
-    printf("%d\n", (int)p);
+__attribute__ ((cogmain, noreturn)) void cog(void *p) {
+    INIT_RTLIB;
+    int val = (int)p;
+    printf("%d\n", val/-3);
     busywait();
 }
 
 int main() {
-    waitx(CLKFREQ/5);
     printf("$\n"); // start of test character
-    waitx(CLKFREQ/10);
 
-    cogstart(hub_cog, 1, (int*)stack, sizeof(stack)/4);
+    int v = 1;
+    stack[0] = 15;
+    _coginit(0x10, cog, stack);
 
     waitx(CLKFREQ/10);
     printf("~\n"); // end of test character

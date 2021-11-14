@@ -72,7 +72,7 @@ def build_libp2(install_dest, llvm):
     if p.returncode != 0:
         return False
 
-    p = subprocess.Popen(['make', 'LLVM=' + llvm, '-j8'], cwd=LIBP2_DIR)
+    p = subprocess.Popen(['make', 'LLVM=' + llvm], cwd=LIBP2_DIR)
     p.wait()
     if p.returncode != 0:
         return False

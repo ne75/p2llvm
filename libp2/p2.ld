@@ -14,11 +14,17 @@ SECTIONS {
         KEEP(*(.text.__entry));
     }
 
-    /* If this address gets changes, we need to update lld's relocation function since it's hard coded there */
-    . = 0x00100;
+    . = 0x40; /* reserve first 64 bytes for global information storage (clkmode, clkfreq, etc) that need to be
+                 available outside of the link step and compatability with other toolchains */
     .cog : {
         KEEP(__start())
         KEEP(*(cog))
+    }
+
+    /* If this address gets changed, we need to update lld's relocation function since it's hard coded there */
+    . = 0x00200;
+    .lut : {
+        KEEP(*(lut))
     }
 
     . = 0x00900;
@@ -61,6 +67,7 @@ SECTIONS {
     . = 0x7c000 - STACK_SIZE;
     .stack (NOLOAD) : {
         . = ALIGN(4);
+        __stack = .;
         . = . + STACK_SIZE - 4;
     }
     
