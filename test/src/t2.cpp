@@ -24,7 +24,7 @@ int main() {
     c = b / a;
     printf("%d ", c); // 6. expect 1
 
-    c = -b / a;
+    c = (-b) / a;
     printf("%d ", c); // 7. expect -1
 
     c = a * b;
@@ -54,6 +54,12 @@ int main() {
 
     c = c >> b;
     printf("%d ", c); // 16. expect 2
+
+    volatile unsigned int d = 0x80000000;
+    volatile unsigned int e = 2000;
+
+    unsigned f = d/e;
+    printf("%d ", f); // 17. expect 2
 
     printf("\n~\n"); // end of test character
     return 0;

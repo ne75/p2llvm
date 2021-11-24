@@ -124,7 +124,7 @@ register volatile int IRET1 asm ("iret1");
 #define __strong_alias(sym, oldfunc) extern __typeof (oldfunc) sym __attribute__ ((alias (#oldfunc)));
 #endif
 
-#define COG_PARAM_TO_OBJ(p, type) ((type*)((int*)p)[0]);
+#define COG_PARAM_TO_OBJ(p, type) ((type*)p)
 
 void __unreachable();
 

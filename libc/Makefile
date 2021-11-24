@@ -26,7 +26,7 @@ endif
 PREFIX = $(OBJDIR)
 WARN = -Wall -Werror
 #WARN =
-BASEFLAGS = $(WARN) -Oz -nostdinc -I./include -ffunction-sections -fno-jump-tables --target=p2
+BASEFLAGS = $(WARN) -Oz -nostdinc -I./include -ffunction-sections -fno-jump-tables --target=p2 #-mllvm -debug
 MATHCFLAGS = $(WARN) -m$(MODEL) $(CHIPOPT) $(FLOATDEF) -Os -nostdinc -I./include
 LLVM = /opt/p2llvm
 AR = $(LLVM)/bin/llvm-ar

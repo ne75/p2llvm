@@ -96,12 +96,12 @@ def build_libp2(install_dest, llvm):
 def build_libc(install_dest, llvm):
     # build and install libc
     install_dir = os.path.join('..', install_dest, 'libc')
-    p = subprocess.Popen(['make', 'clean'], cwd=LIBC_DIR)
-    p.wait()
-    if p.returncode != 0:
-        return False
+    # p = subprocess.Popen(['make', 'clean'], cwd=LIBC_DIR)
+    # p.wait()
+    # if p.returncode != 0:
+    #     return False
 
-    p = subprocess.Popen(['make', 'LLVM=' + llvm, '-j8', 'install', 'DEST=' + str(install_dir)], cwd=LIBC_DIR)
+    p = subprocess.Popen(['make', 'LLVM=' + llvm, 'install', 'DEST=' + str(install_dir)], cwd=LIBC_DIR)
     p.wait()
     if p.returncode != 0:
         return False

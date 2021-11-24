@@ -165,7 +165,11 @@ class P2DBPrompt(cmd.Cmd):
                 else:
                     with open("p2db.log", 'a') as f:
                         f.write("non-debeug char {} at {}\n".format(str(char), data_stream.tell()-1))
-                    self.stdout.write(Fore.LIGHTGREEN_EX + char.decode('ascii') + Fore.RESET)
+
+                    if (char >= b'\x80'):
+                        self.stdout.write(Fore.LIGHTGREEN_EX + str(char) + Fore.RESET)
+                    else:
+                        self.stdout.write(Fore.LIGHTGREEN_EX + char.decode('ascii') + Fore.RESET)
 
         return packets
 

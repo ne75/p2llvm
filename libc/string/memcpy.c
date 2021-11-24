@@ -8,7 +8,13 @@
  */
 #include <string.h>
 #include <compiler.h>
+#include <propeller.h>
 
+#ifdef __p2llvm__
+
+// the p2 rtlib has a definition of memcpy
+
+#else
 #define ALIGNED(a) ( 0 == ( ((unsigned)(a)) & (sizeof(long)-1) ) )
 #define HUBMEM(a)  ( 0 == ( ((unsigned)(a)) & 0xFFF00000 ) )
 
@@ -55,6 +61,7 @@ memcpy(void *dest_p, const void *src_p, size_t n)
 
   return orig_dest;
 }
+#endif
 
 /* +--------------------------------------------------------------------
  * ¦  TERMS OF USE: MIT License

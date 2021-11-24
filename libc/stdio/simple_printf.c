@@ -28,6 +28,8 @@
  * similarly, define LONGLONG_SUPPORT for long long support
  * (needed for FLOAT_SUPPORT)
  */
+#define LONGLONG_SUPPORT
+
 #ifdef FLOAT_SUPPORT
 #define LONGLONG_SUPPORT
 #endif
