@@ -14,11 +14,8 @@ int main() {
     printf("$\n"); // start of test character
     // brk(DEBUG_CODE_INIT);
 
-    uint32_t t = CNT;
     uint64_t z = x/y; // should be 0x1660C174AE462
-    t = CNT - t;
     printf("%llx\n", z);
-
 
     y = 1;
     z = x/y; // should be 0x2428149226142124
@@ -28,24 +25,36 @@ int main() {
     z = x/y; // should be 0xffffffffffffffff
     printf("%llx\n", z);
 
-    
+    y = 0x2000;
+    z = x % y;  // should be 0x124
+    printf("%llx\n", z); 
+
     int64_t c = a/b;
 
-    printf("%lld\n", c);
+    printf("%lld\n", c); // expect -2500000000
 
     a = 5000000000;
     b = -2;     
     c = a/b;
 
-    printf("%lld\n", c);
+    printf("%lld\n", c);    // expect -2500000000
 
     a = -5000000000;
     b = -2;
-    t = CNT;
     c = a/b;
-    t = CNT - t;
-    
-    printf("%lld\n", c);
+    printf("%lld\n", c);    // expect 2500000000
+
+    c = -c;
+    printf("%lld\n", c);    // expect -2500000000
+
+    c = c >> 10;
+    printf("%lld\n", c);    // expect -2441407
+
+    c = c << 10;
+    printf("%lld\n", c);    // expect -2500000768
+
+    x = x >> 10;
+    printf("%llx\n", x);    // expect 90a0524898508
 
     printf("~\n"); // end of test character
 

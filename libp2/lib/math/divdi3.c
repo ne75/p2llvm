@@ -3,7 +3,6 @@
  * 
  * If divisor is > 32 bits, precision is reduced by right-shifts until divisors is 32 bits
  * 
- * 
  */
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wreturn-type"
@@ -14,7 +13,7 @@ __attribute__ ((section ("lut"), cogtext)) long long __divdi3(long long a, long 
             "mov $r5, $r3\n"
             "shr $r5, #31\n"    // sign of b
             "mov $r6, $r4\n"
-            "xor $r6, $r5\n"
+            "xor $r6, $r5\n"    // sign of result
             
             "cmp $r4, #0    wz\n"
     "if_z   jmp #.Lskip_neg_a\n"    // a is positive? 
@@ -36,7 +35,10 @@ __attribute__ ((section ("lut"), cogtext)) long long __divdi3(long long a, long 
             "addx $r3, #0\n"
     ".Lskip_neg_b:"
 
-            "calla #__udivdi3\n" // call unsigned division
+            "wrlong #0, $ptra\n"
+            "add $ptra, #4\n"
+            "calla #__udivmoddi4\n" // call unsigned division
+            "sub $ptra, #4\n"
 
             "cmp $r6, #0    wz\n"
     "if_z   jmp #.Lskip_neg_r\n"    // is result positive? 
