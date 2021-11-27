@@ -197,7 +197,7 @@ def main():
     parser = argparse.ArgumentParser(description='P2 LLVM Tests')
     parser.add_argument('--port', type=str, required=True)
     parser.add_argument('--tests', type=str, nargs='+')
-    parser.add_argument('--verbose', nargs='?', const=True, default=False);
+    parser.add_argument('--verbose', nargs='?', const=True, default=False)
     parser.add_argument('--no_clean', nargs='?', const=True, default=False)
 
     args = parser.parse_args()

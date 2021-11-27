@@ -1,6 +1,5 @@
 #include <propeller.h>
 #include <debug.h>
-#include <stdio.h>
 
 /**
  * The debug app

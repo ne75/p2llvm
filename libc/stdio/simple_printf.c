@@ -217,7 +217,7 @@ we can ignore one 'l' flag; use long long if two
             } else {
                 i_arg = va_arg(args, unsigned int);
                 if (c == 'd') {
-                                l_arg = (ULONG)(LONG)i_arg;
+                    l_arg = (ULONG)(LONG)i_arg;
                 } else {
                     l_arg = i_arg;
                 }

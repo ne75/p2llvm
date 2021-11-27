@@ -352,6 +352,10 @@ class P2DBPrompt(cmd.Cmd):
             addr -= s.get_cog_addr()
             addr /= 4
             addr = int(addr)
+        elif s.exec_mode == 'lutex':
+            addr -= 0x200
+            addr /= 4
+            addr = int(addr) + 0x200
 
         self.send_cmd(b'b', self.current_cog, (addr << 12) + (1 << 10))
         self.active[self.current_cog] = False
