@@ -12,7 +12,21 @@
 
 #ifdef __p2llvm__
 
-// the p2 rtlib has a definition of memcpy
+void *memcpy(void *dst, const void *src, size_t n) {
+    char *d = (char *)dst;
+    const char *s = (const char*)src;
+
+    // might be a smarter way to do this using the FIFO and such
+    if ((d != 0) && (s != 0)) {
+        while(n) {
+            //Copy byte by byte
+            *(d++)= *(s++);
+            --n;
+        }
+    }
+
+    return dst;
+}
 
 #else
 #define ALIGNED(a) ( 0 == ( ((unsigned)(a)) & (sizeof(long)-1) ) )

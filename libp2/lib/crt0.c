@@ -98,31 +98,3 @@ void __unreachable() {
 void __cxa_pure_virtual() {
     __unreachable();
 }
-
-__attribute__ ((section ("lut"), cogtext, no_builtin("memcpy"))) void *memcpy(void *dst, const void *src, unsigned n) {
-    char *d = (char *)dst;
-    const char *s = (const char*)src;
-
-    // might be a smarter way to do this using the FIFO and such
-    if ((d != 0) && (s != 0)) {
-        while(n) {
-            //Copy byte by byte
-            *(d++)= *(s++);
-            --n;
-        }
-    }
-
-    return dst;
-}
-
-__attribute__ ((section ("lut"), cogtext, no_builtin("memset"))) void *memset(void *dst, int c, unsigned n) {
-    // this can certainly be rewritten using the FIFO with wfbyte
-    char *d = (char *)dst;
-    if (d != 0) {
-        for (int i = 0; i < n; i++) {
-            d[i] = c;
-        }
-    }
-
-    return dst;
-}

@@ -56,6 +56,9 @@ int main() {
     x = x >> 10;
     printf("%llx\n", x);    // expect 90a0524898508
 
+    c = x * -2000;
+    printf("%lld\n", c);    // expect -5088583989004816000
+
     printf("~\n"); // end of test character
 
     busywait();

@@ -10,6 +10,22 @@
 #include <stdint.h>
 #include <compiler.h>
 
+#ifdef __p2llvm__
+
+__attribute__ ((section ("lut"), cogtext, no_builtin("memset"))) void *memset(void *dst, int c, size_t n) {
+    // this can certainly be rewritten using the FIFO with wfbyte
+    char *d = (char *)dst;
+    if (d != 0) {
+        for (int i = 0; i < n; i++) {
+            d[i] = c;
+        }
+    }
+
+    return dst;
+}
+
+#else
+
 /*
  * set some memory to a value
  */
@@ -45,6 +61,8 @@ memset(void *dest_p, int c, size_t n)
 
   return orig_dest;
 }
+
+#endif
 
 /* +--------------------------------------------------------------------
  * ¦  TERMS OF USE: MIT License
