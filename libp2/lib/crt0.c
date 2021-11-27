@@ -15,12 +15,6 @@ __attribute__ ((section ("cog"), cogmain)) void __start();
 void _init();
 void _fini();
 
-// These are our built-in functions that LLVM can use. Cogtext attribute does nothing, but including it for future use
-__attribute__ ((section ("lut"), cogtext)) int __sdiv(int a, int b);
-__attribute__ ((section ("lut"), cogtext)) int __srem(int a, int b);
-__attribute__ ((section ("lut"), cogtext)) void *__memcpy(void *dst, const void *src, unsigned n);
-__attribute__ ((section ("lut"), cogtext)) void *__memset(void *str, int c, unsigned n);
-
 extern int main();
 extern void _cstd_init();
 extern func_ptr _init_array_start[];
@@ -29,6 +23,8 @@ extern func_ptr _fini_array_start[];
 extern func_ptr _fini_array_end[];
 extern unsigned _libcall_start[];
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Winvalid-noreturn"
 __attribute__ ((cogmain, noreturn)) void __entry() {
     // basic entry code to jump to our resuable startup code. we do this by restarting cog 0, copying in
     // the code in the cog section (our reusable startup code). The linker will place _start() at address 0x100
@@ -39,6 +35,7 @@ __attribute__ ((cogmain, noreturn)) void __entry() {
     hubset(DEBUG_INT_EN | DEBUG_COG0);
     asm("coginit #0, %0" : : "r"(__start));
 }
+#pragma clang diagnostic pop
 
 void __start() {
     // TODO: figure out how to rewrite this without needing inline asm.
@@ -63,7 +60,7 @@ void __start() {
 
     // default clock frequency. Assumes the loader does not try to set a different one.
     // if we want the loader to be able to configure it, we'll need to pull this number from some shared memory location
-    _clkfreq = 25000000;
+    _clkfreq = 24000000;
 
     // setup c standard library
     _cstd_init();
@@ -100,69 +97,4 @@ void __unreachable() {
 
 void __cxa_pure_virtual() {
     __unreachable();
-}
-
-int __sdiv(int a, int b) {
-    // write this partially as a normal C function for now, optimize with assembly later
-    // full assembly optimization will require adding conditional statement parsing.
-    // the alternative until we get there is to pre-compile asm functions with fast spin
-    // and link the binary. Otherwise, we are using up cycles pushing and popping registers
-    // to and from the stack
-    //
-    // TODO: we have full instruciton parsing, rewrite for efficiency
-    int result_neg = (a ^ b) >> 31;
-
-    // faster than using abs() function
-    asm("abs %0, %1" : "=r"(a) : "r"(a));
-    asm("abs %0, %1" : "=r"(b) : "r"(b));
-
-    int res = (unsigned int)a/(unsigned int)b;
-
-    if (result_neg) return -res;
-
-    return res;
-}
-
-int __srem(int a, int b) {
-    // https://llvm.org/docs/LangRef.html#srem-instruction
-    // per LLVM instruction set, srem return should have the same sign as the first operand, a
-    int result_neg = a >> 31;
-
-    // faster than using abs() function
-    asm("abs %0, %1" : "=r"(a) : "r"(a));
-    asm("abs %0, %1" : "=r"(b) : "r"(b));
-
-    int res = (unsigned int)a%(unsigned int)b;
-
-    if (result_neg) return -res;
-
-    return res;
-}
-
-__attribute__ ((no_builtin("memcpy"))) void *__memcpy(void *dst, const void *src, unsigned n) {
-    char *d = (char *)dst;
-    const char *s = (const char*)src;
-
-    // might be a smarter way to do this using the FIFO and such
-    if ((d != 0) && (s != 0)) {
-        while(n) {
-            //Copy byte by byte
-            *(d++)= *(s++);
-            --n;
-        }
-    }
-
-    return dst;
-}
-
-__attribute__ ((no_builtin("memset"))) void *__memset(void *dst, int c, unsigned n) {
-    // this can certainly be rewritten using the FIFO with wfbyte
-    char *d = (char *)dst;
-    if (d != 0) {
-        for (int i = 0; i < n; i++) {
-            d[i] = c;
-        }
-    }
-
-    return dst;
 }

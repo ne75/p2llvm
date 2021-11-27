@@ -10,6 +10,7 @@
 
 #define STR(s) #s
 
+
 #define BASE_ISR(cog, save_addr) __attribute__ ((section (".debug_isr"), noreturn, cogtext)) void __dbg_isr##cog() {  \
     asm(        \
         "nop\n" \
@@ -44,6 +45,8 @@
     );                                                                              \
 }
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Winvalid-noreturn"
 BASE_ISR(7, 0x7e0);     // saves 0x100 longs to 0xfc000
 BASE_ISR(6, 0x7e2);     // saves 0x100 longs to 0xfc400
 BASE_ISR(5, 0x7e4);     // saves 0x100 longs to 0xfc800
@@ -52,3 +55,4 @@ BASE_ISR(3, 0x7e8);     // saves 0x100 longs to 0xfd000
 BASE_ISR(2, 0x7ea);     // saves 0x100 longs to 0xfd400
 BASE_ISR(1, 0x7ec);     // saves 0x100 longs to 0xfd800
 BASE_ISR(0, 0x7ee);     // saves 0x100 longs to 0xfdc00
+#pragma clang diagnostic pop

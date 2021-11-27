@@ -31,6 +31,9 @@ def build_llvm(configure=True, debug=False, install_dest=None):
     else:
         cmake_cmd.append("-DCMAKE_BUILD_TYPE=" + "Release")
 
+    if install_dest:
+        cmake_cmd.append("-DCMAKE_INSTALL_PREFIX=" + install_dest)
+
     cmake_cmd.append("../llvm")
 
     # run cmake
@@ -101,7 +104,7 @@ def build_libc(install_dest, llvm):
     if p.returncode != 0:
         return False
 
-    p = subprocess.Popen(['make', 'LLVM=' + llvm, '-j8', 'install', 'DEST=' + str(install_dir)], cwd=LIBC_DIR)
+    p = subprocess.Popen(['make', 'LLVM=' + llvm, 'install', 'DEST=' + str(install_dir)], cwd=LIBC_DIR)
     p.wait()
     if p.returncode != 0:
         return False

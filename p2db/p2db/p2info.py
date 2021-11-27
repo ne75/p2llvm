@@ -12,7 +12,13 @@ class Status:
         self.pc = int.from_bytes(status_bytes[12:16], 'little') & 0xfffff # the next instruction that will execute
         
         self._cog_exec_base_addr = -1 # if we are in cogex, this is the base address that was loaded into the cog
-        self.exec_mode = "cogex" if self.pc < 0x400 else "hubex"
+        if (self.pc < 0x200):
+            self.exec_mode = "cogex"
+        elif (self.pc < 0x400):
+            self.exec_mode = "lutex"
+        else:
+            self.exec_mode = "hubex"
+
         self.cog = cog
         self.brk_code = (stat1 >> 24) & 0xff
         self.coginit = ((stat1 >> 23) & 1) == 1
@@ -79,7 +85,9 @@ class Status:
         return self._cog_exec_base_addr
 
     def get_mem_pc(self):
-        if self.exec_mode == "cogex" and self._cog_exec_base_addr != -1:
+        if self.exec_mode == "lutex":
+            return (self.pc-0x200)*4 + 0x200
+        elif self.exec_mode == "cogex" and self._cog_exec_base_addr != -1:
             return self.pc*4 + self._cog_exec_base_addr
         else:
             return self.pc

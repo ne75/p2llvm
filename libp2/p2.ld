@@ -27,7 +27,7 @@ SECTIONS {
         KEEP(*(lut))
     }
 
-    . = 0x00900;
+    . = 0x00a00;
     .text : {
         KEEP(*(.text.main))
         *(.text*);

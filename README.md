@@ -6,8 +6,9 @@ Contains Propeller 2 Library, C Standard Library, examples, and documentation fo
 
 ### Build everything
 Run `python build.py`. The following options can be given: 
+- `--configure`: Run cmake to configure building. Must be included on the first run
 - `--debug`: build the debug version. This is significantly larger (and slower at compiling), but is useful during development
-- '--skip_llvm`: skip building LLVM
+- `--skip_llvm`: skip building LLVM
 - `--skip_libp2`: skip building libp2
 - `--skip_libc`: skip building libc
 - `--install <dir>`: install everything to `dir`

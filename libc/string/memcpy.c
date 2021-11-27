@@ -8,7 +8,27 @@
  */
 #include <string.h>
 #include <compiler.h>
+#include <propeller.h>
 
+#ifdef __p2llvm__
+
+void *memcpy(void *dst, const void *src, size_t n) {
+    char *d = (char *)dst;
+    const char *s = (const char*)src;
+
+    // might be a smarter way to do this using the FIFO and such
+    if ((d != 0) && (s != 0)) {
+        while(n) {
+            //Copy byte by byte
+            *(d++)= *(s++);
+            --n;
+        }
+    }
+
+    return dst;
+}
+
+#else
 #define ALIGNED(a) ( 0 == ( ((unsigned)(a)) & (sizeof(long)-1) ) )
 #define HUBMEM(a)  ( 0 == ( ((unsigned)(a)) & 0xFFF00000 ) )
 
@@ -55,6 +75,7 @@ memcpy(void *dest_p, const void *src_p, size_t n)
 
   return orig_dest;
 }
+#endif
 
 /* +--------------------------------------------------------------------
  * ¦  TERMS OF USE: MIT License

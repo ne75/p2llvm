@@ -1,6 +1,5 @@
 #include <propeller.h>
 #include <debug.h>
-#include <stdio.h>
 
 /**
  * The debug app
@@ -11,7 +10,8 @@
  * hub address 0xfe420..0xfe418 will be used for the 6 byte rx array
  * 
  */
-
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Winvalid-noreturn"
 __attribute__ ((section (".debug"), cogmain, noreturn)) void __dbg_run() {
     asm(    
             // r0 will hold the address of stat.
@@ -228,3 +228,4 @@ __attribute__ ((section (".debug"), cogmain, noreturn)) void __dbg_run() {
         : "r0", "r1", "r2", "r3", "r4", "r5", "r6", "r7", "r30", "r31" // clobber
     );
 }
+#pragma clang diagnostic pop

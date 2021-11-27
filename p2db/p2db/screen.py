@@ -323,9 +323,9 @@ class InstructionWindow(Window):
         self.cog_mode = exec_mode == "cogex"
         self.exec_mode_str = ''
 
-        if self.cog_mode:
+        if self.cog_mode and exec_mode != 'lutex':
             if status._cog_exec_base_addr == -1:
-                self.exec_mode_str = "Cog Execution Mode"
+                self.exec_mode_str = "Cog Execution Mode. Set base address to see disassembly"
 
         for sec in self.obj_data:
             if pc in self.obj_data[sec]:

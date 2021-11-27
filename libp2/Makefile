@@ -16,8 +16,11 @@ all: setup $(OBJDIR)/$(LIBTARGET).a
 
 setup:
 	mkdir -p $(OBJDIR)
+	mkdir -p $(OBJDIR)/math
 
-OBJS = crt0.o propeller2.o p2db.o p2db_isr.o
+OBJS = crt0.o propeller2.o p2db.o p2db_isr.o \
+		math/ashldi3.o math/ashrdi3.o math/divdi3.o math/divsi3.o math/lshrdi3.o math/moddi3.o \
+		math/modsi3.o math/muldi3.o math/negdi2.o math/udivdi3.o math/udivmoddi4.o math/umoddi3.o
 
 $(OBJDIR)/$(LIBTARGET).a: $(addprefix $(OBJDIR)/, $(OBJS))
 		$(AR) rc $@ $^

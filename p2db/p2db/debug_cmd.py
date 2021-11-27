@@ -165,7 +165,11 @@ class P2DBPrompt(cmd.Cmd):
                 else:
                     with open("p2db.log", 'a') as f:
                         f.write("non-debeug char {} at {}\n".format(str(char), data_stream.tell()-1))
-                    self.stdout.write(Fore.LIGHTGREEN_EX + char.decode('ascii') + Fore.RESET)
+
+                    if (char >= b'\x80'):
+                        self.stdout.write(Fore.LIGHTGREEN_EX + str(char) + Fore.RESET)
+                    else:
+                        self.stdout.write(Fore.LIGHTGREEN_EX + char.decode('ascii') + Fore.RESET)
 
         return packets
 
@@ -348,6 +352,10 @@ class P2DBPrompt(cmd.Cmd):
             addr -= s.get_cog_addr()
             addr /= 4
             addr = int(addr)
+        elif s.exec_mode == 'lutex':
+            addr -= 0x200
+            addr /= 4
+            addr = int(addr) + 0x200
 
         self.send_cmd(b'b', self.current_cog, (addr << 12) + (1 << 10))
         self.active[self.current_cog] = False
