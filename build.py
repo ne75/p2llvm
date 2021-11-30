@@ -68,14 +68,15 @@ def build_llvm(configure=True, debug=False, install_dest=None):
 
     return True
 
-def build_libp2(install_dest, llvm):
+def build_libp2(install_dest, llvm, clean=False):
     # build libp2
-    p = subprocess.Popen(['make', 'clean'], cwd=LIBP2_DIR)
-    p.wait()
-    if p.returncode != 0:
-        return False
+    if clean:
+        p = subprocess.Popen(['make', 'clean'], cwd=os.path.join(LIBP2_DIR, 'build'))
+        p.wait()
+        if p.returncode != 0:
+            return False
 
-    p = subprocess.Popen(['make', 'LLVM=' + llvm], cwd=LIBP2_DIR)
+    p = subprocess.Popen(['make', 'LLVM=' + llvm], cwd=os.path.join(LIBP2_DIR, 'build'))
     p.wait()
     if p.returncode != 0:
         return False
@@ -84,7 +85,7 @@ def build_libp2(install_dest, llvm):
     install_dir = os.path.join(install_dest, "libp2")
     os.makedirs(os.path.join(install_dir, 'lib'), exist_ok=True)
 
-    p = subprocess.Popen(['cp', os.path.join(LIBP2_DIR, 'build', 'libp2.a'), os.path.join(install_dir, 'lib', 'libp2.a')])
+    p = subprocess.Popen(['cp', os.path.join(LIBP2_DIR, 'build', 'lib', 'libp2.a'), os.path.join(install_dir, 'lib', 'libp2.a')])
     p.wait()
     if p.returncode != 0:
         return False
@@ -96,13 +97,15 @@ def build_libp2(install_dest, llvm):
 
     return True
 
-def build_libc(install_dest, llvm):
+def build_libc(install_dest, llvm, clean=False):
     # build and install libc
     install_dir = os.path.join('..', install_dest, 'libc')
-    p = subprocess.Popen(['make', 'clean'], cwd=LIBC_DIR)
-    p.wait()
-    if p.returncode != 0:
-        return False
+
+    if clean:
+        p = subprocess.Popen(['make', 'clean'], cwd=LIBC_DIR)
+        p.wait()
+        if p.returncode != 0:
+            return False
 
     p = subprocess.Popen(['make', 'LLVM=' + llvm, 'install', 'DEST=' + str(install_dir)], cwd=LIBC_DIR)
     p.wait()
@@ -119,8 +122,10 @@ def main():
     parser.add_argument('--skip_llvm', nargs='?', const=True, default=False)
     parser.add_argument('--skip_libc', nargs='?', const=True, default=False)
     parser.add_argument('--skip_libp2', nargs='?', const=True, default=False)
+    parser.add_argument('--clean', nargs='?', const=True, default=False)
     parser.add_argument('--debug', nargs='?', const=True, default=False)
     parser.add_argument('--install', type=str, required=False)
+    
 
     args = parser.parse_args()
 
@@ -130,6 +135,7 @@ def main():
     skip_libp2 = args.skip_libp2
     install_dest = args.install
     debug = args.debug
+    clean = args.clean
 
     # set up build directory
     if (debug):
@@ -150,9 +156,9 @@ def main():
     # build libp2
     if not skip_libp2:
         if (install_dest):
-            r = build_libp2(install_dest, llvm)
+            r = build_libp2(install_dest, llvm, clean)
         else:
-            r = build_libp2(build_dir, llvm)
+            r = build_libp2(build_dir, llvm, clean)
 
         if not r:
             return
@@ -160,9 +166,9 @@ def main():
     # build libc
     if not skip_libc:
         if (install_dest):
-            r = build_libc(install_dest, llvm)
+            r = build_libc(install_dest, llvm, clean)
         else:
-            r = build_libc(build_dir, llvm)
+            r = build_libc(build_dir, llvm, clean)
 
         if not r:
             return

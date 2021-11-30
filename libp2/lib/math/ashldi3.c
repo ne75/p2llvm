@@ -34,7 +34,7 @@ __attribute__ ((section ("lut"), cogtext)) long long __ashldi3(long long a, int 
             // lo = 0
             "mov $r30, #0\n"
             "mov $r31, $r0\n"
-            "shr $r31, $r3\n"
+            "shl $r31, $r3\n"
 
     ".Lret:\n"
     : : : "r0", "r1", "r2", "r3");

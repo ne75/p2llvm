@@ -28,7 +28,7 @@
  * similarly, define LONGLONG_SUPPORT for long long support
  * (needed for FLOAT_SUPPORT)
  */
-#define LONGLONG_SUPPORT
+#define FLOAT_SUPPORT
 
 #ifdef FLOAT_SUPPORT
 #define LONGLONG_SUPPORT
@@ -107,41 +107,42 @@ precmult[MAX_PRECISION+1] = {
 static int
 PUTFLOAT(char c, double d, int width, int prec, int fill_char)
 {
-        int outbytes = 0;
-        int sign = 0;
-        ULONG integer_part, frac_part;
-        const ULONG max_integer = 4000000000000000000ULL;
-        if (d < 0.0) {
-                sign = '-';
-                d = -d;
-        }
-        /* figure out the integer part */
-        if (d > (double)max_integer) {
-                if (sign) outbytes += PUTC(sign,1);
-                outbytes += PUTS("<number too big for this printf>", width-1);
-                return outbytes;
-        }
-        integer_part = (ULONG)d;
-        d -= (double)integer_part;
-        if (prec < 0) prec = 0;
-        if (prec > MAX_PRECISION) prec = MAX_PRECISION;
-        d *= precmult[prec];
-        d += 0.5;
-        if (d >= precmult[prec]) {
-            d -= precmult[prec];
-            integer_part++;
-        }
-        frac_part = (ULONG)d;
-        width -= (prec+1);
-        if (sign) {
-                outbytes += PUTC(sign,1); width--;
-        }
-        if (width < 0) width = 0;
-        outbytes += PUTL(integer_part,10,width,fill_char);
-        outbytes += PUTC('.',1);
-        if (prec > 0)
-                outbytes += PUTL(frac_part, 10, prec, '0');
+    int outbytes = 0;
+    int sign = 0;
+    ULONG integer_part, frac_part;
+    const ULONG max_integer = 4000000000000000000ULL;
+    if (d < 0.0) {
+        sign = '-';
+        d = -d;
+    }
+    /* figure out the integer part */
+    if (d > (double)max_integer) {
+        if (sign) outbytes += PUTC(sign,1);
+        outbytes += PUTS("<number too big for this printf>", width-1);
         return outbytes;
+    }
+    integer_part = (ULONG)d;
+
+    d -= (double)integer_part;
+    if (prec < 0) prec = 0;
+    if (prec > MAX_PRECISION) prec = MAX_PRECISION;
+    d *= precmult[prec];
+    d += 0.5;
+    if (d >= precmult[prec]) {
+        d -= precmult[prec];
+        integer_part++;
+    }
+    frac_part = (ULONG)d;
+    width -= (prec+1);
+    if (sign) {
+        outbytes += PUTC(sign,1); width--;
+    }
+    if (width < 0) width = 0;
+    outbytes += PUTL(integer_part,10,width,fill_char);
+    outbytes += PUTC('.',1);
+    if (prec > 0)
+        outbytes += PUTL(frac_part, 10, prec, '0');
+    return outbytes;
 }
 #endif
 

@@ -10,8 +10,8 @@ __attribute__ ((section ("lut"), cogtext)) unsigned long long __udivmoddi4(unsig
     asm(    
             // input validation/short circuits
             // 1. if b == 0, return max int 
-            "cmp $r2, #0    wz\n"
-            "cmpx $r3, #0   wz\n"
+            "cmp $r2, #0    wcz\n"
+            "cmpx $r3, #0   wcz\n"
     "if_nz  jmp #.Lcheck_1\n"
             "augs #8388607\n"
             "mov $r4, #511\n"
@@ -21,8 +21,8 @@ __attribute__ ((section ("lut"), cogtext)) unsigned long long __udivmoddi4(unsig
 
             // 2. if b == 1, return a
     ".Lcheck_1:"
-            "cmp $r2, #1    wz\n"
-            "cmpx $r3, #0   wz\n"
+            "cmp $r2, #1    wcz\n"
+            "cmpx $r3, #0   wcz\n"
     "if_nz  jmp #.Ldiv\n"
             "mov $r30, $r0\n"
             "mov $r31, $r1\n"

@@ -23,7 +23,7 @@ __attribute__ ((section ("lut"), cogtext)) long long __muldi3(long long a, long 
             // a = -a;
             "not $r0, $r0\n"
             "not $r1, $r1\n"
-            "add $r0, #1\n"
+            "add $r0, #1    wc\n"
             "addx $r1, #0\n"
 
     ".Lskip_neg_a:"
@@ -34,7 +34,7 @@ __attribute__ ((section ("lut"), cogtext)) long long __muldi3(long long a, long 
             // b = -b;
             "not $r2, $r2\n"
             "not $r3, $r3\n"
-            "add $r2, #1\n"
+            "add $r2, #1    wc\n"
             "addx $r3, #0\n"
     ".Lskip_neg_b:"
 
@@ -58,7 +58,7 @@ __attribute__ ((section ("lut"), cogtext)) long long __muldi3(long long a, long 
 
             "not $r30, $r30\n"
             "not $r31, $r31\n"
-            "add $r30, #1\n"
+            "add $r30, #1   wc\n"
             "addx $r31, #0\n"
     ".Lskip_neg_r:"
     
