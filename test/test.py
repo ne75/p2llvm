@@ -11,7 +11,7 @@ no_opt_build_dir = 'build/no_opt'
 opt_build_dir = 'build/opt'
 
 load_cmd = '/opt/p2llvm/bin/loadp2'
-load_args = ['-ZERO', '-l', '3000000', '-v', '-FIFO', '1024']
+load_args = ['-ZERO', '-l', '3000000', '-v', '-FIFO', '2048']
 
 verbose = False
 
@@ -58,7 +58,7 @@ class TestCase:
 
         print(Fore.LIGHTMAGENTA_EX + self.name + ": " + Fore.RESET + "Running non-optimized test")
 
-        if not self.load(port, os.path.join(no_opt_build_dir, 'src', self.name + ".bin")):
+        if not self.load(port, os.path.join(no_opt_build_dir, 'src', self.name + ".bin"), 10):
             return False
 
         if verbose:
@@ -76,7 +76,7 @@ class TestCase:
                 return False
 
         print(Fore.LIGHTMAGENTA_EX + self.name + ": " + Fore.RESET + "Running optimized test")
-        if not self.load(port, os.path.join(opt_build_dir, 'src', self.name + ".bin")):
+        if not self.load(port, os.path.join(opt_build_dir, 'src', self.name + ".bin"), 10):
             return False
 
         if (self.expected_output):
@@ -107,7 +107,8 @@ class TestCase:
             output = p.communicate()[0].decode('ascii')
 
             if p.returncode != 0:
-                print(Fore.RED + output + Fore.RESET)
+                if verbose:
+                    print(Fore.RED + output + Fore.RESET)
                 print(Fore.YELLOW + "Load failed, retrying...\r" + Fore.RESET)
                 retries -= 1;
                 result = False;

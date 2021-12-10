@@ -31,6 +31,16 @@ typedef uint16_t       uint_least16_t;
 typedef uint32_t       uint_least32_t;
 typedef uint64_t       uint_least64_t;
 
+#define UINT8_C(x) (x)
+#define UINT16_C(x) (x)
+#define UINT32_C(x) (x)
+#define UINT64_C(x) (x##ull)
+
+#define INT8_C(x) (x)
+#define INT16_C(x) (x)
+#define INT32_C(x) (x)
+#define INT64_C(x) (x##ll)
+
 /* assume "int" is the fastest integer type */
 typedef int            int_fast8_t;
 typedef unsigned int   uint_fast8_t;

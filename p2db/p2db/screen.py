@@ -293,12 +293,15 @@ class InstructionWindow(Window):
 
                         r = re.search(pat, self.inst_to_render[i][2])
 
-                        call_addr = r.group(2) if r else 0
+                        call_addr = int(r.group(2)) if r else 0
 
                         if call_addr == 0:
                             call_dest_name = '<indirect function call>'
                         else:
-                            call_dest_name = p2tools.get_section(self.obj_data, int(call_addr))
+                            # if call address is 0x200-0x400, convert it to where the LUT function is stored in HUB ram
+                            if call_addr >= 0x200 and call_addr < 0x400:
+                                call_addr = 4*(call_addr - 0x200) + 0x200
+                            call_dest_name = p2tools.get_section(self.obj_data, call_addr)
 
                         print("\t" + call_dest_name)
 

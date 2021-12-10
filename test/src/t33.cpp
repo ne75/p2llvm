@@ -14,6 +14,9 @@ int main() {
     printf("$\n"); // start of test character
     // brk(DEBUG_CODE_INIT);
 
+    const unsigned long long max_integer = 4000000000000000000ULL;
+    printf("%llx\n", max_integer);  // expect 0x3782dace9d900000
+
     uint64_t z = x/y; // should be 0x1660C174AE462
     printf("%llx\n", z);
 
