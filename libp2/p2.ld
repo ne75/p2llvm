@@ -51,6 +51,8 @@ SECTIONS {
 
     .data : {
         *(.data*);
+        PROVIDE(__enable_p2db = .);
+        LONG(0) /* by default, debugging is disabled, but if we link p2db, it will define this symbol, overriding it */
     }
 
     .bss : {
@@ -64,8 +66,7 @@ SECTIONS {
     }
 
     /* end of usable memory is 0x7C000 */
-    . = 0x7c000 - STACK_SIZE;
-    .stack (NOLOAD) : {
+    .stack 0x7c000 - STACK_SIZE (NOLOAD) : {
         . = ALIGN(4);
         __stack = .;
         . = . + STACK_SIZE - 4;

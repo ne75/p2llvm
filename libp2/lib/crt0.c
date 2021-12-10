@@ -22,6 +22,7 @@ extern func_ptr _init_array_end[];
 extern func_ptr _fini_array_start[];
 extern func_ptr _fini_array_end[];
 extern unsigned _libcall_start[];
+extern int __enable_p2db;
 
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Winvalid-noreturn"
@@ -32,7 +33,7 @@ __attribute__ ((cogmain, noreturn)) void __entry() {
     // this function might get overwritten later by hub params (clkfreq, clkmode, etc), so DO NOT try to restart the code with coginit #0, #0
 
     // before we start the routine, enable debugging for cog 0. any other cogs that want to be debugged should be enabled by the application
-    hubset(DEBUG_INT_EN | DEBUG_COG0);
+    if (__enable_p2db) hubset(DEBUG_INT_EN | DEBUG_COG0);
     asm("coginit #0, %0" : : "r"(__start));
 }
 #pragma clang diagnostic pop

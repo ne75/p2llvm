@@ -90,6 +90,11 @@ def build_libp2(install_dest, llvm, clean=False):
     if p.returncode != 0:
         return False
 
+    p = subprocess.Popen(['cp', os.path.join(LIBP2_DIR, 'build', 'lib', 'p2db', 'libp2db.a'), os.path.join(install_dir, 'lib', 'libp2db.a')])
+    p.wait()
+    if p.returncode != 0:
+        return False
+
     p = subprocess.Popen(['cp', '-r', os.path.join(LIBP2_DIR, 'include'), install_dir])
     p.wait()
     if p.returncode != 0:

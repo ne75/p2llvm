@@ -68,3 +68,5 @@ build/
 *.elf
 
 .vscode/
+
+*p2db.log
