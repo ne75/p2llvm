@@ -19,7 +19,6 @@
 // mmmm
 
 #include "int_lib.h"
-#include <stdio.h>
 
 double __attribute__ ((noinline)) __floatundidf_(du_int a) {
   if (a == 0)
