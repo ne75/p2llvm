@@ -68,15 +68,29 @@ def build_llvm(configure=True, debug=False, install_dest=None):
 
     return True
 
-def build_libp2(install_dest, llvm, clean=False):
+def build_libp2(install_dest, llvm, clean=False, configure=True):
+    build_dir = os.path.join(LIBP2_DIR, 'build')
+    os.makedirs(build_dir, exist_ok=True)
+
     # build libp2
+
+    if configure:
+        cmake_cmd = ['cmake', '../']
+
+        p = subprocess.Popen(cmake_cmd, cwd=build_dir)
+        p.wait()
+
+        if p.returncode != 0:
+            return False
+        
+
     if clean:
-        p = subprocess.Popen(['make', 'clean'], cwd=os.path.join(LIBP2_DIR, 'build'))
+        p = subprocess.Popen(['make', 'clean'], cwd=build_dir)
         p.wait()
         if p.returncode != 0:
             return False
 
-    p = subprocess.Popen(['make', 'LLVM=' + llvm], cwd=os.path.join(LIBP2_DIR, 'build'))
+    p = subprocess.Popen(['make', 'LLVM=' + llvm], cwd=build_dir)
     p.wait()
     if p.returncode != 0:
         return False
@@ -85,12 +99,12 @@ def build_libp2(install_dest, llvm, clean=False):
     install_dir = os.path.join(install_dest, "libp2")
     os.makedirs(os.path.join(install_dir, 'lib'), exist_ok=True)
 
-    p = subprocess.Popen(['cp', os.path.join(LIBP2_DIR, 'build', 'lib', 'libp2.a'), os.path.join(install_dir, 'lib', 'libp2.a')])
+    p = subprocess.Popen(['cp', os.path.join(build_dir, 'lib', 'libp2.a'), os.path.join(install_dir, 'lib', 'libp2.a')])
     p.wait()
     if p.returncode != 0:
         return False
 
-    p = subprocess.Popen(['cp', os.path.join(LIBP2_DIR, 'build', 'lib', 'p2db', 'libp2db.a'), os.path.join(install_dir, 'lib', 'libp2db.a')])
+    p = subprocess.Popen(['cp', os.path.join(build_dir, 'lib', 'p2db', 'libp2db.a'), os.path.join(install_dir, 'lib', 'libp2db.a')])
     p.wait()
     if p.returncode != 0:
         return False
@@ -161,9 +175,9 @@ def main():
     # build libp2
     if not skip_libp2:
         if (install_dest):
-            r = build_libp2(install_dest, llvm, clean)
+            r = build_libp2(install_dest, llvm, clean, configure)
         else:
-            r = build_libp2(build_dir, llvm, clean)
+            r = build_libp2(build_dir, llvm, clean, configure)
 
         if not r:
             return
