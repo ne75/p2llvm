@@ -4,7 +4,7 @@ SET(CMAKE_CROSSCOMPILING 1)
 set(CMAKE_C_COMPILER_WORKS 1)
 set(CMAKE_CXX_COMPILER_WORKS 1)
 
-set(llvm "/opt/p2llvm/bin")
+# set(llvm "/opt/p2llvm/bin")
 
 set(target_ops "-ffunction-sections -fdata-sections -Oz -fno-exceptions -fno-jump-tables --target=p2")
 
