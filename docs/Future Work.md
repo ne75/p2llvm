@@ -5,7 +5,7 @@ This is a quick reference for features that still needed to fully complete the t
 - the rest of the instructions
 - grouping cog functions to be loaded together
 - better testing of the c standard library
-- support for large immediates (currently need to insert augs/augd explicitly)
+- support for large immediates with inline asm (currently need to insert augs/augd explicitly)
 - support for getting offsets to labels (for rep and similar instructions)
 - instruction costs for the scheduler
 - optimization passes for various things we can do (for example, a for loop of fixed iterations can be implemented using the rep instruction)

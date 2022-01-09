@@ -5,10 +5,10 @@ void a(int a, int b, int c, int d, int e) {
 }
 
 int main() {
-    printf("$\n"); // start of test character
+    // printf("$\n"); // start of test character
 
     a(1, 2, 3, 4, 5);
 
-    printf("~\n"); // end of test character
+    // printf("~\n"); // end of test character
     return 0;
 }
