@@ -22,10 +22,10 @@ COMPILER_RT_ABI di_int __negdi2(di_int a) {
     // Note: this routine is here for API compatibility; any sane compiler
     // should expand it inline.
     asm(
-        "not $r30, $r0\n"
-        "not $r31, $r1\n"
-        "add $r30, #1   wc\n"
-        "addx $r31, #0\n"
+        "not r30, r0\n"
+        "not r31, r1\n"
+        "add r30, #1   wc\n"
+        "addx r31, #0\n"
     );
 }
 #pragma clang diagnostic pop

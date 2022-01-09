@@ -20,63 +20,63 @@ __attribute__ ((section (".debug"), cogmain, noreturn)) void __dbg_run() {
     asm(    
             // r0 will hold the address of stat.
             "augs #0x7f2\n"      
-            "mov $r0, #0\n"    
+            "mov r0, #0\n"    
 
             // r1 will hold the address of rx.     
             "augs #0x7f2\n"     
-            "mov $r1, #0x20\n"
+            "mov r1, #0x20\n"
 
             // get coginit status bit
-            "getbrk $r3 wcz\n"
-            "shr $r3, #23\n"        
-            "and $r3, #1\n"
+            "getbrk r3 wcz\n"
+            "shr r3, #23\n"        
+            "and r3, #1\n"
 
             // if this is a coginit interrupt, set up for a brk interrupt and return 
-            "tjz $r3, #.Lenter\n"
+            "tjz r3, #.Lenter\n"
             "brk %0\n"
             "ret\n" 
 
     ".Lenter:"
 
-            "mov $r7, #0\n"     // r7 == skip sending stat (0 = don't skip sending stat)
+            "mov r7, #0\n"     // r7 == skip sending stat (0 = don't skip sending stat)
     ".Llock:"
             "locktry %4 wc\n"
     "if_nc   jmp #.Llock\n"
 
             // set up by writing '0xdb' and 'g' to our stat array
-            "mov $r2, $r0\n"
-            "wrbyte #0xdb, $r2\n"   
-            "add $r2, #1\n"
-            "wrbyte #0x67, $r2\n"
+            "mov r2, r0\n"
+            "wrbyte #0xdb, r2\n"   
+            "add r2, #1\n"
+            "wrbyte #0x67, r2\n"
 
             // get our cogid
-            "cogid $r6\n"
-            "add $r2, #1\n"
-            "wrbyte $r6, $r2\n"
+            "cogid r6\n"
+            "add r2, #1\n"
+            "wrbyte r6, r2\n"
 
             // fill up stat array, stat1
-            "add $r2, #1\n"         
-            "getbrk $r3 wcz\n"      
-            "wrlong $r3, $r2\n"
+            "add r2, #1\n"         
+            "getbrk r3 wcz\n"      
+            "wrlong r3, r2\n"
 
             // fill up stat array, stat2
-            "add $r2, #4\n"         
-            "getbrk $r4 wc\n"
-            "wrlong $r4, $r2\n"
+            "add r2, #4\n"         
+            "getbrk r4 wc\n"
+            "wrlong r4, r2\n"
 
             // fill up stat array, stat3
-            "add $r2, #4\n"         
-            "getbrk $r4 wz\n"
-            "wrlong $r4, $r2\n"
+            "add r2, #4\n"         
+            "getbrk r4 wz\n"
+            "wrlong r4, r2\n"
 
             // record PC 
-            "add $r2, #4\n"         
-            "wrlong $inb, $r2\n"     // in the debug ISR, inb becomes iret0, the return address of the debug ISR, i.e. the instruction after the breakpoint PC
+            "add r2, #4\n"         
+            "wrlong inb, r2\n"     // in the debug ISR, inb becomes iret0, the return address of the debug ISR, i.e. the instruction after the breakpoint PC
 
-            "tjnz $r7, #.Lmain_loop\n" // skip dumping stat if this wasn't our first entry into the locked region
+            "tjnz r7, #.Lmain_loop\n" // skip dumping stat if this wasn't our first entry into the locked region
     ".Lstat_dump:"
             // dump current data         
-            "mov $r3, #19\n"  
+            "mov r3, #19\n"  
             "call #.Ltx_bytes\n"
 
             // main loop. we stay here forever or return from the interrupt
@@ -85,55 +85,55 @@ __attribute__ ((section (".debug"), cogmain, noreturn)) void __dbg_run() {
             "brk %3\n"
 
             // check if there's already data waiting. if there is, jump to process it
-            "rdbyte $r2, $r1\n"
-            "cmp $r2, #0xdb wz\n"
+            "rdbyte r2, r1\n"
+            "cmp r2, #0xdb wz\n"
     "if_z   jmp #.Lprocess_cmd\n"
 
     ".Lrx_begin:"
-            // get a byte, if we didn't get a '$', jump back to the start of the routine
+            // get a byte, if we didn't get a '0xdb', jump back to the start of the routine
             "call #.Lser_rx\n"
             "cmp $r31, #0xdb wz\n"      
     "if_nz  jmp #.Lrx_begin\n"        
             
             // read in 6 bytes
-            "mov $r2, $r1\n"    
-            "wrbyte #0xdb, $r2\n" // write the start character first to mark that we have a command
-            "add $r2, #1\n"
+            "mov r2, r1\n"    
+            "wrbyte #0xdb, r2\n" // write the start character first to mark that we have a command
+            "add r2, #1\n"
 
-            "mov $r3, #6\n"
+            "mov r3, #6\n"
     ".Lrx_cmd:"
             "call #.Lser_rx\n"
-            "wrbyte $r31, $r2\n"
-            "add $r2, #1\n"
-            "djnz $r3, #.Lrx_cmd\n"
+            "wrbyte r31, r2\n"
+            "add r2, #1\n"
+            "djnz r3, #.Lrx_cmd\n"
 
     ".Lprocess_cmd:"
             // get the command byte
-            "mov $r2, $r1\n"
-            "add $r2, #1\n"
-            "rdbyte $r3, $r2\n"
-            "add $r2, #1\n"
+            "mov r2, r1\n"
+            "add r2, #1\n"
+            "rdbyte r3, r2\n"
+            "add r2, #1\n"
 
             // get the cogid byte and check if the command is for us
-            "rdbyte $r4, $r2\n"
-            "add $r2, #1\n"
-            "cmp $r4, $r6 wz\n"
+            "rdbyte r4, r2\n"
+            "add r2, #1\n"
+            "cmp r4, r6 wz\n"
     "if_z   jmp #.Lcmd_switch\n"
             // command is not for us, release the lock so another cog can begin processing,
             // then, go back to try to re-acquire the lock, but we need to skip sending the status, 
             // since that should only be sent on isr entry
             "brk #0\n"
-            "mov $r7, #1\n"
+            "mov r7, #1\n"
             "lockrel %4\n"
             "jmp #.Llock\n"
 
     ".Lcmd_switch:"
             // switch statement
-            "cmp $r3, #0x68 wz\n"   // h
+            "cmp r3, #0x68 wz\n"   // h
     "if_z   jmp #.Lcase_h\n"
-            "cmp $r3, #0x72 wz\n"   // r
+            "cmp r3, #0x72 wz\n"   // r
     "if_z   jmp #.Lcase_r\n"
-            "cmp $r3, #0x62 wz\n"   // b
+            "cmp r3, #0x62 wz\n"   // b
     "if_z   jmp #.Lcase_b\n"
 
             "brk #0\n"          // default
@@ -141,52 +141,52 @@ __attribute__ ((section (".debug"), cogmain, noreturn)) void __dbg_run() {
 
     // h command case
     ".Lcase_h:"
-            "mov $r4, $r0\n"
-            "add $r4, #1\n"
-            "wrbyte #0x68, $r4\n"
-            "add $r4, #2\n"
-            "rdlong $r5, $r2\n"   // r5 is the address we want to get 
-            "rdbyte $r5, $r5\n"   // r5 is the value we wanted to get
-            "wrbyte $r5, $r4\n"
+            "mov r4, r0\n"
+            "add r4, #1\n"
+            "wrbyte #0x68, r4\n"
+            "add r4, #2\n"
+            "rdlong r5, r2\n"   // r5 is the address we want to get 
+            "rdbyte r5, r5\n"   // r5 is the value we wanted to get
+            "wrbyte r5, r4\n"
 
             // transmite 4 bytes from stat         
-            "mov $r3, #4\n" 
+            "mov r3, #4\n" 
             "call #.Ltx_bytes\n"
 
             // clear the command
-            "mov $r2, $r1\n"
-            "wrbyte #0, $r2\n"
+            "mov r2, r1\n"
+            "wrbyte #0, r2\n"
             "jmp #.Lmain_loop\n"
 
     // r command case
     ".Lcase_r:"
-            "mov $r4, $r0\n"
-            "add $r4, #1\n"
-            "wrbyte #0x72, $r4\n"
-            "add $r4, #2\n"
-            "rdlong $r5, $r2\n"     // r5 is the register address we want
-            "alts $r5, #0\n"        // next instruction's s field will be the value in r5, i.e the register we want to read
-            "mov $r5, $0\n"         // r5 is the value we wanted to get
-            "wrlong $r5, $r4\n"
+            "mov r4, r0\n"
+            "add r4, #1\n"
+            "wrbyte #0x72, r4\n"
+            "add r4, #2\n"
+            "rdlong r5, r2\n"     // r5 is the register address we want
+            "alts r5, #0\n"        // next instruction's s field will be the value in r5, i.e the register we want to read
+            "mov r5, $0\n"         // r5 is the value we wanted to get
+            "wrlong r5, r4\n"
 
             // transmit 7 bytes from stat         
-            "mov $r3, #7\n" 
+            "mov r3, #7\n" 
             "call #.Ltx_bytes\n"
 
             // clear the command
-            "mov $r2, $r1\n"
-            "wrbyte #0, $r2\n"
+            "mov r2, r1\n"
+            "wrbyte #0, r2\n"
             "jmp #.Lmain_loop\n" 
 
     // b command case
     ".Lcase_b:"
-            "rdlong $r5, $r2\n"   // r5 is the brk value 
-            "brk $r5\n"
+            "rdlong r5, r2\n"   // r5 is the brk value 
+            "brk r5\n"
             // nothing to transmit, exit the debug isr
 
             // clear the command
-            "mov $r2, $r1\n"
-            "wrbyte #0, $r2\n"
+            "mov r2, r1\n"
+            "wrbyte #0, r2\n"
             //"jmp #.Lret\n" fallthrough to end the case
 
     ".Lret:"
@@ -197,19 +197,19 @@ __attribute__ ((section (".debug"), cogmain, noreturn)) void __dbg_run() {
      * tx bytes from stat. r3 should contain the number of bytes to send. uses r2 and r30
      */     
     ".Ltx_bytes:"
-            "mov $r2, $r0\n"
+            "mov r2, r0\n"
     ".Ltx_loop:"
-            "rdbyte $r30, $r2\n"
+            "rdbyte r30, r2\n"
             "call #.Lser_tx\n"
-            "add $r2, #1\n"
-            "djnz $r3, #.Ltx_loop\n"
+            "add r2, #1\n"
+            "djnz r3, #.Ltx_loop\n"
             "ret\n" 
 
     /**
      * tx_ser subroutine. place byte to tx in r10
      */
     ".Lser_tx:" 
-            "wypin $r30, %1\n"   
+            "wypin r30, %1\n"   
             "waitx #20\n"  
     ".Ltxflush:"
             "testp %1 wc\n"
@@ -223,8 +223,8 @@ __attribute__ ((section (".debug"), cogmain, noreturn)) void __dbg_run() {
     ".Lser_rx:" 
             "testp %2 wc\n"  
 	"if_nc  jmp #.Lser_rx\n"   
-  	        "rdpin $r31, %2\n"
-	        "shr $r31, #24\n"
+  	        "rdpin r31, %2\n"
+	        "shr r31, #24\n"
             "ret\n"
 
         : // outputs

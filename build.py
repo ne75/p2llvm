@@ -75,7 +75,7 @@ def build_libp2(install_dest, llvm, clean=False, configure=True):
     # build libp2
 
     if configure:
-        cmake_cmd = ['cmake', '../']
+        cmake_cmd = ['cmake', '-Dllvm=' + str(install_dest.join('bin')), '../']
 
         p = subprocess.Popen(cmake_cmd, cwd=build_dir)
         p.wait()
@@ -126,7 +126,7 @@ def build_libc(install_dest, llvm, clean=False):
         if p.returncode != 0:
             return False
 
-    p = subprocess.Popen(['make', 'LLVM=' + llvm, 'install', 'DEST=' + str(install_dir)], cwd=LIBC_DIR)
+    p = subprocess.Popen(['make', 'LLVM=' + llvm, 'DEST=' + str(install_dir), 'install'], cwd=LIBC_DIR)
     p.wait()
     if p.returncode != 0:
         return False
@@ -145,7 +145,6 @@ def main():
     parser.add_argument('--debug', nargs='?', const=True, default=False)
     parser.add_argument('--install', type=str, required=False)
     
-
     args = parser.parse_args()
 
     configure = args.configure

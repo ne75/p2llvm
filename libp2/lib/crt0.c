@@ -42,14 +42,14 @@ void __start() {
     // TODO: figure out how to rewrite this without needing inline asm.
     INIT_RTLIB;
 
-    asm("cogid $r0\n"           // get the current cog ID
-        "tjz $r0, #.Linit\n"    // if cog 0, jump to the special cog0 startup code.
+    asm("cogid r0\n"           // get the current cog ID
+        "tjz r0, #.Linit\n"    // if cog 0, jump to the special cog0 startup code.
 
-        "mov $r0, $ptra\n"      //  if not cog 0, save ptra (value at ptra should be pointer to start of stack)
-        "rdlong $r1, $r0\n"     //  read out first stack value
-        "add $r0, #4\n"
-        "rdlong $r0, $r0\n"     //  read out second stack value
-        "jmp $r1\n"             //  jump to the cog function
+        "mov r0, ptra\n"      //  if not cog 0, save ptra (value at ptra should be pointer to start of stack)
+        "rdlong r1, r0\n"     //  read out first stack value
+        "add r0, #4\n"
+        "rdlong r0, r0\n"     //  read out second stack value
+        "jmp r1\n"             //  jump to the cog function
         ".Linit:"
     );
 
