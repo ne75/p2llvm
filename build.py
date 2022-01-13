@@ -21,6 +21,7 @@ def build_llvm(configure=True, debug=False, install_dest=None):
     cmake_cmd = [   'cmake', 
                     '-G', 
                     'Unix Makefiles',
+		    '-DCMAKE_OSX_ARCHITECTURES=arm64',
                     '-DLLVM_ENABLE_PROJECTS=lld;clang',
                     '-DLLVM_EXPERIMENTAL_TARGETS_TO_BUILD=P2',
                     '-DLLVM_TARGETS_TO_BUILD='

@@ -69,7 +69,7 @@ SECTIONS {
     .stack 0x7c000 - STACK_SIZE (NOLOAD) : {
         . = ALIGN(4);
         __stack = .;
-        . = . + STACK_SIZE - 4;
+        . = . + STACK_SIZE;
     }
     
     .debug : {
