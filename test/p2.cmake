@@ -7,8 +7,8 @@ set(llvm_base "/opt/p2llvm")
 set(llvm "${llvm_base}/bin")
 # set(llvm "/Users/nikita/Github/p2llvm/llvm-project/build_debug/bin")
 
-set(target_ops "-fno-exceptions -fno-jump-tables --target=p2 -Dprintf=__simple_printf -mllvm -debug")
-# set(target_ops "-fno-exceptions -fno-jump-tables --target=p2 -Dprintf=__simple_printf")
+# set(target_ops "-fno-exceptions -fno-jump-tables --target=p2 -Dprintf=__simple_printf -mllvm -debug")
+set(target_ops "-fno-exceptions -fno-jump-tables --target=p2 -Dprintf=__simple_printf")
 
 set(CMAKE_C_FLAGS "${target_ops} -ffunction-sections -fdata-sections" CACHE STRING "" FORCE)
 set(CMAKE_C_LINK_FLAGS "--target=p2 -Wl,--whole-archive -lp2db -Wl,--no-whole-archive")
