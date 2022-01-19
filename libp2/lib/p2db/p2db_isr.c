@@ -37,11 +37,11 @@
         "setq    #0xff\n"       /* load program into 0xf0..0x1ef from 0xfc800*/     \
         "augs    #0x7e4\n"                                                          \
         "rdlong  $0xf0, #0x0\n"                                                     \
-        "call    /#0xf0\n"      /* jump to debug image */                           \
+        "call    #\\0xf0\n"      /* jump to debug image */                           \
         "setq    #0xff\n"       /* exit routine. restore ram from 0xfc000*/         \
         "augs    #" STR(save_addr) "\n"                                             \
         "rdlong  $0xf0, #0\n"                                                       \
-        "jmp     /#0x1fd\n"                                                         \
+        "jmp     #\\0x1fd\n"                                                         \
     );                                                                              \
 }
 

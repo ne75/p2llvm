@@ -523,14 +523,14 @@ class InstRA(Instruction):
         }
 
     def __str__(self):
-        if (self.mnemonic == 'calla'):
-            # calla is special. it's always absolute, but doens't include the /
+        # if (self.mnemonic == 'calla'):
+        #     # calla is special. it's always absolute, but doens't include the /
+        #     return (self._to_cond(self.e) + ' ' + self.mnemonic + ' #' + str(self.a)).strip()
+        # else:
+        if self.r:
             return (self._to_cond(self.e) + ' ' + self.mnemonic + ' #' + str(self.a)).strip()
         else:
-            if self.r:
-                return (self._to_cond(self.e) + ' ' + self.mnemonic + ' #' + str(self.a)).strip()
-            else:
-                return (self._to_cond(self.e) + ' ' + self.mnemonic + ' /#' + str(self.a)).strip()
+            return (self._to_cond(self.e) + ' ' + self.mnemonic + ' #\\' + str(self.a)).strip()
 
 class InstWRA(Instruction):
     pattern = '^EEEE ([0-1]{5})WW RA{2} A{9} A{9}$'
@@ -790,7 +790,7 @@ def gen_sample_instructions(i):
         insts = []
 
         for e in Conditions:
-            insts.append(i(Conditions[e], 1))
+            insts.append(i(Conditions[e], 123456))
 
         return insts
         
