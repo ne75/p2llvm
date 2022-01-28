@@ -4,44 +4,14 @@
 #include "smartpins.h"
 #include "streamer.h"
 
-#define DBG_UART_RX_PIN 63
-#define DBG_UART_TX_PIN 62
+#define UART_RX_PIN 63
+#define UART_TX_PIN 62
+#define UART_BAUD 230400
+#define DBG_UART_RX_PIN 03
+#define DBG_UART_TX_PIN 02
 #define DBG_UART_BAUD 3000000
 
 // assembly macros
-
-// High level and misc
-#define hubset(h) asm volatile ("hubset %0" : : "r"(h))
-#define waitx(t) asm volatile ("waitx %0" : : "r"(t))
-
-#define wrc(x) asm volatile ("wrc %0" : "=r"(x) :)
-#define wrnc(x) asm volatile ("wrnc %0" : "=r"(x) :)
-#define wrz(x) asm volatile ("wrz %0" : "=r"(x) :)
-#define wrnz(x) asm volatile ("wrnz %0" : "=r"(x) :)
-
-// branching
-#define cogret asm volatile ("ret")
-
-// Pin control
-#define dirh(pin) asm volatile ("dirh %0" : : "ri"(pin))
-#define dirl(pin) asm volatile ("dirl %0" : : "ri"(pin))
-#define outh(pin) asm volatile ("outh %0" : : "ri"(pin))
-#define outl(pin) asm volatile ("outl %0" : : "ri"(pin))
-#define outnot(pin) asm volatile ("outnot %0" : : "ri"(pin))
-#define drvh(pin) asm volatile ("drvh %0" : : "ri"(pin))
-#define drvl(pin) asm volatile ("drvl %0" : : "ri"(pin))
-#define drvnot(pin) asm volatile ("drvnot %0" : : "ri"(pin))
-
-// Test
-#define testp(pin, res) asm volatile ("testp %1 wc\nwrc %0\n" : "=r"(res) : "r"(pin))
-
-// Smart pin control
-#define rdpin(v, pin) asm volatile ("rdpin %0, %1" : "=r"(v) : "r"(pin))
-#define rqpin(v, pin) asm volatile ("rqpin %0, %1" : "=r"(v) : "r"(pin))
-
-#define wrpin(v, pin) asm volatile ("wrpin %0, %1" : : "r"(v), "r"(pin))
-#define wxpin(v, pin) asm volatile ("wxpin %0, %1" : : "r"(v), "r"(pin))
-#define wypin(v, pin) asm volatile ("wypin %0, %1" : : "r"(v), "r"(pin))
 
 // Streamer
 #define xinit(x, y) asm volatile ("xinit %0, %1" : : "r"(x), "r"(y))
@@ -158,6 +128,33 @@ extern "C" {
  * init the rtlib so that libcalls work (necessary for native cog functions)
  */
 #define INIT_RTLIB  asm("setq2 #0x1ff\n augs #1\n rdlong $0, #0\n")
+
+// High level and misc
+void _hubset(unsigned h);
+void _waitx(unsigned t);
+
+// Pin control
+void _pinw(char pin, char state);
+void _dirh(char pin);
+void _dirl(char pin);
+void _pinh(char pin);
+void _pinl(char pin);
+//void _pinrnd(char pin);
+void _pinnot(char pin);
+int _pinr(char pin);
+
+// Test
+int _testp(char pin);
+
+// Smart pin control
+int _rdpin(char pin);
+int _rqpin(char pin);
+void _wrpin(char pin, char state);
+void _wxpin(char pin, char state);
+void _wypin(char pin, char state);
+//void _akpin(char pin);
+void _pinstart(char pin, unsigned mode, unsigned xval, unsigned yval);
+
 /**
  * run clock configuration to the desired clock mode and clock frequency
  */
@@ -174,9 +171,19 @@ unsigned int _cnt();
 void _waitcnt(unsigned int cnt);
 
 /**
+ * wait milliseconds
+ */
+void _wait(unsigned int milliseconds);
+
+/**
  * start a new cog dictated by mode. return if start was successful
  */
 int _coginit(unsigned mode, void (*f)(void *), void *par) __attribute__((noinline));
+
+/**
+ * start a new cog from function
+ */
+int cogstart(void (*f)(void *), void *par, unsigned *stack, int stacksize);
 
 /**
  * reverse bits in x

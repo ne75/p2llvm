@@ -33,12 +33,14 @@ __attribute__ ((cogmain, noreturn)) void __entry() {
     // this function might get overwritten later by hub params (clkfreq, clkmode, etc), so DO NOT try to restart the code with coginit #0, #0
 
     // before we start the routine, enable debugging for cog 0. any other cogs that want to be debugged should be enabled by the application
-    if (__enable_p2db) hubset(DEBUG_INT_EN | DEBUG_COG0);
+    if (__enable_p2db) _hubset(DEBUG_INT_EN | DEBUG_COG0);
     asm("coginit #0, %0" : : "r"(__start));
 }
 #pragma clang diagnostic pop
 
 void __start() {
+    int r;
+
     // TODO: figure out how to rewrite this without needing inline asm.
     INIT_RTLIB;
 
@@ -61,7 +63,20 @@ void __start() {
 
     // default clock frequency. Assumes the loader does not try to set a different one.
     // if we want the loader to be able to configure it, we'll need to pull this number from some shared memory location
-    _clkfreq = 24000000;
+    _clkfreq = 200000000;
+
+    asm("hubset #0\n"
+        "augd #32772\n"
+        "hubset #504\n"
+        "augd #390\n"
+        "waitx #140\n"
+        "augs #32772\n"
+        "mov pa, #507\n"
+        "hubset pa\n"
+        "wrlong pa, #24\n"
+        "augd #390625\n"
+        "wrlong #511, #20\n"
+    );
 
     // setup c standard library
     _cstd_init();
@@ -70,7 +85,7 @@ void __start() {
     _init();
 
     // run the main function
-    main();
+    r = main();
 
     // in theory, we don't need this, but leave it for completeness
     _fini();
@@ -93,7 +108,9 @@ void _fini(void) {
 
 // a give-up function if we have some fatal error.
 void __unreachable() {
-    while(1);
+    while(1) {
+      _wait(1000);
+    }
 }
 
 void __cxa_pure_virtual() {
