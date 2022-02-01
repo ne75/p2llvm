@@ -11,7 +11,7 @@
 
 int main() {
     _clkset(_SETFREQ, _CLOCKFREQ);
-    _uart_init(RX_PIN, TX_PIN, 230400); // FIXME: this is SUPPOSED to called by the C standard lib but it isn't working
+    _uart_init(RX_PIN, TX_PIN, 230400);
 
     printf("Hello World!\n");
 

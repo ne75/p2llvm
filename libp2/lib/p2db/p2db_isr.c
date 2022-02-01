@@ -11,7 +11,7 @@
 #define STR(s) #s
 
 
-#define BASE_ISR(cog, save_addr) __attribute__ ((section (".debug_isr"), noreturn, cogtext)) void __dbg_isr##cog() {  \
+#define BASE_ISR(cog, save_addr) __attribute__ ((section (".debug_isr"), noreturn, cogtext, used, retain)) void __dbg_isr##cog() {  \
     asm(        \
         "nop\n" \
         "nop\n" \

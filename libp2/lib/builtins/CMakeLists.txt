@@ -27,3 +27,8 @@ add_library(builtins OBJECT
     udivmoddi4.c
     umoddi3.c
 )
+
+# create a compiler_builtins library for rust
+add_library(compiler_builtins STATIC)
+
+target_link_libraries(compiler_builtins builtins)

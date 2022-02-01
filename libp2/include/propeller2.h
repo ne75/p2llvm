@@ -11,8 +11,8 @@
 // assembly macros
 
 // High level and misc
-#define hubset(h) asm volatile ("hubset %0" : : "r"(h))
-#define waitx(t) asm volatile ("waitx %0" : : "r"(t))
+#define hubset(h) asm volatile ("hubset %0" : : "ri"(h))
+#define waitx(t) asm volatile ("waitx %0" : : "ri"(t))
 
 #define wrc(x) asm volatile ("wrc %0" : "=r"(x) :)
 #define wrnc(x) asm volatile ("wrnc %0" : "=r"(x) :)
@@ -33,28 +33,28 @@
 #define drvnot(pin) asm volatile ("drvnot %0" : : "ri"(pin))
 
 // Test
-#define testp(pin, res) asm volatile ("testp %1 wc\nwrc %0\n" : "=r"(res) : "r"(pin))
+#define testp(pin, res) asm volatile ("testp %1 wc\nwrc %0\n" : "=r"(res) : "ri"(pin))
 
 // Smart pin control
-#define rdpin(v, pin) asm volatile ("rdpin %0, %1" : "=r"(v) : "r"(pin))
-#define rqpin(v, pin) asm volatile ("rqpin %0, %1" : "=r"(v) : "r"(pin))
+#define rdpin(v, pin) asm volatile ("rdpin %0, %1" : "=r"(v) : "ri"(pin))
+#define rqpin(v, pin) asm volatile ("rqpin %0, %1" : "=r"(v) : "ri"(pin))
 
-#define wrpin(v, pin) asm volatile ("wrpin %0, %1" : : "r"(v), "r"(pin))
-#define wxpin(v, pin) asm volatile ("wxpin %0, %1" : : "r"(v), "r"(pin))
-#define wypin(v, pin) asm volatile ("wypin %0, %1" : : "r"(v), "r"(pin))
+#define wrpin(v, pin) asm volatile ("wrpin %0, %1" : : "ri"(v), "ri"(pin))
+#define wxpin(v, pin) asm volatile ("wxpin %0, %1" : : "ri"(v), "ri"(pin))
+#define wypin(v, pin) asm volatile ("wypin %0, %1" : : "ri"(v), "ri"(pin))
 
 // Streamer
-#define xinit(x, y) asm volatile ("xinit %0, %1" : : "r"(x), "r"(y))
-#define setxfrq(x) asm volatile ("setxfrq %0" : : "r"(x))
-#define rdfast(x, y) asm volatile ("rdfast %0, %1" : : "r"(x), "r"(y))
-#define wrfast(x, y) asm volatile ("wrfast %0, %1" : : "r"(x), "r"(y))
+#define xinit(x, y) asm volatile ("xinit %0, %1" : : "ri"(x), "ri"(y))
+#define setxfrq(x) asm volatile ("setxfrq %0" : : "ri"(x))
+#define rdfast(x, y) asm volatile ("rdfast %0, %1" : : "ri"(x), "ri"(y))
+#define wrfast(x, y) asm volatile ("wrfast %0, %1" : : "ri"(x), "ri"(y))
 
 // LUT 
-#define wrlut(x, addr) asm volatile ("wrlut %0, %1" : : "r"(x), "r"(addr))
-#define rdlut(x, addr) asm volatile ("rdlut %0, %1" : "=r"(x), : "r"(addr))
+#define wrlut(x, addr) asm volatile ("wrlut %0, %1" : : "ri"(x), "ri"(addr))
+#define rdlut(x, addr) asm volatile ("rdlut %0, %1" : "=r"(x), : "ri"(addr))
 
 // Debugging
-#define brk(x) asm volatile ("brk %0" : : "r"(x))
+#define brk(x) asm volatile ("brk %0" : : "ri"(x))
 #define cogbrk(x) asm volatile ("cogbrk %0" : : "ri"(x))
 #define getbrk_wcz(x) asm volatile ("getbrk %0 wcz" : "=r"(x) :)
 #define getbrk_wc(x) asm volatile ("getbrk %0 wc" : "=r"(x) :)

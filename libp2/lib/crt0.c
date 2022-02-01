@@ -24,6 +24,10 @@ extern func_ptr _fini_array_end[];
 extern unsigned _libcall_start[];
 extern int __enable_p2db;
 
+void _cstd_init() __attribute__((weak)) {
+    // do nothing if libc is not linked
+}
+
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Winvalid-noreturn"
 __attribute__ ((cogmain, noreturn)) void __entry() {

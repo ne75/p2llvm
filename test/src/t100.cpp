@@ -4,6 +4,8 @@
  * use it.
  *
  */
+
+#define P2_TARGET_MHZ   200
 #include <propeller.h>
 #include <stdio.h>
 #include <sys/p2es_clock.h>
