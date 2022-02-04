@@ -1,6 +1,7 @@
 add_library(p2
     crt0.c
     propeller2.c
+    cstd_init_dummy.c
 )
 
 target_include_directories(p2 PRIVATE ${CMAKE_SOURCE_DIR}/include)

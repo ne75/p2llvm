@@ -1,1 +1,2 @@
-expected_output: ""
+expected_output: |
+  fail
