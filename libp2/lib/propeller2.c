@@ -85,11 +85,11 @@ void _uart_init(unsigned rx, unsigned tx, unsigned baud) {
     x &= 0xfffffc00;
     x |= 7;
 
-    wrpin(SP_ASYNC_TX_MODE, tx);
+    wrpin(P_ASYNC_TX | P_TT_01, tx);
     wxpin(x, tx);
     dirh(tx);
 
-    wrpin(SP_ASYNC_RX_MODE, rx);
+    wrpin(P_ASYNC_RX, rx);
     wxpin(x, rx);
     dirh(rx);
 }

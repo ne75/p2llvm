@@ -13,7 +13,6 @@ unsigned char data[] = "Now is the time for all good men.";
 int main(int argc, char** argv) {
     _clkset(_SETFREQ, _CLOCKFREQ);
     _uart_init(DBG_UART_RX_PIN, DBG_UART_TX_PIN, 3000000);
-    brk(0);
     
     printf("Starting...\n");
 

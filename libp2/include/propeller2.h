@@ -8,11 +8,27 @@
 #define DBG_UART_TX_PIN 62
 #define DBG_UART_BAUD 3000000
 
+#define E_IN_RISE   (1 << 6)
+#define E_IN_FALL   (2 << 6)
+#define E_IN_CHANGE (3 << 6)
+#define E_IN_LOW    (4 << 6)
+#define E_IN_HIGH   (6 << 6)
+
 // assembly macros
 
 // High level and misc
 #define hubset(h) asm volatile ("hubset %0" : : "ri"(h))
 #define waitx(t) asm volatile ("waitx %0" : : "ri"(t))
+
+#define setse1(x) asm volatile ("setse1 %0" : : "ri"(x))
+#define setse2(x) asm volatile ("setse2 %0" : : "ri"(x))
+#define setse3(x) asm volatile ("setse3 %0" : : "ri"(x))
+#define setse4(x) asm volatile ("setse4 %0" : : "ri"(x))
+
+#define waitse1() asm volatile ("waitse1" : :)
+#define waitse2() asm volatile ("waitse2" : :)
+#define waitse3() asm volatile ("waitse3" : :)
+#define waitse4() asm volatile ("waitse4" : :)
 
 #define wrc(x) asm volatile ("wrc %0" : "=r"(x) :)
 #define wrnc(x) asm volatile ("wrnc %0" : "=r"(x) :)
