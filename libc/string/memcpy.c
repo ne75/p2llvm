@@ -12,7 +12,7 @@
 
 #ifdef __p2llvm__
 
-void *memcpy(void *dst, const void *src, size_t n) {
+__attribute__ ((section ("lut"), cogtext, no_builtin("memset"))) void *memcpy(void *dst, const void *src, size_t n) {
     char *d = (char *)dst;
     const char *s = (const char*)src;
 

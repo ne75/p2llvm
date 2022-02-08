@@ -287,7 +287,7 @@ class InstructionWindow(Window):
                     print("{:x}: {}\t\t{}".format(self.inst_to_render[i][0], self.inst_to_render[i][1], self.inst_to_render[i][2]), end='')  
 
                     if 'calla' in self.inst_to_render[i][2]:    # only draw the address for calla since those correspond to an explicit function that has a section
-                        pat = r'^(.*?) #([0-9]+)(.*?)' # pattern to get the address of a call instruction
+                        pat = r'^(.*?) #\\([0-9]+)(.*?)' # pattern to get the address of a call instruction
                         with open("p2db.log", 'a') as f:
                             f.write("call instruction: {}".format(self.inst_to_render[i][2]) + '\n')
 

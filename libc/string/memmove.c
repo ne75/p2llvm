@@ -12,9 +12,7 @@
  * this function has to handle overlapping regions correctly
  */
 
-void *
-memmove(void *dest_p, const void *src_p, size_t n)
-{
+__attribute__ ((section ("lut"), cogtext, no_builtin("memset")))  void *memmove(void *dest_p, const void *src_p, size_t n) {
   void *orig_dest = dest_p;
 
   const char *src = src_p;
