@@ -1,5 +1,5 @@
 class Status:
-    def __init__(self, status_bytes, cog) -> None:
+    def __init__(self, status_bytes) -> None:
         '''
         Stores the current cog/processor status. built each time a command is executed
         See documentation for what each bit is
@@ -19,7 +19,6 @@ class Status:
         else:
             self.exec_mode = "hubex"
 
-        self.cog = cog
         self.brk_code = (stat1 >> 24) & 0xff
         self.coginit = ((stat1 >> 23) & 1) == 1
         self.colorspace_conv_active = ((stat1 >> 22) & 1) == 1
