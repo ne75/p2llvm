@@ -4,18 +4,19 @@ import time
 import logging
 from colorama import Fore
 
-from . import screen
+from . import loggers
 from . import p2tools
 from . import p2db_server
+from . import ui
 
 verbose = False
 
-def main():
-    log = logging.getLogger('main')
-    log.info("=======================")
-    log.info("==== Starting P2DB ====")
-    log.info("=======================")
+log = logging.getLogger('main')
+log.info("=======================")
+log.info("==== Starting P2DB ====")
+log.info("=======================")
 
+def main():
     parser = argparse.ArgumentParser(description='P2DB Debugger')
     parser.add_argument('port', type=str)
     parser.add_argument('app', type=str)
@@ -25,25 +26,22 @@ def main():
 
     verbose = args.verbose
 
-    server = p2db_server.P2DBServer('');
-    server.start()
-
-    # app_bin = p2tools.gen_bin(args.app)
-
-    # if not app_bin:
-    #     return
-
-    # objdata = p2tools.get_objdump_data(args.app)
-
-    if not p2tools.load(args.port, args.app, server.ser.baudrate, verbose):
+    app_bin = p2tools.gen_bin(args.app)
+    if not app_bin:
         return
 
-    # open("p2db.log", 'w').close()
+    objdata = p2tools.get_objdump_data(args.app)
 
-    # main_screen = screen.Screen(ser, objdata)
-    # main_screen.run()
-    while(1):
-        time.sleep(1)
+    server = p2db_server.P2DBServer(args.port);
+    front_end = ui.UI(server, objdata)
+    server.set_objdata(objdata)
+
+    if not p2tools.load(args.port, app_bin, server.ser.baudrate, verbose):
+        return
+
+    front_end.update_log("Loaded " + args.app + "\n")
+    server.start()
+    front_end.run()
 
 if __name__ == "__main__":
     main()
