@@ -2,17 +2,11 @@
 
 extern void __start();
 
-unsigned int _cnt() {
-    int x;
-    asm("getct %0\n" : "=r"(x) : );
-    return x;
-}
+extern unsigned int _cnt();
 
-void _waitcnt(unsigned int cnt) {
-    // ADDCT1 D,#0; WAITCT1
-    asm("addct1 %0, #0" : : "r"(cnt));
-    asm("waitct1");
-}
+extern void busywait();
+
+extern void _waitcnt(unsigned int cnt);
 
 void _wait(unsigned milliseconds)
 {
@@ -25,6 +19,58 @@ void _wait(unsigned milliseconds)
        milliseconds = _clkfreq / 1000 * milliseconds;
        _waitx(milliseconds);
     }
+}
+
+#define _waitms(milliseconds) _wait(milliseconds)
+
+void _waitus(unsigned microseconds)
+{
+    microseconds = _clkfreq / 1000000 * microseconds;
+    _waitx(microseconds);
+}
+
+unsigned int _getsec()
+{
+    unsigned int upper, lower;
+
+    asm("getct %0 wc\n"
+        "getct %1\n"
+        "setq %0\n"
+        "qdiv %1, %2\n"
+        "getqx %1\n"
+        :"+r"(upper), "+r"(lower)
+        :"r"(_clkfreq));
+        return lower;
+}
+
+unsigned int _getms()
+{
+    unsigned int upper, lower;
+    unsigned int msec = _clkfreq / 1000;
+
+    asm("getct %0 wc\n"
+        "getct %1\n"
+        "setq %0\n"
+        "qdiv %1, %2\n"
+        "getqx %1\n"
+        :"+r"(upper), "+r"(lower)
+        :"r"(msec));
+        return lower;
+}
+
+unsigned int _getus()
+{
+    unsigned int upper, lower;
+    unsigned int msec = _clkfreq / 1000000;
+
+    asm("getct %0 wc\n"
+        "getct %1\n"
+        "setq %0\n"
+        "qdiv %1, %2\n"
+        "getqx %1\n"
+        :"+r"(upper), "+r"(lower)
+        :"r"(msec));
+        return lower;
 }
 
 void _clkset(unsigned clkmode, unsigned clkfreq) {
@@ -67,121 +113,49 @@ int cogstart(void (*f)(void *), void *par, unsigned *stack, int stacksize) {
     return started;
 }
 
-unsigned int _locknew() {
-    int x;
-    asm("locknew %0" : "=r"(x) : );
-    return x;
-}
+extern unsigned int _locknew();
 
-void _lockret(unsigned int l) {
-    asm("lockret %0" : : "r"(l));
-}
+extern void _lockret(unsigned int l);
 
-void _lock(unsigned int l) {
-    asm(".L_locktry%=:\n"
-        "locktry %0 wc\n"
-        "if_nc jmp #.L_locktry%=" : : "r"(l));
-}
+extern void _lock(unsigned int l);
 
-int _locktry(unsigned int l) {
-    int x = 0;
-    asm("locktry %0 wc\n"
-        "if_c mov %1, #1\n"
-        :"=r"(x) : "r"(l));
-    return x;
-}
+extern int _locktry(unsigned int l);
 
-void _unlock(unsigned int l) {
-    asm("lockrel %0" : : "r"(l));
-}
+extern void _unlock(unsigned int l);
 
-void _hubset(unsigned h) {
-    asm("hubset %0" : : "r"(h));
-}
+extern void _hubset(unsigned h);
 
-void _waitx(unsigned t) {
-    asm("waitx %0" : : "r"(t));
-}
+extern void _waitx(unsigned t);
 
-void _pinw(char pin, char state) {
-    if (state)
-        asm("dirh %0\n"::"r"(pin));
-    else
-        asm("dirl %0\n"::"r"(pin));
-}
+extern void _pinw(char pin, char state);
 
-void _dirh(char pin) {
-    asm("dirh %0\n"::"r"(pin));
-}
+extern void _dirh(char pin);
 
-void _dirl(char pin) {
-    asm("dirl %0\n"::"r"(pin));
-}
-void _pinh(char pin) {
-    asm("outh %0\n"::"r"(pin));
-}
+extern void _dirl(char pin);
 
-void _pinl(char pin) {
-    asm("outl %0\n"::"r"(pin));
-}
+extern void _pinh(char pin);
 
-//void _pinrnd(char pin) {
-//    asm("outrnd %0\n": :"r"(pin));
-//}
+extern void _pinl(char pin);
 
-void _pinnot(char pin) {
-    asm("outnot %0\n"::"r"(pin));
-}
+extern void _pinnot(char pin);
 
-int _pinr(char pin) {
-    int state = 0;
+extern int _pinr(char pin);
 
-    asm("testp %1 wc\n"
-        "if_c  mov %0, #1\n"
-        :"+r"(state)
-        :"r"(pin));
-    return state;
-}
+extern int _testp(char pin);
 
-int _testp(char pin) {
-    int rslt = 0;
+extern int _rdpin(char pin);
 
-    asm("testp %1 wc\n"
-        "if_c mov %0, #1\n"
-        :"+r"(rslt)
-        :"r"(pin));
-    return rslt;
-}
+extern int _rqpin(char pin);
 
-int _rdpin(char pin) {
-    int rslt = 0;
+extern void _pinf(char pin);
 
-    asm("rdpin %0, %1\n":"=r"(rslt):"r"(pin));
-    return rslt;
-}
+extern void _wrpin(char pin, unsigned mode);
 
-int _rqpin(char pin) {
-    int rslt = 0;
+extern void _wxpin(char pin, unsigned xval);
 
-    asm("rqpin %0, %1\n":"=r"(rslt):"r"(pin));
-    return rslt;
-}
+extern void _wypin(char pin, unsigned yval);
 
-void _wrpin(char pin, char state) {
-    asm("wrpin %0, %1\n"::"r"(state),"r"(pin));
-}
-
-void _wxpin(char pin, char state) {
-    asm("wxpin %0, %1\n"::"r"(state),"r"(pin));
-}
-
-void _wypin(char pin, char state) {
-    asm("wypin %0, %1\n"::"r"(state),"r"(pin));
-}
-
-//void _akpin(char pin) {
-//    asm("akpin %0\n"::"r"(pin));
-//}
+//extern void _akpin(char pin);
 
 void _pinstart(char pin, unsigned mode, unsigned xval, unsigned yval) {
     asm("dirl %0\n"
@@ -192,10 +166,14 @@ void _pinstart(char pin, unsigned mode, unsigned xval, unsigned yval) {
         ::"r"(pin), "r"(mode), "r"(xval), "r"(yval));
 }
 
-unsigned int _rev(unsigned int x) {
-    asm("rev %0" : : "r"(x));
-    return x;
+void _pinclr(char pin)
+{
+    asm("dirl %0\n"
+        "wrpin %0, #0\n"
+        ::"r"(pin));
 }
+
+extern unsigned int _rev(unsigned int x);
 
 void _uart_init(unsigned rx, unsigned tx, unsigned baud) {
 
@@ -224,7 +202,7 @@ void _uart_putc(char c, int p) {
         done = _testp(p);
         if (done != 0)
             break;
-        _wait(1);
+        _waitus(50);
     }
 
     __unlock_dbg();
@@ -242,6 +220,7 @@ char _uart_getc(int p) {
     unsigned x;
 
     x = _rdpin(p);
-
-    return (char)(x >> 24);
+    x = x >> 24;
+    
+    return (char)x;
 }

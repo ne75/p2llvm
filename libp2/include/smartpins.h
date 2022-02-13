@@ -1,6 +1,10 @@
 #ifndef _SMARTPINS_H
 #define _SMARTPINS_H
 
+/**
+ * @brief D/# = %AAAA_BBBB_FFF_PPPPPPPPPPPPP_TT_MMMMM_0
+ */
+
 #define P_TRUE_A 0x00
 #define P_INVERT_A 0x80000000
 #define P_LOCAL_A 0x00

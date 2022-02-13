@@ -8,6 +8,10 @@
 typedef void (*func_ptr)(void);
 
 extern unsigned int __stack;
+int argc = 1;
+static char *argv[2];
+static char program[] = "P2LLVM";
+static char _dummy[] = "dummy";
 
 __attribute__ ((section ("cog"), cogmain)) void __start();
 
@@ -33,7 +37,7 @@ __attribute__ ((cogmain, noreturn)) void __entry() {
     // this function might get overwritten later by hub params (clkfreq, clkmode, etc), so DO NOT try to restart the code with coginit #0, #0
 
     // before we start the routine, enable debugging for cog 0. any other cogs that want to be debugged should be enabled by the application
-    if (__enable_p2db) _hubset(DEBUG_INT_EN | DEBUG_COG0);
+    //if (__enable_p2db) _hubset(DEBUG_INT_EN | DEBUG_COG0);
     asm("coginit #0, %0" : : "r"(__start));
 }
 #pragma clang diagnostic pop
@@ -84,8 +88,14 @@ void __start() {
     // initialize all our constructors
     _init();
 
+    argv[0] = program;
+    argv[1] = _dummy;
+
     // run the main function
-    r = main();
+    r = main(argc, argv);
+
+    if (r == -1)
+        asm("drvl #57\n"::);
 
     // in theory, we don't need this, but leave it for completeness
     _fini();

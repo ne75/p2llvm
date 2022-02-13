@@ -114,11 +114,6 @@ extern "C" {
 #define COGINIT_MODE_HUB 0x00
 
 /**
- * wait indefinitely with waitx to reduce power consumption
- */
-#define busywait() while(1) waitx(CLKFREQ);
-
-/**
  * lock/unlock the debug lock in case something else needs to access the debug UART
  */
 #define __lock_dbg() _lock(_dbg_lock)
@@ -130,50 +125,262 @@ extern "C" {
 #define INIT_RTLIB  asm("setq2 #0x1ff\n augs #1\n rdlong $0, #0\n")
 
 // High level and misc
-void _hubset(unsigned h);
-void _waitx(unsigned t);
+/**
+ * @brief hubset set p2 processor
+ * 
+ * @param h 
+ */
+inline void _hubset(unsigned h) {
+    asm("hubset %0" : : "r"(h));
+}
+
+/**
+ * @brief wait t number of clocks
+ * 
+ * @param t 
+ */
+inline void _waitx(unsigned t) {
+    asm("waitx %0" : : "r"(t));
+}
+
+/**
+ * wait indefinitely with waitx to reduce power consumption
+ */
+inline void busywait() {
+    while (1)
+        _waitx(_clkfreq);
+}
 
 // Pin control
-void _pinw(char pin, char state);
-void _dirh(char pin);
-void _dirl(char pin);
-void _pinh(char pin);
-void _pinl(char pin);
-//void _pinrnd(char pin);
-void _pinnot(char pin);
-int _pinr(char pin);
+/**
+ * @brief setup pin based on state
+ * @param pin pin number to set
+ * @param state 0 - set pin as input, 1 - set as output
+ */
+inline void _pinw(char pin, char state) {
+    if (state)
+        asm("dirh %0\n"::"r"(pin));
+    else
+        asm("dirl %0\n"::"r"(pin));
+}
 
-// Test
-int _testp(char pin);
+/**
+ * @brief set pin direction to output
+ * @param pin pin number to set
+ */
+inline void _dirh(char pin) {
+    asm ("dirh %0\n"::"r"(pin));
+}
+
+/**
+ * @brief set pin direction to input
+ * @param pin pin number to set
+ */
+inline void _dirl(char pin)
+{
+    asm ("dirl %0\n"::"r"(pin));
+}
+
+
+/**
+ * @brief set pin state to high
+ * @param pin pin number to set
+ */
+inline void _pinh(char pin)
+{
+    asm ("dirh %0\n"::"r"(pin));
+}
+
+/**
+ * @brief set pin state to low
+ * @param pin pin number to set
+ */
+inline void _pinl(char pin)
+{
+    asm ("dirl %0\n"::"r"(pin));
+}
+
+/**
+ * @brief set pin state to random
+ * @param pin pin number to set
+ */
+//void _pinrnd(char pin);
+
+/**
+ * @brief set pin to opposite state
+ * @param pin pin number to set
+ */
+inline void _pinnot(char pin) {
+    asm ("outnot %0\n"::"r"(pin));
+}
+
+/**
+ * @brief read the logic state of I/O Pin
+ * @param pin pin number to read
+ */
+inline int _pinr(char pin) {
+    int state;
+
+    asm("testp %1 wc\n"
+        "wrc %0\n"
+        :"+r"(state)
+        :"r"(pin));
+    return state;
+}
+
+/**
+ * @brief test the logic state
+ * @param pin pin to test
+ */
+inline int _testp(char pin) {
+    int rslt;
+
+    asm("testp %1 wc\n"
+        "wrc %0\n"
+        :"=r"(rslt)
+        :"r"(pin));
+    return rslt;
+}
 
 // Smart pin control
-int _rdpin(char pin);
-int _rqpin(char pin);
-void _wrpin(char pin, char state);
-void _wxpin(char pin, char state);
-void _wypin(char pin, char state);
-//void _akpin(char pin);
+/**
+ * @brief read smart pin state and clear in
+ * @param pin smart pin number to read
+ */
+inline int _rdpin(char pin) {
+    int rslt;
+
+    asm ("rdpin %0, %1\n":"=r"(rslt):"r"(pin));
+    return rslt;
+}
+
+/**
+ * @brief read smart pin state don't clear in
+ * @param pin pin number to read
+ */
+inline int _rqpin(char pin) {
+    int rslt;
+
+    asm ("rqpin %0, %1\n":"=r"(rslt):"r"(pin));
+    return rslt;
+}
+
+/**
+ * @brief set smart pin mode
+ * @param pin smart pin to set
+ * @param mode smart pin mode
+ */
+inline void _wrpin(char pin, unsigned mode) {
+    asm ("wrpin %0, %1\n"::"r"(mode),"r"(pin));
+}
+
+/**
+ * @brief write x value to smart pin
+ * @param pin smart pin number
+ * @param xval x value to set
+ */
+inline void _wxpin(char pin, unsigned xval) {
+    asm ("wxpin %0, %1\n"::"r"(xval),"r"(pin));
+}
+
+/**
+ * @brief write y value to smart pin
+ * @param pin smart pin number
+ * @param yval y value to set
+ */
+inline void _wypin(char pin, unsigned yval) {
+    asm ("wypin %0, %1\n"::"r"(yval),"r"(pin));
+}
+
+/**
+ * @brief float pin
+ * @param pin pin number to float
+ */
+inline void _pinf(char pin) {
+	asm ("fltl %0\n"::"r"(pin));
+}
+
+/**
+ * @brief acknowledge smart pin
+ * @param pin smart pin number
+ */
+//inline void _akpin(char pin) {
+//    asm("akpin %0\n"::"r"(pin));
+//}
+
+/**
+ * @brief configure smart
+ * @param pin smart pin number to configure
+ * @param mode smart pin mode value
+ * @param xval x value to set
+ * @param yval y value to set
+ */
 void _pinstart(char pin, unsigned mode, unsigned xval, unsigned yval);
 
 /**
- * run clock configuration to the desired clock mode and clock frequency
+ * @brief clear smart pin
+ * @param pin smart pin number
+ */
+void _pinclr(char pin);
+
+/**
+ * @brief set the P2 processor clock mode and frequency
+ * 
+ * @param clkmode _SETFREQ - macro of mode frequency
+ * @param clkfreq _CLOCKFREQ - macro of freq
+ * @details set P2_TARGET_MHZ 200 as first define in program which
+ *          builds the two above macros for configuring the P2 clock 
  */
 void _clkset(unsigned clkmode, unsigned clkfreq);
 
 /**
- * return the current count
+ * @brief access the processor clock count
+ * @return lower 32 bits of clock value
  */
-unsigned int _cnt();
+inline unsigned int _cnt() {
+    int x;
+    asm("getct %0\n" : "=r"(x) : );
+    return x;
+}
 
 /**
- * wait until current count == cnt
+ * @brief wait unitil cnt
+ * @param cnt clock counter to wait to
  */
-void _waitcnt(unsigned int cnt);
+inline void _waitcnt(unsigned int cnt) {
+    asm("addct1 %0, #0" : : "r"(cnt));
+    asm("waitct1");
+}
 
 /**
  * wait milliseconds
  */
 void _wait(unsigned int milliseconds);
+
+/**
+ * wait milliseconds
+ */
+void _waitms(unsigned int milliseconds);
+
+/**
+ * waitus wait microseconds
+ */
+void _waitus(unsigned microseconds);
+
+/**
+ * get seconds since program started
+ */
+unsigned int _getsec(void);
+
+/**
+ * get milliseconds since program started
+ */
+unsigned int _getms(void);
+
+/**
+ * get microseconds since program started
+ */
+unsigned int _getus(void);
 
 /**
  * start a new cog dictated by mode. return if start was successful
@@ -188,54 +395,88 @@ int cogstart(void (*f)(void *), void *par, unsigned *stack, int stacksize);
 /**
  * reverse bits in x
  */
-unsigned int _rev(unsigned int x);
+inline unsigned int _rev(unsigned int x) {
+    asm("rev %0" :"+r"(x):);
+    return x;
+}
 
 /**
- * initialize the given rx/tx pins in async mode (uart)
- * this needs to be called again if using UART and clkset is called to adjust baud rates
+ * @brief setup serial read and write for the given pins
+ * @param rx recieve pin number to use
+ * @param tx transmitt pin number to use
+ * @param baud baud rate to use
+ * @details This should be called after a clock change to adjust baud rate
  */
 void _uart_init(unsigned rx, unsigned tx, unsigned baud);
 
 /**
- * write a character to the builtin UART
+ * @brief send character
+ * @param c character to send
+ * @param p pin number setup to send
  */
 void _uart_putc(char c, int p);
 
 /**
- * check if there's a character in the buffer for pin p. 0 if there's no data, 1 if there is data
+ * @brief check if character is available
+ * @param p pin number setup to receive data
+ * @return status 0 if there's no character, 1 if there is character
  */
 int _uart_checkc(int p);
 
 /**
- * read a character from the builtin UART. If no character is avilable, then return is undefined, so be sure to check
- * if anything's available wiht _uart_checkc first
+ * @brief receive a character from the serial pin
+ * @param p pin number configured to recieve
+ * @return character received
+ * @details does not wait for a character and returns 0 if no character is available
  */
 char _uart_getc(int p);
 
 /**
- * request a new hardware lock
+ * @brief Get a lock from the lock table (16)
+ * @return lock number
  */
-unsigned int _locknew();
+inline unsigned int _locknew() {
+    int x;
+    asm("locknew %0" : "=r"(x) : );
+    return x;
+}
 
 /**
- * return the lock to the pool
+ * @brief Return lock to the lock table (16)
+ * @param l lock number
  */
-void _lockret(unsigned int l);
+inline void _lockret(unsigned int l) {
+    asm("lockret %0" :: "r"(l));
+}
 
 /**
- * try to lock a lock, returning 1 if it succeed, 0 if not.
+ * @brief try to get a lock
+ * @param l lock number to get
+ * @return 0 - lock not available 1 - got lock
  */
-int _locktry(unsigned int l);
+inline int _locktry(unsigned int l) {
+    int x;
+    asm("locktry %1 wc\n"
+        "wrc %0\n"
+        :"=r"(x) : "r"(l));
+    return x;
+}
 
 /**
  * try to lock a lock, blocking until it is acquired.
  */
-void _lock(unsigned int l);
+inline void _lock(unsigned int l) {
+    asm(".L_locktry%=:\n"
+        "locktry %0 wc\n"
+        "if_nc jmp #.L_locktry%=" : : "r"(l));
+}
 
 /**
  * release the lock
  */
-void _unlock(unsigned int l);
+inline void _unlock(unsigned int l) {
+    asm("lockrel %0" : : "r"(l));
+}
 
 #ifdef __cplusplus
 }
