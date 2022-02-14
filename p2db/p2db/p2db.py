@@ -36,7 +36,7 @@ def main():
     front_end = ui.UI(server, objdata)
     server.set_objdata(objdata)
 
-    if not p2tools.load(args.port, app_bin, server.ser.baudrate, verbose):
+    if not server.load_app(args.port, app_bin, verbose):
         return
 
     front_end.update_log("Loaded " + args.app + "\n")

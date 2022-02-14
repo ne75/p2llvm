@@ -42,7 +42,8 @@ __attribute__ ((section (".debug"), cogmain, noreturn)) void __dbg_run() {
     ".Llock:"
             "locktry %4 wc\n"
     "if_nc   jmp #.Llock\n"
-
+    
+    ".Lstat_send:" 
             // set up by writing '0xdb' and 'g' to our stat array
             "mov r2, r0\n"
             "wrbyte #0xdb, r2\n"   
@@ -135,6 +136,8 @@ __attribute__ ((section (".debug"), cogmain, noreturn)) void __dbg_run() {
     "if_z   jmp #.Lcase_r\n"
             "cmp r3, #0x62 wz\n"   // b
     "if_z   jmp #.Lcase_b\n"
+            "cmp r3, #0x73 wz\n"   // s
+    "if_z   jmp #.Lcase_s\n"
 
             "brk #0\n"          // default
             "jmp #.Lret\n"
@@ -187,7 +190,15 @@ __attribute__ ((section (".debug"), cogmain, noreturn)) void __dbg_run() {
             // clear the command
             "mov r2, r1\n"
             "wrbyte #0, r2\n"
-            //"jmp #.Lret\n" fallthrough to end the case
+            "jmp #.Lret\n" // exit the debug isr
+    
+    // s command case
+    ".Lcase_s:"
+            // clear the command
+            "brk #0\n"
+            "mov r2, r1\n"
+            "wrbyte #0, r2\n"
+            "jmp #.Lstat_send\n"
 
     ".Lret:"
             "lockrel %4\n"

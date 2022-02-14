@@ -7,6 +7,8 @@ from prompt_toolkit.widgets import Frame, TextArea, Box
 from prompt_toolkit.completion import WordCompleter
 from prompt_toolkit.data_structures import Point
 from prompt_toolkit.formatted_text import ANSI
+from prompt_toolkit.layout.screen import Char
+
 from colorama import Fore, Style
 import threading
 import logging
@@ -17,6 +19,7 @@ from . import p2tools
 from . import p2db_server
 
 log = logging.getLogger('main')
+Char.display_mappings['\t'] = '\t'
 
 class UI:
     kb = KeyBindings()
@@ -25,18 +28,20 @@ class UI:
     p2db
     ----
 
-        help            : Print this dialog
-        step            : Step by one instruction. Call instructions are stepped over. Modifier instructions (augd/s, setq) will be skipped.
-        stepin          : Step into a function call
-        stepout         : Step out of the current function call
-        break <addr>    : Set breakpoint at 'addr' and continue. 'addr' should be in hex
-        getreg <reg>    : Get the value in 'reg'. 'reg' can be an address or register name. Address should be in hex
-        getbyte <addr>  : Get the byte at hub address 'addr'. Address should be in hex
-        getlong <addr>  : Get the long at hub address 'addr'. Address should be in hex
-        cog <n>         : Set the active cog to n.
-        continue        : Continue execution. Cog will be disconnected until it interrupts itself
-        reset           : Reload the current program
-        quit            : Quit
+        help                : Print this dialog
+        step [Ctrl+S]       : Step by one instruction. Call instructions are stepped over. Modifier instructions (augd/s, setq) will be skipped.
+        stepin [Ctrl+T]     : Step into a function call
+        stepout [Ctrl+O]    : Step out of the current function call
+        break <addr>        : Set breakpoint at 'addr' and continue. 'addr' should be in hex
+        getreg <reg>        : Get the value in 'reg'. 'reg' can be an address or register name. Address should be in hex
+        getbyte <addr>      : Get the byte at hub address 'addr'. Address should be in hex
+        getlong <addr>      : Get the long at hub address 'addr'. Address should be in hex
+        pins                : Update pin status data
+        cog <n>             : Set the active cog to n
+        cogaddr <addr>      : Set the cog execution address (for native cogs)
+        continue            : (unimplemented) Continue execution. Cog will be disconnected until it interrupts itself
+        reset               : (unimplemented) Reload the current program
+        quit [Ctrl+Q]       : Quit
     '''
 
     pc_cursor_string = Fore.CYAN + "     ---> " + Fore.RESET
@@ -66,7 +71,9 @@ class UI:
             "getbyte": self.on_getbyte,
             "getlong": self.on_getlong,
             "continue": self.on_continue,
+            "pins": self.on_pins,
             "cog": self.on_cog,
+            "cogaddr": self.on_cogaddr,
             "reset": self.on_reset,
             "quit": self.on_quit,
             "help": self.on_help
@@ -77,7 +84,7 @@ class UI:
             y = self.log.text.value.count('\n')
             return Point(0, y)
 
-        self.log = FormattedTextControl(ANSI(""), focusable=True, get_cursor_position=log_cursor_pos)
+        self.log = FormattedTextControl(ANSI(""), get_cursor_position=log_cursor_pos)
         self.log_area = Window(self.log)
 
         # prompt stuff
@@ -102,7 +109,7 @@ class UI:
                 Window(self.status),
                 Box(Window(self.connection, align=WindowAlign.RIGHT), 3, padding_top=0)
             ]),
-            Box(Window(self.pins, width=96), padding=3, padding_bottom=0)
+            Frame(Box(Window(self.pins, width=95, height=5), padding=3, padding_bottom=0, padding_top=1), "Pins")
         ])
 
         # instruction window stuff
@@ -135,7 +142,7 @@ class UI:
             self.prompt_window
         ])
 
-        layout = Layout(root_container)
+        layout = Layout(root_container, self.prompt)
 
         self.app = Application(layout=layout, key_bindings=self.kb, full_screen=True, before_render=self.prerender, after_render=self.postrender)
         self.app.layout.focus(self.prompt_window)
@@ -159,7 +166,7 @@ class UI:
         if r:
             ui_instance.update_log(r + "\n", Fore.RED)
 
-    @kb.add('c-i')
+    @kb.add('c-t')
     def on_stepin(self, args=[]):
         ui_instance = UI.instance
 
@@ -238,12 +245,40 @@ class UI:
             ui_instance.update_log("Error: expected 1 argument\n", Fore.RED)
             return
 
-        ui_instance.server.set_cog(int(args[0]))
+        try:
+            cog_num = int(args[0])
+        except ValueError:
+            ui_instance.update_log("Error: expected numeric argument\n", Fore.RED)
+            return
 
-    def on_continue(self, args):
+        ui_instance.server.set_cog(cog_num)
+
+    def on_cogaddr(self, args):
         ui_instance = UI.instance
 
-        ui_instance.update_log('continue unimplemented\n')
+        if len(args) != 1:
+            ui_instance.update_log("Error: expected 1 argument\n", Fore.RED)
+            return
+
+        try:
+            addr = int(args[0], 16)
+        except ValueError:
+            ui_instance.update_log("Error: expected numeric argument\n", Fore.RED)
+            return
+
+        ui_instance.server.cog_states[ui_instance.server.current_cog].status.set_cog_addr(addr)
+
+
+    @kb.add('c-p')
+    def on_pins(self, args=[]):
+        ui_instance = UI.instance
+
+        ui_instance.server.update_pins()
+
+    def on_continue(self, args=[]):
+        ui_instance = UI.instance
+
+        ui_instance.server.continue_exec()
 
     def on_reset(self, args):
         ui_instance = UI.instance
@@ -265,6 +300,10 @@ class UI:
             self.update_log("Unknown command: " + args[0] + "\n", Fore.RED)
 
         self.dirty = True
+
+    @kb.add('c-i')
+    def shift_focus(e):
+        e.app.layout.focus_next()
 
     def update_log(self, new_text, color=""):
         self.log.text = ANSI(self.log.text.value + color + new_text + Fore.RESET)
@@ -295,7 +334,7 @@ class UI:
                 else:
                     call_dest = ''
 
-                inst = " {:x}: {: <20}{}{}\t{}{}\n".format(i, 
+                inst = " {:x}: {: <20}{}{}\t\t{}{}\n".format(i, 
                                                             sec[i][0], 
                                                             Fore.LIGHTGREEN_EX, 
                                                             sec[i][1], 
@@ -327,7 +366,6 @@ class UI:
         self.render_lock.release()
 
     def data_updater(self):
-
         do_redraw = False
         while(1):
             if (self.server.stat_dirty or self.dirty):
@@ -346,9 +384,9 @@ class UI:
                         if k.startswith('_'):
                             pass
                         elif k == 'pc':
-                            stat_lines.append("{: <22}{: >#8x}".format(k, stat_dict[k]))
+                            stat_lines.append("{: >30} : {: <#8x}".format(k, stat_dict[k]))
                         else:
-                            stat_lines.append("{: <22}{!s: >8}".format(k, stat_dict[k]))
+                            stat_lines.append("{: >30} : {!s: <8}".format(k, stat_dict[k]))
                     
                     stat_text = '\n'.join(stat_lines)
                     self.status.text = stat_text
@@ -387,6 +425,10 @@ class UI:
                             bit = 'H'
                         else:
                             bit = 'L'
+
+                        if not self.server.have_pin_data:
+                            bit = 'X'
+                            color = Fore.LIGHTBLACK_EX
                         
                         porta_str += color + "{0: <3}".format(bit)
 
@@ -399,11 +441,15 @@ class UI:
                             bit = 'H'
                         else:
                             bit = 'L'
+
+                        if not self.server.have_pin_data:
+                            bit = 'X'
+                            color = Fore.LIGHTBLACK_EX
                         
                         portb_str += color + "{0: <3}".format(bit)
 
                     pin_str = porta_str + '\n\n\n' + portb_str + Fore.RESET + Style.RESET_ALL
-                    self.pins.text = ANSI(pin_str)
+                    self.pins.text = ANSI(pin_str) 
                 
                     # update the dissassembly window
                     # get the function the current PC is in
@@ -416,15 +462,14 @@ class UI:
                             section = self.obj_data[sec]
                             func_name = sec
 
-                    if self.current_func != func_name:
-                        if cog_mode and stat.exec_mode != 'lutex':
-                            if stat._cog_exec_base_addr == -1:
-                                self.instructions.text = ANSI("Cog Execution Mode. Set base address to see disassembly")
-
+                    if cog_mode and stat.exec_mode != 'lutex' and stat._cog_exec_base_addr == -1:
+                        self.function_header.text = ANSI(Fore.YELLOW + "Cog Execution Mode. Set base address with 'cogaddr' to see disassembly" + Fore.RESET)
+                        self.instructions.text = ANSI("")
+                    else:
                         s = self.get_section_str(section, pc)
                         self.instructions.text = ANSI(s)
-
                         self.function_header.text = ANSI(func_name)
+
                 else:
                     self.status.text = "*** No connection to cog"
                     self.function_header.text = ANSI("*** No connection to cog")
