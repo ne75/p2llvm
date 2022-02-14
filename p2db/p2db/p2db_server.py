@@ -43,7 +43,7 @@ class CogPacket():
 
     def get_response_size(c):
         if (c == b'g'):
-            return 16
+            return 20
         
         if (c == b'r'):
             return 4
@@ -321,6 +321,7 @@ class P2DBServer:
         else:
             self._set_cmd(self.BREAK, 1)
             self._wait_for_cmd_send()
+
             # switch the isr to the current cog
             return self._switch_cog_isr(self.current_cog)
 

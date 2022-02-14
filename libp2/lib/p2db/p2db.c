@@ -74,10 +74,14 @@ __attribute__ ((section (".debug"), cogmain, noreturn)) void __dbg_run() {
             "add r2, #4\n"         
             "wrlong inb, r2\n"     // in the debug ISR, inb becomes iret0, the return address of the debug ISR, i.e. the instruction after the breakpoint PC
 
+            // record ptrb, the address this cog started at
+            "add r2, #4\n"
+            "wrlong ptrb, r2\n"
+
             "tjnz r7, #.Lmain_loop\n" // skip dumping stat if this wasn't our first entry into the locked region
     ".Lstat_dump:"
             // dump current data         
-            "mov r3, #19\n"  
+            "mov r3, #23\n"  
             "call #.Ltx_bytes\n"
 
             // main loop. we stay here forever or return from the interrupt

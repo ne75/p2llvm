@@ -334,7 +334,7 @@ class UI:
                 else:
                     call_dest = ''
 
-                inst = " {:x}: {: <20}{}{}\t\t{}{}\n".format(i, 
+                inst = " {:x}: {: <20}{}{: <8}\t\t{: <16}{}\n".format(i, 
                                                             sec[i][0], 
                                                             Fore.LIGHTGREEN_EX, 
                                                             sec[i][1], 
@@ -343,13 +343,13 @@ class UI:
 
             elif 'jmp' in sec[i][1] or 'tj' in sec[i][1] or 'dj' in sec[i][1]:
 
-                inst = " {:x}: {: <20}{}{}{}\n".format(i, 
+                inst = " {:x}: {: <20}{}{: <8}{}\n".format(i, 
                                                         sec[i][0], 
                                                         Fore.CYAN, 
                                                         sec[i][1], 
                                                         Fore.RESET)
             else:
-                inst = " {:x}: {: <20}{}\n".format(i, sec[i][0], sec[i][1])
+                inst = " {:x}: {: <20}{: <8}\n".format(i, sec[i][0], sec[i][1])
 
             if i == ptr:
                 data_str += Style.BRIGHT + self.pc_cursor_string + inst + Style.RESET_ALL
