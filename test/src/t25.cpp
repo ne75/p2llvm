@@ -11,6 +11,7 @@ void hub_cog(void *p) {
 }
 
 int main() {
+    hubset(DEBUG_INT_EN | DEBUG_COG1 | DEBUG_COG0);
     brk(0);
     printf("$\n"); // start of test character
     cogstart(hub_cog, 1, (int*)stack, sizeof(stack));
