@@ -8,6 +8,7 @@ add_library(builtins OBJECT
     divdi3.c
     divdf3.c
     divsi3.c
+    divsf3.c
     extendsfdf2.c
     fixunsdfdi.c
     fixunsdfsi.c
@@ -15,6 +16,7 @@ add_library(builtins OBJECT
     fixunssfsi.c
     floatundidf.c
     floatunsisf.c
+    floatsisf.c
     fp_mode.c
     lshrdi3.c
     moddi3.c

@@ -128,7 +128,29 @@ def get_objdump_data(elf_file):
             inst_encoding = [s for s in inst_encoding if s]
             inst_encoding = inst_encoding[::-1]
 
-            output_dict[current_section_key][int(inst_match.group(1), 16)] = [' '.join(inst_encoding), inst_match.group(4).strip()]
+            i_str_fragments = [s.strip() for s in inst_match.group(4).split('\t') if s]
+
+            if len(i_str_fragments) == 1:
+                i_str_fragments = ['', i_str_fragments[0], '']
+            elif len(i_str_fragments) == 2:
+                if i_str_fragments[-1] == 'wc' or i_str_fragments[-1] == 'wz' or i_str_fragments[-1] == 'wcz':
+                    # we don't have a condition, add a blank to the front
+                    i_str_fragments.insert(0, '')
+                else:
+                    # we don't have a effect, add a blank to the back
+                    i_str_fragments.append('')
+
+            elif len(i_str_fragments) == 3:
+                pass # don't need to do anything
+            else:
+                print("Unknown instruction format: " + str(i_str_fragments))
+
+            i_str = '{: >14} {: <18}{}'.format(i_str_fragments[0], i_str_fragments[1], i_str_fragments[2])
+
+            output_dict[current_section_key][int(inst_match.group(1), 16)] = (
+                ' '.join(inst_encoding), 
+                i_str
+            )
 
     return output_dict
 
