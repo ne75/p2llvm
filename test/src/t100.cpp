@@ -10,53 +10,72 @@
 #include <stdio.h>
 #include <sys/p2es_clock.h>
 
-int print(char *);
-void output(char, char);
+inline void _dirh(char pin) {
+    asm volatile  ("dirh %0\n"::"r"(pin));
+}
 
-char Buffer[256];
-char Data[] = "Hello World\n";
+inline void _dirl(char pin) {
+    asm volatile  ("dirl %0\n"::"r"(pin));
+}
 
+inline void _pinh(char pin) {
+    asm volatile  ("dirh %0\n"::"r"(pin));
+}
+
+inline void _pinl(char pin) {
+    asm volatile  ("dirl %0\n"::"r"(pin));
+}
+
+inline void _pinnot(char pin) {
+    asm volatile  ("outnot %0\n"::"r"(pin));
+}
+
+inline int _pinr(char pin) {
+    int state;
+
+    asm volatile ("testp %1 wc\n"
+        "wrc %0\n"
+        :"+r"(state)
+        :"r"(pin));
+    return state;
+}
+
+/**
+ * @brief test the logic state
+ * @param pin pin to test
+ */
+inline int _testp(char pin) {
+    int rslt;
+
+    asm volatile ("testp %1 wc\n"
+        "wrc %0\n"
+        :"=r"(rslt)
+        :"r"(pin));
+    return rslt;
+}
+
+void _waitus(unsigned s) {
+   asm("waitx %0" :: "r"(s));
+}
+
+int get_p_test(int d, int c, int s) {
+   _dirl(d); // float answer
+   _waitus(s);
+   _pinh(c);
+   _waitus(s);
+   d = _pinr(d); //ACK=low
+   _pinl(c);
+   _waitus(s);
+   return d;
+}
 
 int main() {
-    _clkset(_SETFREQ, _CLOCKFREQ);
-    _uart_init(DBG_UART_RX_PIN, DBG_UART_TX_PIN, 3000000);
+   _clkset(_SETFREQ, _CLOCKFREQ);
+   _uart_init(DBG_UART_RX_PIN, DBG_UART_TX_PIN, 3000000);
 
-    dirh(56);
-    dirh(57);
-    outh(56);
-    outl(57);
-
-    //sprintf(Buffer, "Hello World\n");
-    print(Data);
-
-    //printf("Hello World %d\n", CLKFREQ);
-
-    while(1) {
-        outl(56);
-        outnot(57);
-        waitcnt(CLKFREQ + CNT);
-    }
-}
-
-int print(char *buffer)
-{
-  int i = 0;
-
-  while(buffer[i] != 0)
-  {
-     //_uart_putc(buffer[i++], 62);
-     output(buffer[i++], 62);
-  }
-  return i;
-}
-
-void output(char c, char pin)
-{
-   int done;
-
-   wypin(c, pin);
-   waitx(20);
-   do {
-      testp(pin, done);
-   } while (!done);
+   get_p_test(1, 2, 100);
+   
+   while(1) {
+      waitcnt(CLKFREQ + CNT);
+   }
 }

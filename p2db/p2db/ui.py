@@ -319,26 +319,25 @@ class UI:
             inst = " {:x}: {}        {}\n".format(i, sec[i][0], sec[i][1])
 
             if 'call' in sec[i][1]:
-                if 'calla' in sec[i][1]:
-                    pat = r'^(.*?) #\\([0-9]+)(.*?)' # pattern to get the address of a call instruction
-                    r = re.search(pat, sec[i][1])
-                    call_addr = int(r.group(2)) if r else 0
-                    call_dest = p2tools.get_section(self.obj_data, call_addr)
+                # if 'calla' in sec[i][1]:
+                #     pat = r'^(.*?) #\\([0-9]+)(.*?)' # pattern to get the address of a call instruction
+                #     r = re.search(pat, sec[i][1])
+                #     call_addr = int(r.group(2)) if r else 0
+                #     call_dest = p2tools.get_section(self.obj_data, call_addr)
 
-                    if call_addr != 0:
-                        # if call address is 0x200-0x400, convert it to where the LUT function is stored in HUB ram
-                        if call_addr >= 0x200 and call_addr < 0x400:
-                            call_addr = 4*(call_addr - 0x200) + 0x200
-                        call_dest = p2tools.get_section(self.obj_data, call_addr)
+                #     if call_addr != 0:
+                #         # if call address is 0x200-0x400, convert it to where the LUT function is stored in HUB ram
+                #         if call_addr >= 0x200 and call_addr < 0x400:
+                #             call_addr = 4*(call_addr - 0x200) + 0x200
+                #         call_dest = p2tools.get_section(self.obj_data, call_addr)
 
-                else:
-                    call_dest = ''
+                # else:
+                #     call_dest = ''
 
-                inst = " {:x}: {}{}{}{: <20}{}\n".format(i, 
+                inst = " {:x}: {}{}{}{}\n".format(i, 
                                                             sec[i][0], 
                                                             Fore.LIGHTGREEN_EX, 
                                                             sec[i][1], 
-                                                            call_dest,
                                                             Fore.RESET)
 
             elif 'jmp' in sec[i][1] or 'tj' in sec[i][1] or 'dj' in sec[i][1]:

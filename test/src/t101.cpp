@@ -1,37 +1,35 @@
-#define P2_TARGET_MHZ   200
 #include <propeller.h>
 #include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <sys/p2es_clock.h>
+#include <stdint.h>
 
-unsigned char b[128];
-unsigned char Buffer[128];
-unsigned char data[] = "Now is the time for all good men.";
+int test2(int);
 
+int i, j;
 
-int main(int argc, char** argv) {
-    _clkset(_SETFREQ, _CLOCKFREQ);
-    _uart_init(DBG_UART_RX_PIN, DBG_UART_TX_PIN, 3000000);
-    
-    printf("Starting...\n");
+int main() {
+    i = 0x0a2829;
 
-    //b = malloc(128);
+    test2(i);
 
-    printf("Coping into buffer\n");
-
-    memcpy(Buffer, data, 24);
-
-    printf("Coping Buffer to memory\n");
-
-    memcpy(b, Buffer, 24);
-
-    printf("Memory: %24.24s\n", b);
-
-    printf("Done\n");
-
-    while (1)
-    {
-        waitx(1000);
+    while (1) {
+        waitx(CLKFREQ);
     }
+}
+
+int test2(int x) {
+    char p1, p2;
+    p1 = x & 0xff;
+    p2 = (x >> 8) & 0xff;
+
+    asm("drvh %0"::"r"((int)p1));
+    asm("drvh %0"::"r"((int)p2));
+    asm("drvl %0"::"r"((int)p2));
+    asm("drvl %0"::"r"((int)p1));
+    
+    // high(p1);
+    // high(p2);
+    // low(p2);
+    // low(p1);
+
+    return 0;
 }
