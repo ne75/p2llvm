@@ -1,10 +1,20 @@
 import argparse
 import serial
+import time
+import logging
+from colorama import Fore
 
-from . import screen
+from . import loggers
 from . import p2tools
+from . import p2db_server
+from . import ui
 
 verbose = False
+
+log = logging.getLogger('main')
+log.info("=======================")
+log.info("==== Starting P2DB ====")
+log.info("=======================")
 
 def main():
     parser = argparse.ArgumentParser(description='P2DB Debugger')
@@ -16,26 +26,22 @@ def main():
 
     verbose = args.verbose
 
-    ser = serial.Serial()
-    ser.baudrate = 3000000
-    ser.timeout = 0.05
-    ser.port = args.port
-    ser.open()
-
     app_bin = p2tools.gen_bin(args.app)
-
     if not app_bin:
         return
 
     objdata = p2tools.get_objdump_data(args.app)
 
-    if not p2tools.load(args.port, app_bin, ser.baudrate, verbose):
+    server = p2db_server.P2DBServer(args.port);
+    front_end = ui.UI(server, objdata)
+    server.set_objdata(objdata)
+
+    if not server.load_app(args.port, app_bin, verbose):
         return
 
-    open("p2db.log", 'w').close()
-
-    main_screen = screen.Screen(ser, objdata)
-    main_screen.run()
+    front_end.update_log("Loaded " + args.app + "\n")
+    server.start()
+    front_end.run()
 
 if __name__ == "__main__":
     main()

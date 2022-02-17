@@ -18,18 +18,13 @@ int main() {
 
 int test2(int x) {
     char p1, p2;
-    p1 = x & 0xff;
-    p2 = (x >> 8) & 0xff;
+    p1 = x;
+    p2 = (x >> 8);
 
     asm("drvh %0"::"r"((int)p1));
     asm("drvh %0"::"r"((int)p2));
     asm("drvl %0"::"r"((int)p2));
     asm("drvl %0"::"r"((int)p1));
-    
-    // high(p1);
-    // high(p2);
-    // low(p2);
-    // low(p1);
 
     return 0;
 }

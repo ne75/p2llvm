@@ -17,13 +17,13 @@
 // assembly macros
 
 // High level and misc
-#define hubset(h) asm volatile ("hubset %0" : : "ri"(h))
-#define waitx(t) asm volatile ("waitx %0" : : "ri"(t))
+#define hubset(h) asm volatile ("hubset %0" : : "ri"((int)h))
+#define waitx(t) asm volatile ("waitx %0" : : "ri"((int)t))
 
-#define setse1(x) asm volatile ("setse1 %0" : : "ri"(x))
-#define setse2(x) asm volatile ("setse2 %0" : : "ri"(x))
-#define setse3(x) asm volatile ("setse3 %0" : : "ri"(x))
-#define setse4(x) asm volatile ("setse4 %0" : : "ri"(x))
+#define setse1(x) asm volatile ("setse1 %0" : : "ri"((int)x))
+#define setse2(x) asm volatile ("setse2 %0" : : "ri"((int)x))
+#define setse3(x) asm volatile ("setse3 %0" : : "ri"((int)x))
+#define setse4(x) asm volatile ("setse4 %0" : : "ri"((int)x))
 
 #define waitse1() asm volatile ("waitse1" : :)
 #define waitse2() asm volatile ("waitse2" : :)
@@ -39,39 +39,39 @@
 #define cogret asm volatile ("ret")
 
 // Pin control
-#define dirh(pin) asm volatile ("dirh %0" : : "ri"(pin))
-#define dirl(pin) asm volatile ("dirl %0" : : "ri"(pin))
-#define outh(pin) asm volatile ("outh %0" : : "ri"(pin))
-#define outl(pin) asm volatile ("outl %0" : : "ri"(pin))
-#define outnot(pin) asm volatile ("outnot %0" : : "ri"(pin))
-#define drvh(pin) asm volatile ("drvh %0" : : "ri"(pin))
-#define drvl(pin) asm volatile ("drvl %0" : : "ri"(pin))
-#define drvnot(pin) asm volatile ("drvnot %0" : : "ri"(pin))
+#define dirh(pin) asm volatile ("dirh %0" : : "ri"((int)pin))
+#define dirl(pin) asm volatile ("dirl %0" : : "ri"((int)pin))
+#define outh(pin) asm volatile ("outh %0" : : "ri"((int)pin))
+#define outl(pin) asm volatile ("outl %0" : : "ri"((int)pin))
+#define outnot(pin) asm volatile ("outnot %0" : : "ri"((int)pin))
+#define drvh(pin) asm volatile ("drvh %0" : : "ri"((int)pin))
+#define drvl(pin) asm volatile ("drvl %0" : : "ri"((int)pin))
+#define drvnot(pin) asm volatile ("drvnot %0" : : "ri"((int)pin))
 
 // Test
-#define testp(pin, res) asm volatile ("testp %1 wc\nwrc %0\n" : "=r"(res) : "ri"(pin))
+#define testp(pin, res) asm volatile ("testp %1 wc\nwrc %0\n" : "=r"(res) : "ri"((int)pin))
 
 // Smart pin control
-#define rdpin(v, pin) asm volatile ("rdpin %0, %1" : "=r"(v) : "ri"(pin))
-#define rqpin(v, pin) asm volatile ("rqpin %0, %1" : "=r"(v) : "ri"(pin))
+#define rdpin(v, pin) asm volatile ("rdpin %0, %1" : "=r"(v) : "ri"((int)pin))
+#define rqpin(v, pin) asm volatile ("rqpin %0, %1" : "=r"(v) : "ri"((int)pin))
 
-#define wrpin(v, pin) asm volatile ("wrpin %0, %1" : : "ri"(v), "ri"(pin))
-#define wxpin(v, pin) asm volatile ("wxpin %0, %1" : : "ri"(v), "ri"(pin))
+#define wrpin(v, pin) asm volatile ("wrpin %0, %1" : : "ri"((int)v), "ri"((int)pin))
+#define wxpin(v, pin) asm volatile ("wxpin %0, %1" : : "ri"((int)v), "ri"((int)pin))
 #define wypin(v, pin) asm volatile ("wypin %0, %1" : : "ri"((int)v), "ri"((int)pin))
 
 // Streamer
-#define xinit(x, y) asm volatile ("xinit %0, %1" : : "ri"(x), "ri"(y))
-#define setxfrq(x) asm volatile ("setxfrq %0" : : "ri"(x))
-#define rdfast(x, y) asm volatile ("rdfast %0, %1" : : "ri"(x), "ri"(y))
-#define wrfast(x, y) asm volatile ("wrfast %0, %1" : : "ri"(x), "ri"(y))
+#define xinit(x, y) asm volatile ("xinit %0, %1" : : "ri"((int)x), "ri"((int)y))
+#define setxfrq(x) asm volatile ("setxfrq %0" : : "ri"((int)x))
+#define rdfast(x, y) asm volatile ("rdfast %0, %1" : : "ri"((int)x), "ri"((int)y))
+#define wrfast(x, y) asm volatile ("wrfast %0, %1" : : "ri"((int)x), "ri"((int)y))
 
 // LUT 
-#define wrlut(x, addr) asm volatile ("wrlut %0, %1" : : "ri"(x), "ri"(addr))
-#define rdlut(x, addr) asm volatile ("rdlut %0, %1" : "=r"(x), : "ri"(addr))
+#define wrlut(x, addr) asm volatile ("wrlut %0, %1" : : "ri"((int)x), "ri"((int)addr))
+#define rdlut(x, addr) asm volatile ("rdlut %0, %1" : "=r"(x), : "ri"((int)addr))
 
 // Debugging
-#define brk(x) asm volatile ("brk %0" : : "ri"(x))
-#define cogbrk(x) asm volatile ("cogbrk %0" : : "ri"(x))
+#define brk(x) asm volatile ("brk %0" : : "ri"((int)x))
+#define cogbrk(x) asm volatile ("cogbrk %0" : : "ri"((int)x))
 #define getbrk_wcz(x) asm volatile ("getbrk %0 wcz" : "=r"(x) :)
 #define getbrk_wc(x) asm volatile ("getbrk %0 wc" : "=r"(x) :)
 #define getbrk_wz(x) asm volatile ("getbrk %0 wz" : "=r"(x) :)

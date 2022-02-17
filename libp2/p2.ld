@@ -26,14 +26,6 @@ SECTIONS {
         . = 0x00a00;
         KEEP(*(.text.main))
         *(.text*);
-
-        _init_array_start = . ;
-        KEEP(*(.init_array))
-        _init_array_end = . ;
-
-        _fini_array_start = .;
-        KEEP(*(.fini_array))
-        _fini_array_end = .;
     }
 
     .rodata : {
@@ -44,6 +36,14 @@ SECTIONS {
         *(.data*);
         PROVIDE(__enable_p2db = .);
         LONG(0) /* by default, debugging is disabled, but if we link p2db, it will define this symbol, overriding it */
+
+        _init_array_start = . ;
+        KEEP(*(.init_array))
+        _init_array_end = . ;
+
+        _fini_array_start = .;
+        KEEP(*(.fini_array))
+        _fini_array_end = .;
     }
 
     .bss : {

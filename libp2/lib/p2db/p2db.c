@@ -42,7 +42,8 @@ __attribute__ ((section (".debug"), cogmain, noreturn)) void __dbg_run() {
     ".Llock:"
             "locktry %4 wc\n"
     "if_nc   jmp #.Llock\n"
-
+    
+    ".Lstat_send:" 
             // set up by writing '0xdb' and 'g' to our stat array
             "mov r2, r0\n"
             "wrbyte #0xdb, r2\n"   
@@ -73,10 +74,14 @@ __attribute__ ((section (".debug"), cogmain, noreturn)) void __dbg_run() {
             "add r2, #4\n"         
             "wrlong inb, r2\n"     // in the debug ISR, inb becomes iret0, the return address of the debug ISR, i.e. the instruction after the breakpoint PC
 
+            // record ptrb, the address this cog started at
+            "add r2, #4\n"
+            "wrlong ptrb, r2\n"
+
             "tjnz r7, #.Lmain_loop\n" // skip dumping stat if this wasn't our first entry into the locked region
     ".Lstat_dump:"
             // dump current data         
-            "mov r3, #19\n"  
+            "mov r3, #23\n"  
             "call #.Ltx_bytes\n"
 
             // main loop. we stay here forever or return from the interrupt
@@ -135,6 +140,8 @@ __attribute__ ((section (".debug"), cogmain, noreturn)) void __dbg_run() {
     "if_z   jmp #.Lcase_r\n"
             "cmp r3, #0x62 wz\n"   // b
     "if_z   jmp #.Lcase_b\n"
+            "cmp r3, #0x73 wz\n"   // s
+    "if_z   jmp #.Lcase_s\n"
 
             "brk #0\n"          // default
             "jmp #.Lret\n"
@@ -187,7 +194,15 @@ __attribute__ ((section (".debug"), cogmain, noreturn)) void __dbg_run() {
             // clear the command
             "mov r2, r1\n"
             "wrbyte #0, r2\n"
-            //"jmp #.Lret\n" fallthrough to end the case
+            "jmp #.Lret\n" // exit the debug isr
+    
+    // s command case
+    ".Lcase_s:"
+            // clear the command
+            "brk #0\n"
+            "mov r2, r1\n"
+            "wrbyte #0, r2\n"
+            "jmp #.Lstat_send\n"
 
     ".Lret:"
             "lockrel %4\n"

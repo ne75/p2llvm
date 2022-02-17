@@ -10,8 +10,9 @@ class Status:
         stat2 = int.from_bytes(status_bytes[4:8], 'little')
         stat3 = int.from_bytes(status_bytes[8:12], 'little')
         self.pc = int.from_bytes(status_bytes[12:16], 'little') & 0xfffff # the next instruction that will execute
+        self._cog_exec_base_addr = int.from_bytes(status_bytes[16:20], 'little') 
         
-        self._cog_exec_base_addr = -1 # if we are in cogex, this is the base address that was loaded into the cog
+        # self._cog_exec_base_addr = -1 # if we are in cogex, this is the base address that was loaded into the cog
         if (self.pc < 0x200):
             self.exec_mode = "cogex"
         elif (self.pc < 0x400):
@@ -79,7 +80,8 @@ class Status:
         self.int_occured = (stat2 & 1) == 1
     
     def set_cog_addr(self, addr):
-        self._cog_exec_base_addr = addr
+        # self._cog_exec_base_addr = addr
+        pass
 
     def get_cog_addr(self):
         return self._cog_exec_base_addr

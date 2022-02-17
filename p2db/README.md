@@ -67,11 +67,12 @@ These are notes on what I will implement, formal docs to come
 
 ## Protocol 
 
-Each command has the following format: `\xdb<command><value>` in binary format. Value is always 4 bytes long, so each command string is 6 bytes long
+Each command has the following format: `\xdb<cog><command><value>` in binary format. Value is always 4 bytes long, so each command string is 7 bytes long
 - `command` is a single byte for what the code should do
     - `b`: execute `brk <value>` 
     - `r`: get value at ram address <value>
     - `h`: get value at hub address <value>
+    - 's': get status of the cog. <value> can be anything. This will also force the the given cog to take control of the debug isr 
 
 Each response has the following format: `\xdb<code><values>`
 - `code` is what values contains

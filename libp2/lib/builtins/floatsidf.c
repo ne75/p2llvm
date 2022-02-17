@@ -17,7 +17,7 @@
 
 #include "int_lib.h"
 
-COMPILER_RT_ABI fp_t __floatsidf(si_int a) {
+fp_t ___floatsidf(si_int a) {
 
   const int aWidth = sizeof a * CHAR_BIT;
 
@@ -46,4 +46,8 @@ COMPILER_RT_ABI fp_t __floatsidf(si_int a) {
   result += (rep_t)(exponent + exponentBias) << significandBits;
   // Insert the sign bit and return
   return fromRep(result | sign);
+}
+
+COMPILER_RT_ABI fp_t __floatsidf(si_int a) {
+  return ___floatsidf(a);
 }
