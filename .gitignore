@@ -70,3 +70,4 @@ build/
 .vscode/
 
 *p2db.log
+*.egg-info/
