@@ -113,6 +113,10 @@ int cogstart(void (*f)(void *), void *par, unsigned *stack, int stacksize) {
     return started;
 }
 
+extern int _cogid(void);
+
+extern void _cogstop(int id);
+
 extern unsigned int _locknew();
 
 extern void _lockret(unsigned int l);
@@ -127,37 +131,37 @@ extern void _hubset(unsigned h);
 
 extern void _waitx(unsigned t);
 
-extern void _pinw(char pin, char state);
+extern void _pinw(int pin, char state);
 
-extern void _dirh(char pin);
+extern void _dirh(int pin);
 
-extern void _dirl(char pin);
+extern void _dirl(int pin);
 
-extern void _pinh(char pin);
+extern void _pinh(int pin);
 
-extern void _pinl(char pin);
+extern void _pinl(int pin);
 
-extern void _pinnot(char pin);
+extern void _pinnot(int pin);
 
-extern int _pinr(char pin);
+extern int _pinr(int pin);
 
-extern int _testp(char pin);
+extern int _testp(int pin);
 
-extern int _rdpin(char pin);
+extern int _rdpin(int pin);
 
-extern int _rqpin(char pin);
+extern int _rqpin(int pin);
 
-extern void _pinf(char pin);
+extern void _pinf(int pin);
 
-extern void _wrpin(char pin, unsigned mode);
+extern void _wrpin(int pin, unsigned mode);
 
-extern void _wxpin(char pin, unsigned xval);
+extern void _wxpin(int pin, unsigned xval);
 
-extern void _wypin(char pin, unsigned yval);
+extern void _wypin(int pin, unsigned yval);
 
-//extern void _akpin(char pin);
+//extern void _akpin(int pin);
 
-void _pinstart(char pin, unsigned mode, unsigned xval, unsigned yval) {
+void _pinstart(int pin, unsigned mode, unsigned xval, unsigned yval) {
     asm("dirl %0\n"
         "wrpin %1, %0\n"
         "wxpin %2, %0\n"
@@ -166,7 +170,7 @@ void _pinstart(char pin, unsigned mode, unsigned xval, unsigned yval) {
         ::"r"(pin), "r"(mode), "r"(xval), "r"(yval));
 }
 
-void _pinclr(char pin)
+void _pinclr(int pin)
 {
     asm("dirl %0\n"
         "wrpin %0, #0\n"

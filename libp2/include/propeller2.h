@@ -157,7 +157,7 @@ inline void busywait() {
  * @param pin pin number to set
  * @param state 0 - set pin as input, 1 - set as output
  */
-inline void _pinw(char pin, char state) {
+inline void _pinw(int pin, char state) {
     if (state)
         asm("dirh %0\n"::"r"(pin));
     else
@@ -168,36 +168,36 @@ inline void _pinw(char pin, char state) {
  * @brief set pin direction to output
  * @param pin pin number to set
  */
-inline void _dirh(char pin) {
-    asm ("dirh %0\n"::"r"(pin));
+inline void _dirh(int pin)
+{
+    asm volatile ("dirh %0\n"::"r"(pin));
 }
 
 /**
  * @brief set pin direction to input
  * @param pin pin number to set
  */
-inline void _dirl(char pin)
+inline void _dirl(int pin)
 {
-    asm ("dirl %0\n"::"r"(pin));
+    asm volatile ("dirl %0\n"::"r"(pin));
 }
-
 
 /**
  * @brief set pin state to high
  * @param pin pin number to set
  */
-inline void _pinh(char pin)
+inline void _pinh(int pin)
 {
-    asm ("dirh %0\n"::"r"(pin));
+    asm volatile ("drvh %0\n"::"r"(pin));
 }
 
 /**
  * @brief set pin state to low
  * @param pin pin number to set
  */
-inline void _pinl(char pin)
+inline void _pinl(int pin)
 {
-    asm ("dirl %0\n"::"r"(pin));
+    asm volatile ("drvl %0\n"::"r"(pin));
 }
 
 /**
@@ -210,32 +210,34 @@ inline void _pinl(char pin)
  * @brief set pin to opposite state
  * @param pin pin number to set
  */
-inline void _pinnot(char pin) {
-    asm ("outnot %0\n"::"r"(pin));
+inline void _pinnot(int pin)
+{
+    asm volatile ("outnot %0\n"::"r"(pin));
 }
 
 /**
  * @brief read the logic state of I/O Pin
  * @param pin pin number to read
  */
-inline int _pinr(char pin) {
+inline int _pinr(int pin)
+{
     int state;
 
-    asm("testp %1 wc\n"
+    asm volatile ("testp %1 wc\n"
         "wrc %0\n"
-        :"+r"(state)
-        :"r"(pin));
+        :"=r"(state):"r"(pin));
     return state;
 }
+
 
 /**
  * @brief test the logic state
  * @param pin pin to test
  */
-inline int _testp(char pin) {
+inline int _testp(int pin) {
     int rslt;
 
-    asm("testp %1 wc\n"
+    asm volatile ("testp %1 wc\n"
         "wrc %0\n"
         :"=r"(rslt)
         :"r"(pin));
@@ -247,7 +249,7 @@ inline int _testp(char pin) {
  * @brief read smart pin state and clear in
  * @param pin smart pin number to read
  */
-inline int _rdpin(char pin) {
+inline int _rdpin(int pin) {
     int rslt;
 
     asm ("rdpin %0, %1\n":"=r"(rslt):"r"(pin));
@@ -258,7 +260,7 @@ inline int _rdpin(char pin) {
  * @brief read smart pin state don't clear in
  * @param pin pin number to read
  */
-inline int _rqpin(char pin) {
+inline int _rqpin(int pin) {
     int rslt;
 
     asm ("rqpin %0, %1\n":"=r"(rslt):"r"(pin));
@@ -270,7 +272,7 @@ inline int _rqpin(char pin) {
  * @param pin smart pin to set
  * @param mode smart pin mode
  */
-inline void _wrpin(char pin, unsigned mode) {
+inline void _wrpin(int pin, unsigned mode) {
     asm ("wrpin %0, %1\n"::"r"(mode),"r"(pin));
 }
 
@@ -279,7 +281,7 @@ inline void _wrpin(char pin, unsigned mode) {
  * @param pin smart pin number
  * @param xval x value to set
  */
-inline void _wxpin(char pin, unsigned xval) {
+inline void _wxpin(int pin, unsigned xval) {
     asm ("wxpin %0, %1\n"::"r"(xval),"r"(pin));
 }
 
@@ -288,7 +290,7 @@ inline void _wxpin(char pin, unsigned xval) {
  * @param pin smart pin number
  * @param yval y value to set
  */
-inline void _wypin(char pin, unsigned yval) {
+inline void _wypin(int pin, unsigned yval) {
     asm ("wypin %0, %1\n"::"r"(yval),"r"(pin));
 }
 
@@ -296,7 +298,7 @@ inline void _wypin(char pin, unsigned yval) {
  * @brief float pin
  * @param pin pin number to float
  */
-inline void _pinf(char pin) {
+inline void _pinf(int pin) {
 	asm ("fltl %0\n"::"r"(pin));
 }
 
@@ -315,13 +317,13 @@ inline void _pinf(char pin) {
  * @param xval x value to set
  * @param yval y value to set
  */
-void _pinstart(char pin, unsigned mode, unsigned xval, unsigned yval);
+void _pinstart(int pin, unsigned mode, unsigned xval, unsigned yval);
 
 /**
  * @brief clear smart pin
  * @param pin smart pin number
  */
-void _pinclr(char pin);
+void _pinclr(int pin);
 
 /**
  * @brief set the P2 processor clock mode and frequency
@@ -383,20 +385,51 @@ unsigned int _getms(void);
 unsigned int _getus(void);
 
 /**
- * start a new cog dictated by mode. return if start was successful
+ * @brief start a new cog based on mode
+ * @param mode - 01 - new cog, 07 
+ * @param f pointer to a function to start
+ * @param par pointer to passed parameters
+ * @return cog number started
  */
 int _coginit(unsigned mode, void (*f)(void *), void *par) __attribute__((noinline));
 
 /**
- * start a new cog from function
+ * @brief start a new cog
+ * 
+ * @param f pointer to a function to start
+ * @param par pointer to passed parameters
+ * @param stack function stack pointer to use
+ * @param stacksize stack pointer size
+ * @return cog number started
  */
 int cogstart(void (*f)(void *), void *par, unsigned *stack, int stacksize);
+
+/**
+ * @brief get current cog number
+ * @return cog number
+ */
+inline int _cogid(void)
+{
+    int id;
+
+    asm("cogid %0\n":"=r"(id):);
+    return id;
+}
+
+/**
+ * @brief stop a running cog
+ * @param cog cog number to stop
+ */
+inline void _cogstop(int id)
+{
+    asm("cogstop %0\n"::"r"(id));
+}
 
 /**
  * reverse bits in x
  */
 inline unsigned int _rev(unsigned int x) {
-    asm("rev %0" :"+r"(x):);
+    asm("rev %0\n" :"+r"(x):);
     return x;
 }
 
