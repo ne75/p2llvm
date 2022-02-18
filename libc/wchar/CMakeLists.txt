@@ -1,0 +1,46 @@
+add_library(wchar OBJECT
+    wctype.c
+    iswctype.c
+    iswalnum.c
+    iswalpha.c
+    iswblank.c
+    iswcntrl.c
+    iswdigit.c
+    iswgraph.c
+    iswlower.c
+    iswprint.c
+    iswpunct.c
+    iswspace.c
+    iswupper.c
+    iswxdigit.c
+    towlower.c
+    wcscat.c
+    wcscmp.c
+    wcscpy.c
+    wcslen.c
+    wcschr.c
+    wcsrchr.c
+    wcsncat.c
+    wcsncmp.c
+    wcsncpy.c
+    wmemcpy.c
+    wmemmove.c
+    wmemcmp.c
+    wcstol.c
+    wcstoul.c
+    wcstoll.c
+    wcstoull.c
+    mbrtowc_utf.c
+    mbrtowc_ascii.c
+    wcrtomb_utf.c
+    wcrtomb_ascii.c
+    mbsrtowcs.c
+    mbsinit.c
+    mbrlen.c
+    btowc.c
+    wctob.c
+    wcscoll.c
+    wcsxfrm.c
+)
+
+target_include_directories(wchar PRIVATE ${CMAKE_SOURCE_DIR}/include)

@@ -9,6 +9,20 @@ LIBC_DIR = "libc"
 
 build_dir = ""
 
+def copy(src, dst, cwd=None, recurse=False):
+    cmd = ['cp']
+    if (recurse):
+        cmd += ['-r']
+
+    cmd += [src, dst]
+
+    p = subprocess.Popen(cmd, cwd=cwd)
+    p.wait()
+    if p.returncode != 0:
+        return False
+
+    return True
+
 def build_llvm(configure=True, debug=False, install_dest=None):
     '''
     if install_dest is None, then don't run install
@@ -60,14 +74,11 @@ def build_llvm(configure=True, debug=False, install_dest=None):
 
     # install the linker script to either the install destination or the build directory
     if (install_dest):
-        p = subprocess.Popen(['cp', '../../libp2/p2.ld', install_dest], cwd=build_dir)
+        if not copy('../../libp2/p2.ld', install_dest, cwd=build_dir):
+            return False
     else:
-        p = subprocess.Popen(['cp', '../../libp2/p2.ld', '.'], cwd=build_dir)
-
-    p.wait()
-
-    if p.returncode != 0:
-        return False
+        if not copy('../../libp2/p2.ld', '.', cwd=build_dir):
+            return False
 
     return True
 
@@ -78,7 +89,7 @@ def build_libp2(install_dest, llvm, clean=False, configure=True):
     # build libp2
 
     if configure:
-        cmake_cmd = ['cmake', '-Dllvm=' + str(install_dest.join('bin')), '../']
+        cmake_cmd = ['cmake', '-Dllvm=' + str(os.path.join(install_dest, 'bin')), '../']
 
         p = subprocess.Popen(cmake_cmd, cwd=build_dir)
         p.wait()
@@ -93,7 +104,7 @@ def build_libp2(install_dest, llvm, clean=False, configure=True):
         if p.returncode != 0:
             return False
 
-    p = subprocess.Popen(['make', 'LLVM=' + llvm], cwd=build_dir)
+    p = subprocess.Popen(['make', 'LLVM=' + llvm, '-j8'], cwd=build_dir)
     p.wait()
     if p.returncode != 0:
         return False
@@ -102,36 +113,51 @@ def build_libp2(install_dest, llvm, clean=False, configure=True):
     install_dir = os.path.join(install_dest, "libp2")
     os.makedirs(os.path.join(install_dir, 'lib'), exist_ok=True)
 
-    p = subprocess.Popen(['cp', os.path.join(build_dir, 'lib', 'libp2.a'), os.path.join(install_dir, 'lib', 'libp2.a')])
-    p.wait()
-    if p.returncode != 0:
+    if not copy(os.path.join(build_dir, 'lib', 'libp2.a'), os.path.join(install_dir, 'lib', 'libp2.a')):
         return False
 
-    p = subprocess.Popen(['cp', os.path.join(build_dir, 'lib', 'p2db', 'libp2db.a'), os.path.join(install_dir, 'lib', 'libp2db.a')])
-    p.wait()
-    if p.returncode != 0:
+    if not copy(os.path.join(build_dir, 'lib', 'p2db', 'libp2db.a'), os.path.join(install_dir, 'lib', 'libp2db.a')):
         return False
 
-    p = subprocess.Popen(['cp', '-r', os.path.join(LIBP2_DIR, 'include'), install_dir])
-    p.wait()
-    if p.returncode != 0:
+    if not copy(os.path.join(LIBP2_DIR, 'include'), install_dir, recurse=True):
         return False
 
     return True
 
-def build_libc(install_dest, llvm, clean=False):
-    # build and install libc
-    install_dir = os.path.join('..', install_dest, 'libc')
+def build_libc(install_dest, llvm, clean=False, configure=True):
+    build_dir = os.path.join(LIBC_DIR, 'build')
+    os.makedirs(build_dir, exist_ok=True)
+
+    # build libc
+    if configure:
+        cmake_cmd = ['cmake', '-Dllvm=' + str(os.path.join(install_dest, 'bin')), '../']
+
+        p = subprocess.Popen(cmake_cmd, cwd=build_dir)
+        p.wait()
+
+        if p.returncode != 0:
+            return False
+        
 
     if clean:
-        p = subprocess.Popen(['make', 'clean'], cwd=LIBC_DIR)
+        p = subprocess.Popen(['make', 'clean'], cwd=build_dir)
         p.wait()
         if p.returncode != 0:
             return False
 
-    p = subprocess.Popen(['make', 'LLVM=' + llvm, 'DEST=' + str(install_dir), 'install'], cwd=LIBC_DIR)
+    p = subprocess.Popen(['make', 'LLVM=' + llvm, '-j8'], cwd=build_dir)
     p.wait()
     if p.returncode != 0:
+        return False
+
+    # install libc
+    install_dir = os.path.join(install_dest, "libc")
+    os.makedirs(os.path.join(install_dir, 'lib'), exist_ok=True)
+
+    if not copy(os.path.join(build_dir, 'libc.a'), os.path.join(install_dir, 'lib', 'libc.a')):
+        return False
+
+    if not copy(os.path.join(LIBC_DIR, 'include'), install_dir, recurse=True):
         return False
 
     return True
@@ -187,9 +213,9 @@ def main():
     # build libc
     if not skip_libc:
         if (install_dest):
-            r = build_libc(install_dest, llvm, clean)
+            r = build_libc(install_dest, llvm, clean, configure)
         else:
-            r = build_libc(build_dir, llvm, clean)
+            r = build_libc(build_dir, llvm, clean, configure)
 
         if not r:
             return
