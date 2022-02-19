@@ -147,6 +147,8 @@ extern int _pinr(int pin);
 
 extern int _testp(int pin);
 
+extern void _power(int state);
+
 extern int _rdpin(int pin);
 
 extern int _rqpin(int pin);

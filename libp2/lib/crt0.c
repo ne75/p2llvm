@@ -10,7 +10,6 @@ typedef void (*func_ptr)(void);
 extern unsigned int __stack;
 int argc = 1;
 static char *argv[2];
-static char program[] = "P2LLVM";
 static char _dummy[] = "dummy";
 
 __attribute__ ((section ("cog"), cogmain)) void __start();
@@ -68,19 +67,17 @@ void __start() {
     // default clock frequency. Assumes the loader does not try to set a different one.
     // if we want the loader to be able to configure it, we'll need to pull this number from some shared memory location
     _clkfreq = 200000000;
+    _clkmode = 0x14c00f8;
+    _Program = 0x4c4c3250;
+    _Program1 = 0x4d56;
 
-    asm("hubset #0\n"
-        "augd #32772\n"
-        "hubset #504\n"
-        "augd #390\n"
-        "waitx #140\n"
-        "augs #32772\n"
-        "mov pa, #507\n"
-        "hubset pa\n"
-        "wrlong pa, #24\n"
-        "augd #390625\n"
-        "wrlong #511, #20\n"
-    );
+    // configure clock to run at the speed selected
+    _hubset(0);
+    _hubset(_clkmode); // clock config (20,000,000 * 10)
+    _waitx(177340);
+    r = _clkfreq / 1000000 - 1;
+    _clkmode |= (r << 8) | 3;
+    _hubset(_clkmode); // set clock pll
 
     // setup c standard library
     _cstd_init();
@@ -88,7 +85,7 @@ void __start() {
     // initialize all our constructors
     _init();
 
-    argv[0] = program;
+    argv[0] = (char*)&_Program;
     argv[1] = _dummy;
 
     // run the main function

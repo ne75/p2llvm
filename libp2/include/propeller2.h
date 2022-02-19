@@ -30,9 +30,10 @@
 #define getbrk_wc(x) asm volatile ("getbrk %0 wc" : "=r"(x) :)
 #define getbrk_wz(x) asm volatile ("getbrk %0 wz" : "=r"(x) :)
 
-#define _clkfreq (*((int*)0x24))
-#define _clkmode (*((int*)0x28))
-
+#define _clkfreq (*((int*)0x20))
+#define _clkmode (*((int*)0x24))
+#define _Program (*((int*)0x28))
+#define _Program1 (*((int*)0x2c))
 #define _dbg_lock (*((int*)0x3c))
 
 register volatile int R0 asm ("r0");
@@ -131,7 +132,7 @@ extern "C" {
  * @param h 
  */
 inline void _hubset(unsigned h) {
-    asm("hubset %0" : : "r"(h));
+    asm volatile ("hubset %0" : : "r"(h));
 }
 
 /**
@@ -140,7 +141,7 @@ inline void _hubset(unsigned h) {
  * @param t 
  */
 inline void _waitx(unsigned t) {
-    asm("waitx %0" : : "r"(t));
+    asm volatile ("waitx %0" : : "r"(t));
 }
 
 /**
@@ -159,9 +160,9 @@ inline void busywait() {
  */
 inline void _pinw(int pin, char state) {
     if (state)
-        asm("dirh %0\n"::"r"(pin));
+        asm volatile ("dirh %0\n"::"r"(pin));
     else
-        asm("dirl %0\n"::"r"(pin));
+        asm volatile ("dirl %0\n"::"r"(pin));
 }
 
 /**
@@ -242,6 +243,17 @@ inline int _testp(int pin) {
         :"=r"(rslt)
         :"r"(pin));
     return rslt;
+}
+
+/**
+ * @brief Set P2 to slow speed (20khz)
+ * 
+ * @param state - 0 - normal speed, 1 - slow speed
+ */
+inline void _power(int state)
+{
+    int mode = _clkmode ^ (state << 1);
+    asm volatile ("hubset %0\n"::"r"(mode));
 }
 
 // Smart pin control
