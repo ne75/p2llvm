@@ -14,6 +14,7 @@ __attribute__ ((section ("cog"), cogmain)) void __start();
 // the relocation for these calls isn't encoded properly since the linker thinks the calls are global calls, not external "libcalls"
 void _init();
 void _fini();
+void __start0();
 
 extern int main();
 extern void _cstd_init();
@@ -27,16 +28,21 @@ extern int __enable_p2db;
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Winvalid-noreturn"
 __attribute__ ((cogmain, noreturn)) void __entry() {
+    __start0();
+}
+#pragma clang diagnostic pop
+
+void __start0() {
     // basic entry code to jump to our resuable startup code. we do this by restarting cog 0, copying in
     // the code in the cog section (our reusable startup code). The linker will place _start() at address 0x100
 
     // this function might get overwritten later by hub params (clkfreq, clkmode, etc), so DO NOT try to restart the code with coginit #0, #0
 
     // before we start the routine, enable debugging for cog 0. any other cogs that want to be debugged should be enabled by the application
+    
     if (__enable_p2db) hubset(DEBUG_INT_EN | DEBUG_COG0);
     asm("coginit #0, %0" : : "r"(__start));
 }
-#pragma clang diagnostic pop
 
 void __start() {
     // TODO: figure out how to rewrite this without needing inline asm.

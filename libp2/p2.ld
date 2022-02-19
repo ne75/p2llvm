@@ -16,6 +16,7 @@ SECTIONS {
         . = 0x40; /* reserve remainder of first 64 bytes for global information storage (clkmode, clkfreq, etc) that need to be
                     available outside of the link step and compatability with other toolchains */
 
+        KEEP(__start0())
         KEEP(__start())
         KEEP(*(cog))
 
