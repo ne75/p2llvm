@@ -6,7 +6,7 @@ set(CMAKE_CXX_COMPILER_WORKS 1)
 
 # set(llvm "/opt/p2llvm/bin")
 
-set(target_ops "-ffunction-sections -fdata-sections -Oz -fno-exceptions -fno-jump-tables --target=p2")
+set(target_ops "-ffunction-sections -fdata-sections -Oz -fno-exceptions --target=p2")
 
 set(CMAKE_C_FLAGS "${target_ops}" CACHE STRING "" FORCE)
 set(CMAKE_C_LINK_FLAGS "--target=p2")

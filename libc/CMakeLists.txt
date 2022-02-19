@@ -14,7 +14,7 @@ add_subdirectory(misc)
 add_subdirectory(stdio)
 add_subdirectory(stdlib)
 add_subdirectory(string)
-add_subdirectory(time)
+# add_subdirectory(time)
 add_subdirectory(wchar)
 
 add_library(c STATIC)

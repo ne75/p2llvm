@@ -62,6 +62,13 @@ SECTIONS {
         __stack = .;
         . = . + STACK_SIZE;
     }
+    
+    .debug : {
+        . = 0x7c800;
+        KEEP(*(.debug));
+        . = 0x7fc00;
+        KEEP(*(.debug_isr));
+    }
 
     _end = . ;
 }

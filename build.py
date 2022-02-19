@@ -76,8 +76,12 @@ def build_llvm(configure=True, debug=False, install_dest=None):
     if (install_dest):
         if not copy('../../libp2/p2.ld', install_dest, cwd=build_dir):
             return False
+        if not copy('../../libp2/p2_debug.ld', install_dest, cwd=build_dir):
+            return False
     else:
         if not copy('../../libp2/p2.ld', '.', cwd=build_dir):
+            return False
+        if not copy('../../libp2/p2_debug.ld', '.', cwd=build_dir):
             return False
 
     return True

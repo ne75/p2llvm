@@ -26,9 +26,9 @@ def main():
 
     verbose = args.verbose
 
-    app_bin = p2tools.gen_bin(args.app)
-    if not app_bin:
-        return
+    # app_bin = p2tools.gen_bin(args.app)
+    # if not app_bin:
+    #     return
 
     objdata = p2tools.get_objdump_data(args.app)
 
@@ -36,7 +36,7 @@ def main():
     front_end = ui.UI(server, objdata)
     server.set_objdata(objdata)
 
-    if not server.load_app(args.port, app_bin, verbose):
+    if not server.load_app(args.port, args.app, verbose):
         return
 
     front_end.update_log("Loaded " + args.app + "\n")
