@@ -10,7 +10,6 @@
 
 #include <stdio.h>
 #include <time.h>
-#include <cog.h>
 #include <sys/driver.h>
 #include <errno.h>
 

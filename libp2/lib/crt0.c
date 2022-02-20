@@ -9,6 +9,8 @@ typedef void (*func_ptr)(void);
 
 extern unsigned int __stack;
 
+__attribute__ ((cogmain, noreturn)) void __entry();
+__attribute__ ((section ("cog"), cogmain, noreturn)) void __start0();
 __attribute__ ((section ("cog"), cogmain)) void __start();
 
 // the relocation for these calls isn't encoded properly since the linker thinks the calls are global calls, not external "libcalls"
@@ -25,27 +27,24 @@ extern func_ptr _fini_array_end[];
 extern unsigned _libcall_start[];
 extern int __enable_p2db;
 
+
+// basic entry code to jump to our resuable startup code. we do this by restarting cog 0, copying in
+// the code in the cog section (our reusable startup code). The linker will place _start0() at 0x40, so jump to 0x10 since this is in cog mode
+// before we start the routine, enable debugging for cog 0. any other cogs that want to be debugged should be enabled by the application
+// We split it into 2 functions so that their is a gap in memory for hub parameters (clkfreq, clkmode, etc)
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Winvalid-noreturn"
-__attribute__ ((cogmain, noreturn)) void __entry() {
-    __start0();
+void __entry() {
+    asm("jmp #\\0x10"); // TODO figure out how to not hardcode this address. requires solving how to call cog functions from other cog functions
 }
-#pragma clang diagnostic pop
 
 void __start0() {
-    // basic entry code to jump to our resuable startup code. we do this by restarting cog 0, copying in
-    // the code in the cog section (our reusable startup code). The linker will place _start() at address 0x100
-
-    // this function might get overwritten later by hub params (clkfreq, clkmode, etc), so DO NOT try to restart the code with coginit #0, #0
-
-    // before we start the routine, enable debugging for cog 0. any other cogs that want to be debugged should be enabled by the application
-    
     if (__enable_p2db) hubset(DEBUG_INT_EN | DEBUG_COG0);
     asm("coginit #0, %0" : : "r"(__start));
 }
+#pragma clang diagnostic pop
 
 void __start() {
-    // TODO: figure out how to rewrite this without needing inline asm.
     INIT_RTLIB;
 
     asm("cogid r0\n"           // get the current cog ID
@@ -65,9 +64,9 @@ void __start() {
     // init the debug lock
     _dbg_lock = _locknew();
 
-    // default clock frequency. Assumes the loader does not try to set a different one.
-    // if we want the loader to be able to configure it, we'll need to pull this number from some shared memory location
+    // TODO: make patching clock settings work
     _clkfreq = 24000000;
+    _dbgbaud = DBG_UART_BAUD;
 
     // setup c standard library
     _cstd_init();

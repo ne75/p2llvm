@@ -19,7 +19,7 @@ void _clkset(unsigned clkmode, unsigned clkfreq) {
     hubset(0xf0);
     _clkmode = clkmode;
     _clkfreq = clkfreq;
-    hubset(clkmode);
+    hubset(clkmode & ~3);
     waitx(200000);
     hubset(clkmode | 3);
 }

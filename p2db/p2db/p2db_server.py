@@ -110,7 +110,7 @@ class P2DBServer:
         self.stat_dirty = True
 
         self.ser = serial.Serial()
-        self.ser.baudrate = 3000000
+        self.ser.baudrate = 2000000
         self.ser.timeout = None
         self.ser.port = port
         self.ser.open()

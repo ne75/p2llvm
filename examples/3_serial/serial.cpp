@@ -2,6 +2,7 @@
  * A basic test of using the built-in UART interface, implemented using smart pins. It uses the file structure internal to
  * the C std lib to write to the serial devices.
  */
+
 #include <propeller.h>
 #include <sys/p2es_clock.h>
 #include <stdio.h>

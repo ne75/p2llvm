@@ -6,7 +6,7 @@
 
 #define DBG_UART_RX_PIN 63
 #define DBG_UART_TX_PIN 62
-#define DBG_UART_BAUD 3000000
+#define DBG_UART_BAUD 2000000
 
 #define E_IN_RISE   (1 << 6)
 #define E_IN_FALL   (2 << 6)
@@ -76,8 +76,9 @@
 #define getbrk_wc(x) asm volatile ("getbrk %0 wc" : "=r"(x) :)
 #define getbrk_wz(x) asm volatile ("getbrk %0 wz" : "=r"(x) :)
 
-#define _clkfreq (*((int*)0x24))
-#define _clkmode (*((int*)0x28))
+#define _clkfreq (*((int*)0x14))
+#define _clkmode (*((int*)0x18))
+#define _dbgbaud (*((int*)0x1c))
 
 #define _dbg_lock (*((int*)0x3c))
 

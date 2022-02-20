@@ -14,10 +14,6 @@
 #include <propeller.h>
 #include <sys/driver.h>
 
-#ifndef __propeller2__
-extern unsigned int _baud;
-#endif
-
 /*
  * we use the following elements of the FILE structure (P1 only. P2 sets up everything when opening the FILE)
  * drvarg[0] = rxpin
@@ -137,7 +133,7 @@ static int _serial_fopen(FILE *fp, const char *name, const char *mode)
     // these are the default pins
     unsigned int txpin = DBG_UART_TX_PIN;
 	unsigned int rxpin = DBG_UART_RX_PIN;
-	unsigned int baud = DBG_UART_BAUD;
+	unsigned int baud = _dbgbaud;
 	#else
     unsigned int txpin = _txpin;
 	unsigned int rxpin = _rxpin;

@@ -45,6 +45,8 @@ add_library(stdio OBJECT
     init_io.c
     remove.c
     fmemopen.c 
+    vfprintf.c
+    vfscanf.c
 )
 
 target_include_directories(stdio PRIVATE ${CMAKE_SOURCE_DIR}/include)

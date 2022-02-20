@@ -36,7 +36,7 @@ add_library(wchar OBJECT
     wcrtomb_ascii.c
     mbsrtowcs.c
     mbsinit.c
-    mbrlen.c
+    #mbrlen.c
     btowc.c
     wctob.c
     wcscoll.c

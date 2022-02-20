@@ -10,7 +10,6 @@ add_library(stdlib OBJECT
     abort.c
     qsort.c
     bsearch.c
-    signal.c
     strtol.c
     strtoul.c
     strtod.c
@@ -23,7 +22,6 @@ add_library(stdlib OBJECT
     lldiv.c
     abs.c
     llabs.c
-    getenv.c
     multibyte.c
     fenv.c
     mblencur.c

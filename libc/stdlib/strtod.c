@@ -193,9 +193,7 @@ strtold(const char *str, char **endptr)
   return v;
 }
 
-#if defined(__PROPELLER_64BIT_DOUBLES__)
 double strtod(const char *str, char **endptr) __attribute__((alias("strtold")));
-#endif
 
 /* +--------------------------------------------------------------------
  * ¦  TERMS OF USE: MIT License
