@@ -64,9 +64,9 @@ void __start() {
     // init the debug lock
     _dbg_lock = _locknew();
 
-    // TODO: make patching clock settings work
-    _clkfreq = 24000000;
-    _dbgbaud = DBG_UART_BAUD;
+    // if settings weren't patched in, set to a default
+    if (_clkfreq == 0) _clkfreq = 24000000;
+    if (_dbgbaud == 0) _dbgbaud = DBG_UART_BAUD;
 
     // setup c standard library
     _cstd_init();

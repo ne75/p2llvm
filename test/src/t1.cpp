@@ -1,6 +1,6 @@
 #include <stdio.h>
 
-#define P2_TARGET_MHZ   200
+#define P2_TARGET_MHZ   300
 #include "propeller.h"
 #include "sys/p2es_clock.h"
 
