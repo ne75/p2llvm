@@ -6,9 +6,9 @@ LOAD = $(LLVM_BASE)/bin/loadp2
 TARGET = cogs
 OBJDIR = ../build
 
-CFLAGS = -Os -ffunction-sections -fdata-sections -fno-jump-tables --target=p2 -Dprintf=__simple_printf -DP2_TARGET_MHZ=200
-LFLAGS = --target=p2 -Wl,--gc-sections -Wl,--print-gc-sections
-LOADFLAGS = -v -ZERO -b 230400 -t
+CFLAGS = -Os --target=p2 -Dprintf=__simple_printf
+LFLAGS = --target=p2 -Wl,--gc-sections
+LOADFLAGS = -v -ZERO -b 2000000
 
 .PHONY: all setup clean load
 
