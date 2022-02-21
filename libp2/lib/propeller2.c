@@ -26,14 +26,14 @@ void _clkset(unsigned clkmode, unsigned clkfreq) {
 
 int _coginit(unsigned mode, void (*f)(void *), void *par) {
     int res;
-    asm("setq %1\n"
-        "coginit %2, %3 wc\n"
+    asm("setq %2\n"
+        "coginit %1, %3 wc\n"
         "wrc %0\n"
-        : "=r"(res)
-        : "r"(par), "r"(mode), "r"(f)
+        : "=r"(res), "+r"(mode)
+        : "r"(par), "r"(f)
         );
 
-    return !res;
+    return !res ? mode : 0;
 }
 
 int cogstart(void (*f)(void *), int par, int *stack, unsigned int stacksize) {

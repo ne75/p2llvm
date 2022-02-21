@@ -1,7 +1,7 @@
 LLVM_BASE = /opt/p2llvm
 CC = $(LLVM_BASE)/bin/clang
 LD = $(LLVM_BASE)/bin/ld.lld
-LOAD = loadp2
+LOAD = $(LLVM_BASE)/bin/loadp2
 
 TARGET = cogs
 OBJDIR = ../build
