@@ -59,6 +59,8 @@
 #define wxpin(v, pin) asm volatile ("wxpin %0, %1" : : "ri"((int)v), "ri"((int)pin))
 #define wypin(v, pin) asm volatile ("wypin %0, %1" : : "ri"((int)v), "ri"((int)pin))
 
+#define akpin(pin) asm volatile ("akpin %0" : : "ri"((int)pin))
+
 // Streamer
 #define xinit(x, y) asm volatile ("xinit %0, %1" : : "ri"((int)x), "ri"((int)y))
 #define setxfrq(x) asm volatile ("setxfrq %0" : : "ri"((int)x))

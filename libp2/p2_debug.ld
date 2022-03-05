@@ -9,6 +9,8 @@ STACK_SIZE = 0xc000;
 HEAP_SIZE = 0xc000;
 
 SECTIONS {
+    PROVIDE(__stack = 0x7c000 - STACK_SIZE);
+    
     . = 0x00000;
     .text : {
         KEEP(*(.text.__entry));
@@ -60,7 +62,6 @@ SECTIONS {
     /* end of usable memory is 0x7C000 */
     .stack 0x7c000 - STACK_SIZE (NOLOAD) : {
         . = ALIGN(4);
-        __stack = .;
         . = . + STACK_SIZE;
     }
     
