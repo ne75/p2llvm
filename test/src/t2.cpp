@@ -59,8 +59,11 @@ int main() {
     volatile unsigned int e = 2000;
 
     unsigned f = d/e;
-    printf("%d ", f); // 17. expect 2
+    printf("%d\n", f); // 17. expect 2
 
-    printf("\n~\n"); // end of test character
-    return 0;
+    printf("~\n"); // end of test character
+
+    while(1) {
+        waitx(1000);
+    };
 }

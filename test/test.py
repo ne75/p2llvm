@@ -11,7 +11,7 @@ no_opt_build_dir = 'build/no_opt'
 opt_build_dir = 'build/opt'
 
 load_cmd = '/opt/p2llvm/bin/loadp2'
-load_args = ['-ZERO', '-l', '2000000', '-v', '-FIFO', '2048']
+load_args = ['-ZERO', '-l', '2000000', '-v', '-FIFO', '2048', '-b', '2000000', '-f', '200000000']
 
 verbose = False
 
@@ -127,7 +127,10 @@ class TestCase:
         done = False
         results = ''
         while not done:
-            l = ser.readline().decode('ascii').strip() + '\n'
+            l_raw = ser.readline()
+            if (verbose):
+                print(l_raw, end=': ');
+            l = l_raw.decode('ascii').strip() + '\n'
             if (verbose):
                 print(l.strip());
 

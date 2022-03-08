@@ -6,14 +6,13 @@
 #include <stdio.h>
 #include <stdarg.h>
 
-int vsprintf(char *str, const char *fmt, va_list args)
-{
-  FILE tmpfile;
-  int r;
-  size_t len = 0x7fffffff;
-  r = vfprintf(__string_file(&tmpfile, str, "w", len), fmt, args);
-  fclose(&tmpfile);
-  return r;
+int vsprintf(char *str, const char *fmt, va_list args) {
+    FILE tmpfile;
+    int r;
+    size_t len = 0x7fffffff;
+    r = vfprintf(__string_file(&tmpfile, str, "w", len), fmt, args);
+    fclose(&tmpfile);
+    return r;
 }
 
 /* +--------------------------------------------------------------------

@@ -4,8 +4,15 @@ extern void __start();
 
 unsigned int _cnt() {
     int x;
-    asm("getct $r31" : "=r"(x) : );
+    asm("getct %0" : "=r"(x) : );
     return x;
+}
+
+unsigned long long _cnt64() {
+    asm volatile("getct $r30\n"
+                "getct $r31 wc\n");
+
+    // don't return on purpose, will raise error but that's okay
 }
 
 void _waitcnt(unsigned int cnt) {

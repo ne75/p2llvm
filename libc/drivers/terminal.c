@@ -19,16 +19,14 @@ int _term_write(FILE *fp, unsigned char *buf, int size)
   while (count < size)
     {
       c = *buf++;
-      if (c == '\n')
-	putbyte('\r', fp);
+      if (c == '\n') putbyte('\r', fp);
       putbyte(c, fp);
       count++;
     }
   return count;
 }
 
-int _term_read(FILE *fp, unsigned char *buf, int size)
-{
+int _term_read(FILE *fp, unsigned char *buf, int size) {
   int (*putbyte)(int c, FILE *fp);
   int (*getbyte)(FILE *fp);
   int value;

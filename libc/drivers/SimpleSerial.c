@@ -78,7 +78,7 @@ static int _serial_getbyte(FILE *fp) {
 		if ( 0 != _uart_checkc(rxpin) )
 			return -1;
 	} else {
-		while (_uart_checkc(rxpin));
+		while (!_uart_checkc(rxpin));
 	}
 
 	return _uart_getc(rxpin);

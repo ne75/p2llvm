@@ -188,6 +188,11 @@ void _clkset(unsigned clkmode, unsigned clkfreq);
 unsigned int _cnt();
 
 /**
+ * return the current 64 bit count
+ */
+unsigned long long _cnt64();
+
+/**
  * wait until current count == cnt
  */
 void _waitcnt(unsigned int cnt);
