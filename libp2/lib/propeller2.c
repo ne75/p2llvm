@@ -40,7 +40,7 @@ int _coginit(unsigned mode, void (*f)(void *), void *par) {
         : "r"(par), "r"(f)
         );
 
-    return !res ? mode : 0;
+    return !res ? mode : -1;
 }
 
 int cogstart(void (*f)(void *), int par, int *stack, unsigned int stacksize) {
@@ -118,9 +118,7 @@ void _uart_putc(char c, int p) {
 int _uart_checkc(int p) {
     int have_data = 0;
     testp(p, have_data);
-    if (have_data) return 1;
-    
-    return 0;
+    return have_data;
 }
 
 char _uart_getc(int p) {

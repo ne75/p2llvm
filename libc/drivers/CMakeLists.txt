@@ -1,5 +1,6 @@
 add_library(drivers OBJECT
     SimpleSerial.c
+    FdSerial.c
     terminal.c
     memory.c
 )

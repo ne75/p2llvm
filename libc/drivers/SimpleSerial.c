@@ -75,8 +75,9 @@ static int _serial_getbyte(FILE *fp) {
 
 	if (fp->_flag & _IONONBLOCK) {
 	/* if non-blocking I/O, return immediately if no data */
-		if ( 0 != _uart_checkc(rxpin) )
+		if (_uart_checkc(rxpin) == 0) {
 			return -1;
+		}
 	} else {
 		while (!_uart_checkc(rxpin));
 	}

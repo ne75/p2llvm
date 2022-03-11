@@ -19,7 +19,7 @@ fgets(char *buf, int size, FILE *fp)
     c = fgetc(fp);
     if (c < 0) break;
     buf[count++] = c;
-    if (c == '\n') break;
+    if (c == '\n' || c == '\r') break;
   }
   buf[count] = 0;
   return (count > 0) ? buf : NULL;
