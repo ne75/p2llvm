@@ -24,43 +24,12 @@ static FdSerial_t *coglist;
  * If this driver is active on debug pins and debugging is used, it might capture debug data if running in the background
  * so we include a brk to force it to stop on entry when debugging is enabled
  * 
- * TODO: rewrite in assembly to make it speedier, current code is 53 instructions + function calls, could be better
- * 
  */
 __attribute__ ((cogmain)) static void _Fdserial_driver(void *p) {
     INIT_RTLIB;
     brk(0);
 
     FdSerial_t *dat = (FdSerial_t*)p;
-
-            /*
-            while(1) {
-        // implement uart send functions directly rather than using the library for speed
-        // int have_data = 0;
-        // testp(rxpin, have_data);
-        if (_uart_checkc(rxpin)) {
-            drvnot(31);
-            // we have a character, add it to the receive buffer
-            int c = 0;
-            rdpin(c, rxpin);
-            dat->rxbuff[dat->rx_head] = (char)(c>>24);
-            dat->rx_head = (dat->rx_head+1) & FDSERIAL_BUFF_MASK;
-        }
-
-        if (dat->tx_head != dat->tx_tail) {
-            // we have something to transmit, send it
-            int buffer_ready = 0;
-            testp(txpin, buffer_ready);
-            if (!buffer_ready) continue; // currently sending another byte, try again shortly
-
-            // send the byte
-            wypin(dat->txbuff[dat->tx_tail], txpin);
-            dat->tx_tail = (dat->tx_tail+1) & FDSERIAL_BUFF_MASK;
-        }
-    }   
-    */
-
-    // static int can_check_IN = 0;
 
     int rxpin = dat->rx_pin;
     int txpin = dat->tx_pin;
