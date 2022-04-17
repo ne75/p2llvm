@@ -13,6 +13,7 @@ typedef long off_t;
 #endif
 #ifndef __SSIZE_T_DEFINED__
 typedef long ssize_t;
+#define SSIZE_MAX 4
 #define __OFF_T_DEFINED__
 #endif
 
