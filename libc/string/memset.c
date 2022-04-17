@@ -10,59 +10,16 @@
 #include <stdint.h>
 #include <compiler.h>
 
-#ifdef __p2llvm__
-
-__attribute__ ((section ("lut"), cogtext, no_builtin("memset"))) void *memset(void *dst, int c, size_t n) {
+__attribute__ ((section ("lut"), cogtext, no_builtin("memset")))
+void *memset(void *dst, int c, size_t n) {
     // this can certainly be rewritten using the FIFO with wfbyte
-    char *d = (char *)dst;
-    if (d != 0) {
-        for (int i = 0; i < n; i++) {
-            d[i] = c;
-        }
-    }
-
+    asm volatile ("wrfast #0, %[dst]\n"
+             ".L1: wfbyte %[c]\n"
+                  " djnz %[n], #.L1\n"
+                  :[dst]"+r"(dst), [c]"+r"(c), [n]"+r"(n):);
     return dst;
 }
 
-#else
-
-/*
- * set some memory to a value
- */
-#define ALIGNED(a) ( 0 == ( ((sizeof(uint32_t))-1) & ((unsigned)a) ) )
-
-_CACHED
-void *
-memset(void *dest_p, int c, size_t n)
-{
-  void *orig_dest = dest_p;
-  char *dst;
-
-  /* fill with longs if applicable */
-  if (ALIGNED(dest_p) && n > sizeof(uint32_t))
-    {
-      uint32_t lc;
-      uint32_t *dstl = dest_p;
-      c &= 0xff;
-      lc = (c<<24)|(c<<16)|(c<<8)|c;
-      while (n >= sizeof(uint32_t))
-	{
-	  *dstl++ = lc;
-	  n -= sizeof(uint32_t);
-	}
-      dest_p = dstl;
-    }
-
-  dst = dest_p;
-  while (n > 0) {
-    *dst++ = c;
-    --n;
-  }
-
-  return orig_dest;
-}
-
-#endif
 
 /* +--------------------------------------------------------------------
  * ¦  TERMS OF USE: MIT License

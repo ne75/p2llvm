@@ -14,6 +14,9 @@ static unsigned char linebuf[80];
 /* initialize I/O */
 void _InitIO(void)
 {
+  int _flock;
+
+  _flock = _locknew();
   /* open stdin */
   __fopen_driver(stdin, _driverlist[0], "", "r");
   /* make it "cooked" input, and give it a decent sized buffer */
@@ -25,4 +28,14 @@ void _InitIO(void)
   __fopen_driver(stdout, _driverlist[0], "", "w");
   /* open stderr */
   __fopen_driver(stderr, _driverlist[0], "", "w");
+
+  // make sure there clear to use
+  for (int i=3;i<FOPEN_MAX;i++)
+  {
+    __files[i]._base = NULL;
+    __files[i]._ptr = NULL;
+    __files[i]._flag = 0;
+    __files[i]._drv = 0;
+    __files[i]._lock = _flock;
+  }
 }
