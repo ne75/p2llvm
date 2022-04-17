@@ -9,78 +9,80 @@
 
 int _term_write(FILE *fp, unsigned char *buf, int size)
 {
-  int count = 0;
-  int c;
-  int (*putbyte)(int, FILE *);
+    int count = 0;
+    int c;
+    int (*putbyte)(int, FILE *);
 
-  putbyte = fp->_drv->putbyte;
-  if (!putbyte)
-    return 0;
-  while (count < size)
-    {
-      c = *buf++;
-      if (c == '\n')
-	putbyte('\r', fp);
-      putbyte(c, fp);
-      count++;
-    }
-  return count;
+    putbyte = fp->_drv->putbyte;
+    if (!putbyte)
+        return 0;
+    while (count < size)
+        {
+            c = *buf++;
+            if (c == '\n') putbyte('\r', fp);
+            putbyte(c, fp);
+            count++;
+        }
+    return count;
 }
 
-int _term_read(FILE *fp, unsigned char *buf, int size)
-{
-  int (*putbyte)(int c, FILE *fp);
-  int (*getbyte)(FILE *fp);
-  int value;
-  int count = 0;
-  int cooked = fp->_flag & _IOCOOKED;
-  int unbuffered = fp->_flag & _IONBF;
+int _term_read(FILE *fp, unsigned char *buf, int size) {
+    int (*putbyte)(int c, FILE *fp);
+    int (*getbyte)(FILE *fp);
+    int value;
+    int count = 0;
+    int cooked = fp->_flag & _IOCOOKED;
+    int unbuffered = fp->_flag & _IONBF;
 
-  putbyte = fp->_drv->putbyte;
-  getbyte = fp->_drv->getbyte;
-  if (!putbyte || !getbyte)
-    return 0;
+    putbyte = fp->_drv->putbyte;
+    getbyte = fp->_drv->getbyte;
+    if (!putbyte || !getbyte)
+        return 0;
 
-  if (!cooked)
-    size = 1;
+    if (!cooked)
+        size = 1;
 
-  while (count < size)
-    {
-      value = (*getbyte)(fp);
-      if (value == -1)
-	break;  /* EOF */
+    while (count < size) {
+        value = (*getbyte)(fp);
+        if (value == -1)
+            break;  /* EOF */
 
-      /* convert cr to lf */
-      if (cooked && value == '\r') {
-	putbyte(value, fp); /* echo CR+LF */
-	value = '\n';
-      }
-      buf[count++] = value;
-      /* do cooked mode processing */
-      /* for now this echos the input */
-      if (cooked) {
-	/* process backspace */
-	if ( (value == '\b' || value == 0x7f) && !unbuffered)
-	  {
-	    if (count >= 2)
-	      {
-		count -= 2;
-		putbyte('\b', fp);
-		putbyte(' ', fp);
-		putbyte('\b', fp);
-	      }
-	    else
-	      {
-		count = 0;
-	      }
-	  }
-	else
-	  putbyte(value, fp);
-      }
-      /* end of line stops the read */
-      if (value == '\n') break;
+        /* convert cr to lf */
+        if (cooked && value == '\r') {
+            putbyte(value, fp); /* echo CR+LF */
+            value = '\n';
+        }
+
+        buf[count++] = value;
+        /* do cooked mode processing */
+        /* for now this echos the input */
+        if (cooked) {
+            /* process backspace */
+            if ((value == '\b' || value == 0x7f) && !unbuffered) {
+                if (count >= 2) {
+                    count -= 2;
+                    putbyte('\b', fp);
+                    putbyte(' ', fp);
+                    putbyte('\b', fp);
+                } else {
+                    count = 0;
+                }
+
+                if (fp->_flag & _IONONBLOCK) {
+                    putbyte('\b', fp);
+                    putbyte(' ', fp);
+                    putbyte('\b', fp);
+                    count = 1;
+                }
+            } else {
+                putbyte(value, fp);
+            }
+        }
+        /* end of line stops the read */
+        if (value == '\n') break;
     }
-  return count;
+
+    return count;
 }
 
 /*

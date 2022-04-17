@@ -17,7 +17,7 @@
 
 #include "int_lib.h"
 
-fp_t ___floatunsisf(unsigned int a) {
+fp_t __attribute__ ((noinline)) ___floatunsisf(unsigned int a) {
 
   const int aWidth = sizeof a * CHAR_BIT;
 

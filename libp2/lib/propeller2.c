@@ -4,8 +4,15 @@ extern void __start();
 
 unsigned int _cnt() {
     int x;
-    asm("getct $r31" : "=r"(x) : );
+    asm("getct %0" : "=r"(x) : );
     return x;
+}
+
+unsigned long long _cnt64() {
+    asm volatile("getct $r30\n"
+                "getct $r31 wc\n");
+
+    // don't return on purpose, will raise error but that's okay
 }
 
 void _waitcnt(unsigned int cnt) {
@@ -33,7 +40,7 @@ int _coginit(unsigned mode, void (*f)(void *), void *par) {
         : "r"(par), "r"(f)
         );
 
-    return !res ? mode : 0;
+    return !res ? mode : -1;
 }
 
 int cogstart(void (*f)(void *), int par, int *stack, unsigned int stacksize) {
@@ -111,9 +118,7 @@ void _uart_putc(char c, int p) {
 int _uart_checkc(int p) {
     int have_data = 0;
     testp(p, have_data);
-    if (have_data) return 1;
-    
-    return 0;
+    return have_data;
 }
 
 char _uart_getc(int p) {

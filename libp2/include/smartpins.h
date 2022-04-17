@@ -116,4 +116,138 @@
 #define P_ASYNC_TX          0x3c
 #define P_ASYNC_RX          0x3e
 
+// #ifdef __cplusplus
+// // declare a C++ class for smart pins (to be implemeented by libp2++)
+// #include "propeller.h"
+
+// /**
+//  * Abstract class representing a smart pin. 
+//  * 
+//  * All of these are control classes, underlying pin control instructions can still be used if desired
+//  */
+// class SmartPin {
+//     int pin;
+//     int sp_mode;
+
+// public:
+//     SmartPin(int p);
+
+//     /**
+//      * Initialize the pin and release it from reset
+//      */
+//     virtual void init();
+
+//     /**
+//      * Hold the smart pin in reset
+//      */
+//     virtual void reset();
+
+//     /**
+//      * Set the A input mode (if applicable)
+//      */
+//     void set_a_input(int a);
+
+//     /**
+//      * Set the B input mode (if applicable)
+//      */
+//     void set_b_input(int b);
+
+//     /**
+//      * Set the A/B logic filter mode (if applicable)
+//      */
+//     void set_ab_logic(int logic);
+
+//     /**
+//      * Set the high drive mode (if applicable)
+//      */
+//     void set_high_drive(int h);
+
+//     /**
+//      * Set the low drive mode (if applicable)
+//      */
+//     void set_low_drive(int l);
+
+//     /**
+//      * Set input to be clocked (if applicable)
+//      */
+//     void set_clocked(int c);
+
+//     /**
+//      * Set the raw input to be inverted (if applicable)
+//      */
+//     void set_invert_input(int inv);
+
+//     /**
+//      * Set the output to be inverted (if applicable)
+//      */
+//     void set_invert_output(int out);
+
+//     /**
+//      * wrappers around internal instructions 
+//      */
+//     inline void outhi() {outh(pin);};
+//     inline void outlo() {outl(pin);};
+//     inline void dirhi() {dirh(pin);};
+//     inline void dirlo() {dirl(pin);};
+//     inline void drvhi() {drvh(pin);};
+//     inline void drvlo() {drvl(pin);};
+// };
+
+// /**
+//  * Simple pin mode (no smart pin is active)
+//  */
+// class SimplePin : public SmartPin {
+// public:
+//     SimplePin(int p);
+//     void init() override;
+// };
+
+// class PulsePin : public SmartPin {
+// public:
+//     PulsePin(int p);
+//     void init(int base_period, int compare); 
+//     void pulse(int n);
+// };
+
+// class ADCPin : public SmartPin {
+// public:
+//     ADCPin(int p);
+//     void init(int )
+
+// };
+
+/*
+long repository
+long repository
+long repository
+DAC noise
+DAC 16-bit dither, noise
+DAC 16-bit dither, PWM
+pulse/cycle output
+transition output
+NCO frequency
+NCO duty
+PWM triangle
+PWM sawtooth
+PWM switch-mode power supply, V and I feedback
+periodic/continuous: A-B quadrature encoder
+periodic/continuous: inc on A-rise & B-high
+periodic/continuous: inc on A-rise & B-high / dec on A-rise & B-low
+periodic/continuous: inc on A-rise {/ dec on B-rise}
+periodic/continuous: inc on A-high {/ dec on B-high}
+time A-states
+time A-highs
+time X A-highs/rises/edges -or- timeout on X A-high/rise/edge
+for X periods, count time
+for X periods, count states
+for periods in X+ clocks, count time
+for periods in X+ clocks, count states
+for periods in X+ clocks, count periods
+ADC sample/filter/capture, internally clocked
+ADC sample/filter/capture, externally clocked
+ADC scope with trigger
+USB host/device              (even/odd pin pair = DM/DP)*/
+
+// #endif
+
 #endif

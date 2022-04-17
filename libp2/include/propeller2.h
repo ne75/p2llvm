@@ -8,6 +8,11 @@
 #define DBG_UART_TX_PIN 62
 #define DBG_UART_BAUD 2000000
 
+#define SPI_FLASH_MISO  58
+#define SPI_FLASH_MOSI  59
+#define SPI_FLASH_CLK   60
+#define SPI_FLASH_CS    61
+
 #define E_IN_RISE   (1 << 6)
 #define E_IN_FALL   (2 << 6)
 #define E_IN_CHANGE (3 << 6)
@@ -20,20 +25,30 @@
 #define hubset(h) asm volatile ("hubset %0" : : "ri"((int)h))
 #define waitx(t) asm volatile ("waitx %0" : : "ri"((int)t))
 
+#define addct1(t, dt) asm volatile ("addct1 %0, %1" : "+r"(t): "ri"(dt))
+#define addct2(t, dt) asm volatile ("addct2 %0, %1" : "+r"(t): "ri"(dt))
+#define addct3(t, dt) asm volatile ("addct3 %0, %1" : "+r"(t): "ri"(dt))
+
 #define setse1(x) asm volatile ("setse1 %0" : : "ri"((int)x))
 #define setse2(x) asm volatile ("setse2 %0" : : "ri"((int)x))
 #define setse3(x) asm volatile ("setse3 %0" : : "ri"((int)x))
 #define setse4(x) asm volatile ("setse4 %0" : : "ri"((int)x))
 
-#define waitse1() asm volatile ("waitse1" : :)
-#define waitse2() asm volatile ("waitse2" : :)
-#define waitse3() asm volatile ("waitse3" : :)
-#define waitse4() asm volatile ("waitse4" : :)
+#define waitct1() asm volatile ("waitct1")
+#define waitct2() asm volatile ("waitct2")
+#define waitct3() asm volatile ("waitct3")
 
-#define wrc(x) asm volatile ("wrc %0" : "=r"(x) :)
-#define wrnc(x) asm volatile ("wrnc %0" : "=r"(x) :)
-#define wrz(x) asm volatile ("wrz %0" : "=r"(x) :)
-#define wrnz(x) asm volatile ("wrnz %0" : "=r"(x) :)
+#define waitse1() asm volatile ("waitse1")
+#define waitse2() asm volatile ("waitse2")
+#define waitse3() asm volatile ("waitse3")
+#define waitse4() asm volatile ("waitse4")
+
+#define wrc(x) asm volatile ("wrc %0" : "=r"(x))
+#define wrnc(x) asm volatile ("wrnc %0" : "=r"(x))
+#define wrz(x) asm volatile ("wrz %0" : "=r"(x))
+#define wrnz(x) asm volatile ("wrnz %0" : "=r"(x))
+
+#define cogstop(x) asm volatile("cogstop %0" :: "ri"(x))
 
 // branching
 #define cogret asm volatile ("ret")
@@ -74,9 +89,9 @@
 // Debugging
 #define brk(x) asm volatile ("brk %0" : : "ri"((int)x))
 #define cogbrk(x) asm volatile ("cogbrk %0" : : "ri"((int)x))
-#define getbrk_wcz(x) asm volatile ("getbrk %0 wcz" : "=r"(x) :)
-#define getbrk_wc(x) asm volatile ("getbrk %0 wc" : "=r"(x) :)
-#define getbrk_wz(x) asm volatile ("getbrk %0 wz" : "=r"(x) :)
+#define getbrk_wcz(x) asm volatile ("getbrk %0 wcz" : "=r"(x))
+#define getbrk_wc(x) asm volatile ("getbrk %0 wc" : "=r"(x))
+#define getbrk_wz(x) asm volatile ("getbrk %0 wz" : "=r"(x))
 
 #define _clkfreq (*((int*)0x14))
 #define _clkmode (*((int*)0x18))
@@ -188,6 +203,11 @@ void _clkset(unsigned clkmode, unsigned clkfreq);
 unsigned int _cnt();
 
 /**
+ * return the current 64 bit count
+ */
+unsigned long long _cnt64();
+
+/**
  * wait until current count == cnt
  */
 void _waitcnt(unsigned int cnt);
@@ -196,6 +216,8 @@ void _waitcnt(unsigned int cnt);
  * start a new cog dictated by mode. return if start was successful
  */
 int _coginit(unsigned mode, void (*f)(void *), void *par) __attribute__((noinline));
+
+
 
 /**
  * reverse bits in x

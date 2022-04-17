@@ -8,7 +8,7 @@
 /* list of drivers we can use */
 extern _Driver _SimpleSerialDriver;
 
-_Driver *_driverlist[] = {
+_Driver *_driverlist[] __attribute__((weak)) = {
   &_SimpleSerialDriver,
   NULL
 };

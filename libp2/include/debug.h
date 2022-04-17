@@ -41,5 +41,7 @@
 #define DEBUG_COG5          (1 << 5)
 #define DEBUG_COG6          (1 << 6)
 #define DEBUG_COG7          (1 << 7)
+#define DEBUG_COG_ALL       (DEBUG_COG0 | DEBUG_COG1 | DEBUG_COG2 | DEBUG_COG3 | \
+                                DEBUG_COG4 | DEBUG_COG5 | DEBUG_COG6 | DEBUG_COG7)
 
 #define DEBUG_CODE_INIT     0xff    // Initial brk to enter debugging mode

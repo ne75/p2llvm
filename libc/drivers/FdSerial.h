@@ -9,9 +9,9 @@
 #define __FDSerial__
 
 /**
- * Defines buffer length. hard coded in asm driver ... s/b bigger
+ * Defines buffer length
  */
-#define FDSERIAL_BUFF_MASK 0xf
+#define FDSERIAL_BUFF_MASK 0x3ff // 1kb buffer
 
 /**
  * Defines mode bits
@@ -20,10 +20,10 @@
  *   mode bit 2 = open-drain/source tx
  *   mode bit 3 = ignore tx echo on rx
  */
-#define FDSERIAL_MODE_INVERT_RX 1
-#define FDSERIAL_MODE_INVERT_TX 2
-#define FDSERIAL_MODE_OPENDRAIN_TX 4
-#define FDSERIAL_MODE_IGNORE_TX_ECHO 8
+// #define FDSERIAL_MODE_INVERT_RX 1
+// #define FDSERIAL_MODE_INVERT_TX 2
+// #define FDSERIAL_MODE_OPENDRAIN_TX 4
+// #define FDSERIAL_MODE_IGNORE_TX_ECHO 8
 
 /**
  * Defines FdSerial interface struct
@@ -40,7 +40,7 @@ typedef struct FdSerial_struct
     int rx_pin;    // recieve pin
     int tx_pin;    // transmit pin
     int mode;      // interface mode
-    int ticks;     // clkfreq / baud
+    int baud;      // baud rate
     int buffptr;   // pointer to rx buffer
     volatile char rxbuff[FDSERIAL_BUFF_MASK+1];  // receive buffer
     volatile char txbuff[FDSERIAL_BUFF_MASK+1];  // transmit buffer
@@ -49,6 +49,8 @@ typedef struct FdSerial_struct
     // make a linked list so we can find which pins are in use by other cogs
     struct FdSerial_struct *next;
     int users;  // number of FILE handles using this struct
+
+    volatile int stack[32];
 } FdSerial_t;
 
 /**
@@ -97,19 +99,19 @@ int _FdSerial_tx(FdSerial_t *data, int txbyte);
 
 /*
 +------------------------------------------------------------------------------------------------------------------------------+
-¦                                                   TERMS OF USE: MIT License                                                  ¦                                                            
-+------------------------------------------------------------------------------------------------------------------------------¦
-¦Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation    ¦ 
-¦files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,    ¦
-¦modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software¦
-¦is furnished to do so, subject to the following conditions:                                                                   ¦
-¦                                                                                                                              ¦
-¦The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.¦
-¦                                                                                                                              ¦
-¦THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE          ¦
-¦WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR         ¦
-¦COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,   ¦
-¦ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                         ¦
+ï¿½                                                   TERMS OF USE: MIT License                                                  ï¿½                                                            
++------------------------------------------------------------------------------------------------------------------------------ï¿½
+ï¿½Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation    ï¿½ 
+ï¿½files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,    ï¿½
+ï¿½modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Softwareï¿½
+ï¿½is furnished to do so, subject to the following conditions:                                                                   ï¿½
+ï¿½                                                                                                                              ï¿½
+ï¿½The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.ï¿½
+ï¿½                                                                                                                              ï¿½
+ï¿½THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE          ï¿½
+ï¿½WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR         ï¿½
+ï¿½COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,   ï¿½
+ï¿½ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                         ï¿½
 +------------------------------------------------------------------------------------------------------------------------------+
 */
 

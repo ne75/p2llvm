@@ -17,7 +17,7 @@
 
 #include "int_lib.h"
 
-COMPILER_RT_ABI fp_t __floatunsidf(su_int a) {
+fp_t __attribute__ ((noinline)) ___floatunsidf(su_int a) {
 
   const int aWidth = sizeof a * CHAR_BIT;
 
@@ -36,4 +36,8 @@ COMPILER_RT_ABI fp_t __floatunsidf(su_int a) {
   // Insert the exponent
   result += (rep_t)(exponent + exponentBias) << significandBits;
   return fromRep(result);
+}
+
+COMPILER_RT_ABI fp_t __floatunsidf(unsigned int a) {
+  return ___floatunsidf(a);
 }

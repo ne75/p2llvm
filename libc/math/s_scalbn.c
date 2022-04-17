@@ -102,9 +102,9 @@ double scalbn (double x, int n)
 __strong_alias(ldexp, scalbn);
 #endif
 
-#if	LDBL_MANT_DIG == 53
-__weak_alias(scalbnl, scalbn);
-__weak_alias(ldexpl, scalbn);
-#endif	/* LDBL_MANT_DIG == 53 */
+// #if	LDBL_MANT_DIG == 53
+// __weak_alias(scalbnl, scalbn);
+// __weak_alias(ldexpl, scalbn);
+// #endif	/* LDBL_MANT_DIG == 53 */
 
 

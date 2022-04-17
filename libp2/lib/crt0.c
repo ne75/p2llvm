@@ -24,6 +24,8 @@ extern func_ptr _init_array_start[];
 extern func_ptr _init_array_end[];
 extern func_ptr _fini_array_start[];
 extern func_ptr _fini_array_end[];
+extern char _bss_start[];
+extern char _bss_end[];
 extern unsigned _libcall_start[];
 extern int __enable_p2db;
 
@@ -39,7 +41,7 @@ void __entry() {
 }
 
 void __start0() {
-    if (__enable_p2db) hubset(DEBUG_INT_EN | DEBUG_COG0);
+    if (__enable_p2db) hubset(DEBUG_INT_EN | DEBUG_COG_ALL);
     asm("coginit #0, %0" : : "r"(__start));
 }
 #pragma clang diagnostic pop
@@ -56,10 +58,15 @@ void __start() {
         "rdlong r0, r0\n"     //  read out second stack value
         "jmp r1\n"             //  jump to the cog function
         ".Linit:"
-    );
+    ::: "r0", "r1");
 
     // initialize the stack
     PTRA = (unsigned int)&__stack;
+
+    // clear bss
+    for (char *ptr = _bss_start; ptr < _bss_end; ptr++) {
+        *ptr = 0;
+    }
 
     // init the debug lock
     _dbg_lock = _locknew();

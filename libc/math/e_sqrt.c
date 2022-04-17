@@ -444,11 +444,11 @@ B.  sqrt(x) by Reciproot Iteration
  
  */
 
-#if	LDBL_MANT_DIG == 53
-#ifdef	lint
-/* PROTOLIB1 */
-long double sqrtl(long double);
-#else	/* lint */
-__weak_alias(sqrtl, sqrt);
-#endif	/* lint */
-#endif	/* LDBL_MANT_DIG == 53 */
+// #if	LDBL_MANT_DIG == 53
+// #ifdef	lint
+// /* PROTOLIB1 */
+// long double sqrtl(long double);
+// #else	/* lint */
+// __weak_alias(sqrtl, sqrt);
+// #endif	/* lint */
+// #endif	/* LDBL_MANT_DIG == 53 */

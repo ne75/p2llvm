@@ -16,7 +16,7 @@ gets(char *buf)
 
   for(;;) {
     c = fgetc(stdin);
-    if (c < 0 || c == '\n') break;
+    if (c < 0 || c == '\n' || c == '\r') break;
     buf[count++] = c;
   }
   buf[count] = 0;

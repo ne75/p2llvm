@@ -5,6 +5,7 @@ import subprocess
 DEBUG_BUILD_DIR = "llvm-project/build_debug"
 RELEASE_BUILD_DIR = "llvm-project/build_release"
 LIBP2_DIR = "libp2"
+LIBP2PP_DIR = "libp2++"
 LIBC_DIR = "libc"
 
 build_dir = ""
@@ -128,6 +129,44 @@ def build_libp2(install_dest, llvm, clean=False, configure=True):
 
     return True
 
+def build_libp2pp(install_dest, llvm, clean=False, configure=True):
+    build_dir = os.path.join(LIBP2PP_DIR, 'build')
+    os.makedirs(build_dir, exist_ok=True)
+
+    # build libp2++
+    if configure:
+        cmake_cmd = ['cmake', '-Dllvm=' + str(os.path.join(install_dest, 'bin')), '../']
+
+        p = subprocess.Popen(cmake_cmd, cwd=build_dir)
+        p.wait()
+
+        if p.returncode != 0:
+            return False
+        
+
+    if clean:
+        p = subprocess.Popen(['make', 'clean'], cwd=build_dir)
+        p.wait()
+        if p.returncode != 0:
+            return False
+
+    p = subprocess.Popen(['make', 'LLVM=' + llvm, '-j8'], cwd=build_dir)
+    p.wait()
+    if p.returncode != 0:
+        return False
+
+    # install libp2
+    install_dir = os.path.join(install_dest, "libp2")
+    os.makedirs(os.path.join(install_dir, 'lib'), exist_ok=True)
+
+    if not copy(os.path.join(build_dir, 'lib', 'libp2++.a'), os.path.join(install_dir, 'lib', 'libp2++.a')):
+        return False
+
+    if not copy(os.path.join(LIBP2PP_DIR, 'include'), install_dir, recurse=True):
+        return False
+
+    return True
+
 def build_libc(install_dest, llvm, clean=False, configure=True):
     build_dir = os.path.join(LIBC_DIR, 'build')
     os.makedirs(build_dir, exist_ok=True)
@@ -208,8 +247,10 @@ def main():
     if not skip_libp2:
         if (install_dest):
             r = build_libp2(install_dest, llvm, clean, configure)
+            # r = build_libp2pp(install_dest, llvm, clean, configure)
         else:
             r = build_libp2(build_dir, llvm, clean, configure)
+            # r = build_libp2pp(build_dir, llvm, clean, configure)
 
         if not r:
             return

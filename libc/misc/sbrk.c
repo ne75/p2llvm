@@ -8,9 +8,6 @@
 
 #include <compiler.h>
 
-// FIXME: something with linker makes it such that when we try to assign to __heap_start, it will read the value,
-// not the address location. Need to figure out how to do that, something in the linker script. Workaround
-// is to get the pointer to __heap_start
 __attribute__ ((section (".heap"))) char __heap_start;
 
 char *_heap_base = &__heap_start;

@@ -6,16 +6,15 @@
 #include <stdio.h>
 #include <stdarg.h>
 
-int snprintf(char *str, size_t len, const char *fmt, ...)
-{
-  FILE tmpfile;
-  va_list args;
-  int r;
-  va_start(args, fmt);
-  r = vfprintf(__string_file(&tmpfile, str, "w", len), fmt, args);
-  fclose(&tmpfile);
-  va_end(args);
-  return r;
+int snprintf(char *str, size_t len, const char *fmt, ...) {
+    FILE tmpfile;
+    va_list args;
+    int r;
+    va_start(args, fmt);
+    r = vfprintf(__string_file(&tmpfile, str, "w", len), fmt, args);
+    fclose(&tmpfile);
+    va_end(args);
+    return r;
 }
 
 /* +--------------------------------------------------------------------
