@@ -19,7 +19,7 @@
 
 #include "int_lib.h"
 
-COMPILER_RT_ABI float __floatdisf(di_int a) {
+float __attribute__ ((noinline)) ___floatdisf(di_int a) {
   if (a == 0)
     return 0.0F;
   const unsigned N = sizeof(di_int) * CHAR_BIT;
@@ -64,4 +64,8 @@ COMPILER_RT_ABI float __floatdisf(di_int a) {
          ((e + 127) << 23) |        // exponent
          ((su_int)a & 0x007FFFFF);  // mantissa
   return fb.f;
+}
+
+COMPILER_RT_ABI float __floatdisf(di_int a)  {
+  return ___floatdisf(a);
 }

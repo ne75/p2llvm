@@ -11,13 +11,16 @@ add_library(builtins OBJECT
     divsf3.c
     extendsfdf2.c
     fixdfsi.c
+    fixsfdi.c
     fixsfsi.c
     fixunsdfdi.c
     fixunsdfsi.c
     fixunssfdi.c
     fixunssfsi.c
+    floatdisf.c
     floatsidf.c
     floatundidf.c
+    floatundisf.c
     floatunsidf.c
     floatunsisf.c
     floatsisf.c

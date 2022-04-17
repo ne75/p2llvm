@@ -20,7 +20,7 @@
 
 #include "int_lib.h"
 
-double __attribute__ ((noinline)) __floatundidf_(du_int a) {
+double __attribute__ ((noinline)) ___floatundidf(du_int a) {
   if (a == 0)
     return 0.0;
   const unsigned N = sizeof(du_int) * CHAR_BIT;
@@ -67,5 +67,5 @@ double __attribute__ ((noinline)) __floatundidf_(du_int a) {
 }
 
 COMPILER_RT_ABI double __floatundidf(du_int a) {
-  return __floatundidf_(a);
+  return ___floatundidf(a);
 }
