@@ -12,31 +12,38 @@
  * this function has to handle overlapping regions correctly
  */
 
-__attribute__ ((section ("lut"), cogtext, no_builtin("memset")))  void *memmove(void *dest_p, const void *src_p, size_t n) {
+__attribute__ ((section ("lut"), cogtext, no_builtin("memmove")))
+void *memmove(void *dest_p, const void *src_p, size_t n)
+{
   void *orig_dest = dest_p;
+  unsigned int b;
 
   const char *src = src_p;
   char *dst = dest_p;
 
   if ( (unsigned long)dst < (unsigned long)src )
-    {
-      while (n > 0) {
-	*dst++ = *src++;
-	--n;
-      }
-    }
+  {
+    asm volatile ("rdfast #0, %[src]\n"
+             ".L1: rfbyte %[b]\n"
+                  "wrbyte %[b], %[dst]\n"
+                  "add %[dst], #1\n"
+                  "djnz %[n], #.L1\n"
+                  :[src]"+r"(src), [dst]"+r"(dst), [b]"+r"(b), [n]"+r"(n):);
+  }
   else
-    {
+  {
       /* copy backwards */
       dst += n;
       src += n;
-      while (n > 0) {
-	--n;
-	--src;
-	--dst;
-	*dst = *src;
-      }
-    }
+      asm volatile (
+          ".L2: rdbyte %[b], %[src]\n"
+          "wrbyte %[b], %[dst]\n"
+          "sub %[src], #1\n"
+          "sub %[dst], #1\n"
+          "djnz %[n], #.L2\n"
+          :[src]"+r"(src), [dst]"+r"(dst), [b]"+r"(b), [n]"+r"(n):);
+
+  }
 
   return orig_dest;
 }

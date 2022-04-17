@@ -37,6 +37,8 @@ extern "C" {
 #include <sys/va_list.h>
 #include <sys/driver.h>
 #include <sys/null.h>
+#include <sys/sdcard.h>
+#include <sys/syslimits.h>
 #include <propeller.h>
 #include <sys/thread.h>
 
@@ -50,8 +52,6 @@ extern "C" {
 
 #define EOF       (-1)
 #define BUFSIZ     512
-#define FOPEN_MAX    8
-#define FILENAME_MAX 256
 
 #define SEEK_SET 0
 #define SEEK_CUR 1

@@ -1,18 +1,19 @@
 #include <time.h>
-#include <sys/thread.h>
 #include <propeller.h>
+#include <unistd.h>
 
-void
+unsigned int
 sleep(unsigned int n)
 {
   unsigned waitcycles;
   unsigned second = _clkfreq;
 
   waitcycles = getcnt();
-  while (n > 0)
+  while (n > 0) 
     {
       waitcycles += second;
-      __napuntil(waitcycles);
+      waitcnt(waitcycles);
       --n;
     }
+  return 0;
 }

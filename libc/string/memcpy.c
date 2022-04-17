@@ -10,72 +10,23 @@
 #include <compiler.h>
 #include <propeller.h>
 
-#ifdef __p2llvm__
 
-__attribute__ ((section ("lut"), cogtext, no_builtin("memset"))) void *memcpy(void *dst, const void *src, size_t n) {
-    char *d = (char *)dst;
-    const char *s = (const char*)src;
+__attribute__ ((section ("lut"), cogtext, no_builtin("memcpy")))
+void *memcpy(void *dst, const void *src, size_t n) {
+    unsigned int b;
 
-    // might be a smarter way to do this using the FIFO and such
-    if ((d != 0) && (s != 0)) {
-        while(n) {
-            //Copy byte by byte
-            *(d++)= *(s++);
-            --n;
-        }
-    }
-
+    if ((dst == NULL) || (src == NULL))
+        return dst;
+    
+    asm volatile ("rdfast #0, %[src]\n"
+             ".L1: rfbyte %[b]\n"
+                  "wrbyte %[b], %[dst]\n"
+                  "add %[dst], #1\n"
+                  "djnz %[n], #.L1\n"
+                  :[src]"+r"(src), [dst]"+r"(dst), [b]"+r"(b), [n]"+r"(n):);
     return dst;
 }
 
-#else
-#define ALIGNED(a) ( 0 == ( ((unsigned)(a)) & (sizeof(long)-1) ) )
-#define HUBMEM(a)  ( 0 == ( ((unsigned)(a)) & 0xFFF00000 ) )
-
-#define MINBLOCKSIZE (2*(sizeof(long)))
-
-#if defined(__PROPELLER_CMM__)
-__attribute__((fcache))
-#endif
-void *
-memcpy(void *dest_p, const void *src_p, size_t n)
-{
-  void *orig_dest = dest_p;
-
-#if defined(__PROPELLER_USE_XMM__)
-  extern void *_copy_from_xmm(void *dest, const void *src, size_t n);
-  if (HUBMEM(dest_p) && !HUBMEM(src_p))
-    return _copy_from_xmm(dest_p, src_p, n);
-#endif
-
-  /* do a quick copy if src and dest are aligned */
-  if ( ALIGNED(dest_p) && ALIGNED(src_p) && n > MINBLOCKSIZE) {
-    long *dst = dest_p;
-    const long *src = src_p;
-    do
-      {
-	*dst++ = *src++;
-	*dst++ = *src++;
-	n -= MINBLOCKSIZE;
-      }
-    while (n > MINBLOCKSIZE);
-    dest_p = dst;
-    src_p = src;
-  }
-
-  {
-    char *dst = dest_p;
-    const char *src = src_p;
-    
-    while (n > 0) {
-      *dst++ = *src++;
-      --n;
-    }
-  }
-
-  return orig_dest;
-}
-#endif
 
 /* +--------------------------------------------------------------------
  * ¦  TERMS OF USE: MIT License
