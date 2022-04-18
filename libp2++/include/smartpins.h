@@ -55,6 +55,11 @@ public:
         FLOAT = 0b111
     };  
 
+    enum OutControl {
+        OUTBIT = 0,
+        OTHER = 1
+    };
+
     /**
      * @param p: the pin to control
      */
@@ -189,6 +194,19 @@ public:
     }
 
     /**
+     * Set up the pin control. 
+     * 
+     * @param out: Output mode (OUT or OTHER, Smart mode will override)
+     * @param enabled: Output is enabled, regardless of DIR bit
+     * 
+     */
+    void pin_control(OutControl out, bool enabled) {
+        r &= ~(0b11 << 6);
+        r |= (out << 7) | (enabled << 6);
+        wrpin(r, pin);
+    }
+
+    /**
      * Get the value of the pin's IN bit (0 or 1)
      */
     int get_in() {
@@ -227,18 +245,53 @@ public:
     }
 
     /**
-     * Pulse the pin a given number of times
+     * Pulse the pin a given number of times. Uses event 4
      * 
      * @param n: number of times to pulse
+     * @param wait: wait for pulses to send
      */
-    void pulse(int n) {
+    void pulse(int n, bool wait = false) {
         y = n;
         wypin(y, pin);
+        if (wait) {
+            setse4(E_IN_HIGH | pin);
+            waitse4();
+        }
     }
 };
 
 /**
- * ADC Mode.
+ * Quadrature mode
+ */
+class QuadraturePin : public SmartPin {
+    int bpin = -1;
+public:
+    QuadraturePin(int p) : SmartPin(p) {};
+
+    void init(int bpin, int period = 0) {
+        this->bpin = bpin;
+
+        b_input_pin(bpin);
+        r &= ~(0b11111 << 1);
+        r |= P_QUADRATURE;
+        wrpin(r, pin);
+
+        wxpin(period, pin);
+
+        dirh(pin);
+        dirl(bpin); // float the B input
+    }
+
+    int count() {
+        int v;
+        rdpin(v, pin);
+        return v;
+    }
+
+};
+
+/**
+ * ADC Mode
  */
 class ADCPin : public SmartPin {
     int sample_ticks = 0;
@@ -279,8 +332,6 @@ public:
         wrpin(r, pin);
         wxpin(sp | (mode << 4), pin);
 
-        dirh(pin);
-
         switch (mode) {
             case SINC2_SAMPLING:
                 bits = sp + 1;
@@ -293,7 +344,7 @@ public:
                 break;
         }
 
-        printf("bits: %d\n", bits);
+        dirh(pin);
     }
 
     /**
@@ -343,6 +394,78 @@ public:
         int result = ((s - gio) << bits)/(vio-gio);
 
         return result;
+    }
+};
+
+class SyncTXPin : public SmartPin {
+    int bits;
+public:
+    enum Mode {
+        START_STOP = 0,
+        CONTINUOUS = 1
+    };
+
+    enum MSBMode {
+        LSB_FIRST = 0,
+        MSB_FIRST = 1
+    };
+
+    SyncTXPin(int p) : SmartPin(p) {}
+
+    void init(int clk, Mode m, int bits) {
+        b_input_pin(clk);
+        pin_control(OutControl::OUTBIT, true);
+
+        x &= ~(0b111111);
+        x |= (m << 5) | ((bits - 1) & 0b11111);
+        wxpin(x, pin);
+
+        this->bits = bits;
+
+        dirh(pin);
+    }
+
+    void tx(int word, MSBMode msb_mode=LSB_FIRST) {
+        if (msb_mode == MSB_FIRST) word = _rev(word << (32-bits));
+        wypin(word, pin);
+    }
+};
+
+class SyncRXPin : public SmartPin {
+    int bits;
+public:
+    enum Mode {
+        PRE_EDGE = 0,
+        ON_EDGE = 1
+    };
+
+    enum MSBMode {
+        LSB_FIRST = 0,
+        MSB_FIRST = 1
+    };
+
+    SyncRXPin(int p) : SmartPin(p) {}
+
+    void init(int clk, Mode m, int bits) {
+        b_input_pin(clk);
+
+        x &= ~(0b111111);
+        x |= (m << 5) | ((bits - 1) & 0b11111);
+        wxpin(x, pin);
+
+        this->bits = bits;
+
+        dirh(pin);
+    }
+
+    int rx(MSBMode msb_mode=LSB_FIRST) {
+        uint32_t v;
+        rdpin(v, pin);
+        
+        if (msb_mode == MSB_FIRST) v = _rev(v) & ~(0xffffffff << bits);
+        else v = v >> (32-bits);
+
+        return v;
     }
 };
 
