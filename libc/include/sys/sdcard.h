@@ -5,7 +5,7 @@
  * This code maps the sd card functions to the normal
  * function names for convience
  */
-#include "../../drivers/ff.h"
+#include <sys/ff.h>
 #include <dirent.h>
 #include <sys/stat.h>
 
@@ -87,9 +87,9 @@ int sd_rmdir(const char *name);
 /**
  * @brief rename a file entry
  * 
- * @param old path to old file
- * @param new new file name
+ * @param old_file path to old file
+ * @param new_file new file name
  * @return int 0 on success errno set
  */
-int sd_rename(const char *old, const char *new);
+int sd_rename(const char *old_file, const char *new_file);
 
