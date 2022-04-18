@@ -221,7 +221,7 @@ int _coginit(unsigned mode, void (*f)(void *), void *par) __attribute__((noinlin
  * reverse bits in x
  */
 static inline unsigned int _rev(unsigned int x) {
-    asm volatile ("rev %0" : : "r"(x));
+    asm volatile ("rev %0" : "+r"(x));
     return x;
 }
 
