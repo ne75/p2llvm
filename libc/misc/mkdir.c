@@ -26,7 +26,7 @@
 
 int mkdir(const char *path1, int mode)
 {
-    return sd_rmdir(path1);
+    return sd_mkdir(path1);
 }
 
 /*

@@ -8,7 +8,7 @@
 
 /* Integer types used for FatFs API */
 
-#if defined(_WIN32)	/* Main development platform */
+#if defined(_WIN32x)	/* Main development platform */
 #define FF_INTDEF 2
 #include <windows.h>
 typedef unsigned __int64 QWORD;
@@ -55,82 +55,110 @@ typedef WORD			WCHAR;	/* UTF-16 character type */
 
 /**
  * @brief Set SD Interface
+ * @param drive number
  * @param cs chip select pint
  * @param clk clock pin
  * @param mosi master out slave in
  * @param miso master in slave out
  */
-void SetSD(int cs, int clk, int mosi, int miso);
+void SetSD(int drive, int cs, int clk, int mosi, int miso);
 
 /**
  * @brief Enable SD Interface
+ * @param drive number
  */
-void EnableSD(void);
+void EnableSD(int drive);
 
 /**
  * @brief Send Data to SD Memory Card
+ * @param drive volume number 0/1
  * @param buff pointer to buffer data
  * @param bc number of bytes to send
  */
-void SendSD(const BYTE *buff, unsigned int bc);
+void SendSD(int drive, const BYTE *buff, unsigned int bc);
 
 /**
  * @brief Receive Data from SD Memory Card
+ * @param drive volume number 0/1
  * @param buff pointer to buffer data
  * @param bc number of bytes to receive
  */
-void ReceiveSD(BYTE *buff, unsigned int bc);
+void ReceiveSD(int drive, BYTE *buff, unsigned int bc);
+
+/**
+ * @brief Send Data Block to SD Memory Card
+ * @param drive volume number 0/1
+ * @param buff pointer to buffer data
+ * @param bc number of bytes to send
+ */
+void SendSDB(int drive, const BYTE *buff, unsigned int bc);
+
+/**
+ * @brief Receive Data from SD Memory Card
+ * @param drive volume number 0/1
+ * @param buff pointer to buffer data
+ * @param bc number of bytes to receive
+ */
+void ReceiveSD(int drive, BYTE *buff, unsigned int bc);
 
 /**
  * @brief Get ready state for SD Memory Card
+ * @param drive volume number 0/1
  * @return ready ready status 0 - not ready
  */
-int GetStatus(void);
+int GetStatus(int drive);
 
 /**
  * @brief Release SD Memory Card
+ * @param drive volume number 0/1
  */
-void ReleaseSD(void);
+void ReleaseSD(int drive);
 
 /**
  * @brief Select SD Memory Card
+ * @param drive volume number 0/1
  * @return status 0 - not ready
  */
-int SelectSD(void);
+int SelectSD(int drive);
 
 /**
  * @brief Receive Block of data from SD Memory Card
+ * @param drive volume number 0/1
  * @param buff pointer to buffer of data
  * @param bc byte count to receive
  * @return status 0 - not ready
  */
-int ReceiveBlock(BYTE *buff, unsigned int bc);
+int ReceiveBlock(int drive, BYTE *buff, unsigned int bc);
 
 /**
  * @brief Send Block of data to SD Memory Card
+ * @param drive volume number 0/1
  * @param buff pointer to buffer of data
  * @param token end of send data
  * @return status 0 - not ready
  */
-int SendBlock(const BYTE *buff, int token);
+int SendBlock(int drive, const BYTE *buff, int token);
 
 /**
  * @brief Send Command to SD Memory Card
+ * @param drive volume number 0/1
  * @param cmd command to send
  * @param arg command options
  * @return status bit 7 == 1 failed
  */
-BYTE SendCommand(const BYTE cmd, unsigned int arg);
+BYTE SendCommand(int drive, const BYTE cmd, unsigned int arg);
 
 /**
  * @brief Disk Status
+ * @param drive volume number 0/1
  * @return status
  */
-char MMC_disk_status(void);
+char MMC_disk_status(int drive);
 
 /**
  * @brief Disk Initialize
+ * @param drive volume number 0/1
  * @return status
  */
-char MMC_disk_initialize(void);
+char MMC_disk_initialize(int drive);
 

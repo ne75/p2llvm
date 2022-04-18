@@ -18,7 +18,14 @@
  * @param miso master in slave out pin
  * @return results
  */
-int sd_mount(int cs, int clk, int mosi, int miso);
+int sd_mount(int volume, int cs, int clk, int mosi, int miso);
+
+/**
+ * @brief unmount sd card file system
+ * @param volume
+ * @return results
+ */
+int sd_unmount(int volume);
 
 /**
  * @brief open directory of sd card

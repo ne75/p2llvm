@@ -52,7 +52,6 @@ extern "C" {
 
 #define EOF       (-1)
 #define BUFSIZ     512
-#define FOPEN_MAX    8
 
 #define SEEK_SET 0
 #define SEEK_CUR 1
@@ -118,9 +117,9 @@ extern "C" {
   void setbuffer(FILE *fp, char *buf, size_t size);
   void setlinebuf(FILE *fp);
 #endif
-// #if defined(_GNU_SOURCE) || defined(_POSIX_SOURCE)
+#if defined(_GNU_SOURCE) || defined(_POSIX_SOURCE)
   FILE *fmemopen(void *buf, size_t size, const char *mode);
-// #endif
+#endif
 
   int fputc(int c, FILE *fp);
   int fputs(const char *s, FILE *fp);

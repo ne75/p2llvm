@@ -163,6 +163,11 @@ extern "C" {
 /**  Permission denied */
 #define EPERM        EACCES
 
+/**
+ * @brief set error value
+ */
+int _seterror(int);
+
 #if defined(__cplusplus)
 }
 #endif

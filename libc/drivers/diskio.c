@@ -44,30 +44,30 @@ DSTATUS disk_initialize (
     BYTE type;
     int i;
     
-    EnableSD();
+    EnableSD(pdrv);
     
     for (i=0;i<100;i++)
-    	ReceiveSD(buff, 1);
+    	ReceiveSD(pdrv, buff, 1);
     
     type = 0;
-    if (SendCommand(CMD0, 0) == 1) //Enter Idle State
+    if (SendCommand(pdrv, CMD0, 0) == 1) //Enter Idle State
     {
-        if (SendCommand(CMD8, 0x1AA) == 1) //SD v2
+        if (SendCommand(pdrv, CMD8, 0x1AA) == 1) //SD v2
         {
-            ReceiveSD(buff, 4);
+            ReceiveSD(pdrv, buff, 4);
             if ((buff[2] == 0x01)  && (buff[3] == 0xaa)) //working voltage
             {
                 for (i=0;i<10000;i++) //wait to leave idle state
                 {
-                    if (SendCommand(ACMD41, 1 << 30) == 0)
+                    if (SendCommand(pdrv, ACMD41, 1 << 30) == 0)
                     	break;
                     WAITS;
                 }
                 if (i < 10000)
                 {
-                    if (SendCommand(CMD58, 0) == 0)
+                    if (SendCommand(pdrv, CMD58, 0) == 0)
                     {
-                        ReceiveSD(buff, 4);
+                        ReceiveSD(pdrv, buff, 4);
                         if ((buff[0] & 0x40) == 0)
                         	type = CT_SDC2;
                         else
@@ -78,7 +78,7 @@ DSTATUS disk_initialize (
         }
         else
         {
-            if (SendCommand(ACMD41, 0) <= 1)
+            if (SendCommand(pdrv, ACMD41, 0) <= 1)
             {
                 type = CT_SDC1; //SDv1
                 cmd = ACMD41;
@@ -90,16 +90,16 @@ DSTATUS disk_initialize (
             }
             for (i=0;i<10000;i++)
             {
-                if (SendCommand(cmd, 0) == 0)
+                if (SendCommand(pdrv, cmd, 0) == 0)
                 	break;
                 WAITS;
             }
-            if ((i == 10000) || (SendCommand(CMD16, 512) != 0))
+            if ((i == 10000) || (SendCommand(pdrv, CMD16, 512) != 0))
             	type = 0;
         }
     }
     CardType = type;
-    ReleaseSD();
+    ReleaseSD(pdrv);
 #ifdef _DEBUG
     __builtin_printf("Init: %d\n", type);
 #endif
@@ -135,20 +135,20 @@ DRESULT disk_read (
     else
     	cmd = CMD17;
     
-    if (SendCommand(cmd, sect) == 0)
+    if (SendCommand(pdrv, cmd, sect) == 0)
     {
         for (i=0;i<count;i++)
         {
-            if (ReceiveBlock(buff, 512) == 0)
+            if (ReceiveBlock(pdrv, buff, 512) == 0)
             	break;
             buff += 512;
         }
         if (cmd == CMD18)
-        	SendCommand(CMD12, 0);
+        	SendCommand(pdrv, CMD12, 0);
     }
-    ReleaseSD();
+    ReleaseSD(pdrv);
 #ifdef _DEBUG
-    __builtin_printf("Read Sector %d: %d\n", sect, count);
+    __builtin_printf("Reading Sector(s) %d: %d\n", sect, count);
 #endif
     if (i != count)
     	return RES_ERROR;
@@ -171,40 +171,40 @@ DRESULT disk_write (
 	UINT count			/* Number of sectors to write */
 )
 {
+    int i = 0;
     DWORD sect = (DWORD)sector;
-    int i;
     
     if ((CardType & CT_BLOCK) == 0)
     	sect = sect * 512;
     
     if (count == 1)
     {
-        if (SendCommand(CMD24, sect) == 0)
-        	if (SendBlock(buff, 0xfe) != 0)
-        		count = 0;
+        if (SendCommand(pdrv, CMD24, sect) == 0)
+        	if (SendBlock(pdrv, buff, 0xfe) != 0)
+                i = 1;
     }
     else
     {
         if ((CardType & CT_SDC) != 0)
-        	SendCommand(ACMD23, count);
-        if ((SendCommand(CMD25, sect) == 0))
+        	SendCommand(pdrv, ACMD23, count);
+        if ((SendCommand(pdrv, CMD25, sect) == 0))
         {
             for (i=0;i<count;i++)
             {
-                if (SendBlock(buff, 0xfc) == 0)
+                if (SendBlock(pdrv, buff, 0xfc) == 0)
                 	break;
                 buff += 512;
             }
-            if (SendBlock(0, 0xfd) == 0)
-            	count = 1;
+            if (SendBlock(pdrv, 0, 0xfd) == 0)
+            	i = 0;
         }
     }
-    ReleaseSD();
+    ReleaseSD(pdrv);
     
 #ifdef _DEBUG
-    __builtin_printf("Write sector %d: %d\n", sect, count);
+    __builtin_printf("Writing sector(s) %d: %d\n", sect, i);
 #endif
-    if (count != 0)
+    if (count != i)
     	return RES_ERROR;
     
     return RES_OK;
@@ -232,12 +232,12 @@ DRESULT disk_ioctl (
     switch (ctrl)
     {
         case CTRL_SYNC:
-        	if (SelectSD())
+        	if (SelectSD(pdrv))
         		res = RES_OK;
         	break;
         case GET_SECTOR_COUNT:
-        	if ((SendCommand(CMD9, 0) == 0))
-        		if (ReceiveBlock(csd, 16) != 0)
+        	if ((SendCommand(pdrv, CMD9, 0) == 0))
+        		if (ReceiveBlock(pdrv, csd, 16) != 0)
         		{
         		    if ((csd[0] & 0x20) != 0)
         		    {
@@ -260,7 +260,7 @@ DRESULT disk_ioctl (
         default:
         	res = RES_PARERR;
     }
-    ReleaseSD();
+    ReleaseSD(pdrv);
 #ifdef _DEBUG
     __builtin_printf("IOCTL: ctrl:%d %d\n", ctrl, res);
 #endif

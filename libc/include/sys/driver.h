@@ -42,11 +42,9 @@ typedef struct __driver _Driver;
  * @verbatim
 
 extern _Driver _SimpleSerialDriver;
-extern _Driver _FileDriver;
 
 _Driver *_driverlist[] = {
   &_SimpleSerialDriver,
-  &_FileDriver,
   NULL
 };
 

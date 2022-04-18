@@ -2,7 +2,7 @@
 /  FatFs Functional Configurations
 /---------------------------------------------------------------------------*/
 
-#define FFCONF_DEF	80196	/* Revision ID */
+#define FFCONF_DEF	86631	/* Revision ID */
 
 /*---------------------------------------------------------------------------/
 / Function Configurations
@@ -25,20 +25,12 @@
 /   3: f_lseek() function is removed in addition to 2. */
 
 
-#define FF_USE_STRFUNC	0
-/* This option switches string functions, f_gets(), f_putc(), f_puts() and f_printf().
-/
-/  0: Disable string functions.
-/  1: Enable without LF-CRLF conversion.
-/  2: Enable with LF-CRLF conversion. */
-
-
 #define FF_USE_FIND		0
 /* This option switches filtered directory read functions, f_findfirst() and
 /  f_findnext(). (0:Disable, 1:Enable 2:Enable with matching altname[] too) */
 
 
-#define FF_USE_MKFS		1
+#define FF_USE_MKFS		0
 /* This option switches f_mkfs() function. (0:Disable or 1:Enable) */
 
 
@@ -62,6 +54,30 @@
 
 #define FF_USE_FORWARD	0
 /* This option switches f_forward() function. (0:Disable or 1:Enable) */
+
+
+#define FF_USE_STRFUNC	0
+#define FF_PRINT_LLI	0
+#define FF_PRINT_FLOAT	0
+#define FF_STRF_ENCODE	0
+/* FF_USE_STRFUNC switches string functions, f_gets(), f_putc(), f_puts() and
+/  f_printf().
+/
+/   0: Disable. FF_PRINT_LLI, FF_PRINT_FLOAT and FF_STRF_ENCODE have no effect.
+/   1: Enable without LF-CRLF conversion.
+/   2: Enable with LF-CRLF conversion.
+/
+/  FF_PRINT_LLI = 1 makes f_printf() support long long argument and FF_PRINT_FLOAT = 1/2
+   makes f_printf() support floating point argument. These features want C99 or later.
+/  When FF_LFN_UNICODE >= 1 with LFN enabled, string functions convert the character
+/  encoding in it. FF_STRF_ENCODE selects assumption of character encoding ON THE FILE
+/  to be read/written via those functions.
+/
+/   0: ANSI/OEM in current CP
+/   1: Unicode in UTF-16LE
+/   2: Unicode in UTF-16BE
+/   3: Unicode in UTF-8
+*/
 
 
 /*---------------------------------------------------------------------------/
@@ -137,19 +153,6 @@
 /  on character encoding. When LFN is not enabled, these options have no effect. */
 
 
-#define FF_STRF_ENCODE	3
-/* When FF_LFN_UNICODE >= 1 with LFN enabled, string I/O functions, f_gets(),
-/  f_putc(), f_puts and f_printf() convert the character encoding in it.
-/  This option selects assumption of character encoding ON THE FILE to be
-/  read/written via those functions.
-/
-/   0: ANSI/OEM in current CP
-/   1: Unicode in UTF-16LE
-/   2: Unicode in UTF-16BE
-/   3: Unicode in UTF-8
-*/
-
-
 #define FF_FS_RPATH		0
 /* This option configures support for relative path.
 /
@@ -163,7 +166,7 @@
 / Drive/Volume Configurations
 /---------------------------------------------------------------------------*/
 
-#define FF_VOLUMES		1
+#define FF_VOLUMES		2
 /* Number of volumes (logical drives) to be used. (1-10) */
 
 
@@ -194,7 +197,7 @@
 #define FF_MAX_SS		512
 /* This set of options configures the range of sector size to be supported. (512,
 /  1024, 2048 or 4096) Always set both 512 for most systems, generic memory card and
-/  harddisk. But a larger value may be required for on-board flash memory and some
+/  harddisk, but a larger value may be required for on-board flash memory and some
 /  type of optical media. When FF_MAX_SS is larger than FF_MIN_SS, FatFs is configured
 /  for variable sector size mode and disk_ioctl() function needs to implement
 /  GET_SECTOR_SIZE command. */
