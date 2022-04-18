@@ -2,6 +2,8 @@
 
 #include <pins.h>
 #include <propeller.h>
+#include <assert.h>
+#include <stdio.h>
 
 /**
  * Abstract class representing a smart pin. 
@@ -9,40 +11,19 @@
  * All of these are control classes, underlying pin control instructions can still be used if desired
  */
 class SmartPin {
+protected:
     int pin;
     int sp_mode;
-    int r, x, y; // local copies of r, x, and y pin registers since we can't read them directly
+    int r = 0, x = 0, y = 0; // local copies of r, x, and y pin registers since we can't read them directly
 
 public:
-    /*
-    #define P_TRUE_A            0x00
-#define P_INVERT_A          0x80000000
-#define P_LOCAL_A           0x00
-#define P_PLUS1_A           0x10000000
-#define P_PLUS2_A           0x20000000
-#define P_PLUS3_A           0x30000000
-#define P_OUTBIT_A          0x40000000
-#define P_MINUS3_A          0x50000000
-#define P_MINUS2_A          0x60000000
-#define P_MINUS1_A          0x70000000
-#define P_TRUE_B            0x00
-#define P_INVERT_B          0x8000000
-#define P_LOCAL_B           0x00
-#define P_PLUS1_B           0x1000000
-#define P_PLUS2_B           0x2000000
-#define P_PLUS3_B           0x3000000
-#define P_OUTBIT_B          0x4000000
-#define P_MINUS3_B          0x5000000
-#define P_MINUS2_B          0x6000000
-#define P_MINUS1_B          0x7000000
-    */
     enum InputMode {
         TRUE = 0b0000,
         INVERT = 0b1000,
     };
 
     enum InputSource {
-        LOCAL = 0b000,
+        PIN = 0b000,
         PLUS1 = 0b001,
         PLUS2 = 0b010,
         PLUS3 = 0b011,
@@ -74,40 +55,79 @@ public:
         FLOAT = 0b111
     };  
 
-    SmartPin(int p);
+    /**
+     * @param p: the pin to control
+     */
+    SmartPin(int p) : pin(p) {};
 
     /**
      * Initialize the pin and release it from reset
      */
-    virtual void init();
+    virtual void init() {};
 
     /**
      * Hold the smart pin in reset
      */
-    virtual void reset();
+    virtual void reset() {
+        dirl(pin);
+    };
 
     /**
      * Set the A input mode and source, if applicable
+     * 
+     * @param source: The source for this pin's A input
+     * @param mode: The input mode for this pin's A input
      */
-    void set_a_input(InputSource source, InputMode mode) {
+    void a_input(InputSource source, InputMode mode = TRUE) {
         r &= ~(0b1111 << 28);
         r |= (mode | source) << 28;
         wrpin(r, pin);
     }
 
     /**
-     * Set the B input mode and source, if applicable
+     * Set the A input to a specific pin number
+     * 
+     * @param p: The source for this pin's A input. Must be within 3 of this pin. 
+     * @param m: The input mode
      */
-    void set_b_input(InputSource source, InputMode mode) {
+    void a_input_pin(int p, InputMode m = TRUE) {
+        int a_delta = p - pin;
+        assert(a_delta < 4 && a_delta > -4 && "desired A input pin is too far from this smart pin");
+
+        a_input((InputSource)(a_delta & 0b111), m);
+    }
+
+    /**
+     * Set the B input mode and source, if applicable
+     *
+     * @param source: The source for this pin's B input
+     * @param mode: The input mode for this pin's B input
+     */
+    void b_input(InputSource source, InputMode mode = TRUE) {
         r &= ~(0b1111 << 24);
         r |= (mode | source) << 24;
         wrpin(r, pin);
     }
 
     /**
-     * Set the A/B logic filter mode (if applicable)
+     * Set the B input to a specific pin number
+     * 
+     * @param p: The source for this pin's B input. Must be within 3 of this pin. 
+     * @param m: The input mode
      */
-    void set_ab_logic(InputLogic logic) {
+    void b_input_pin(int p, InputMode m = TRUE) {
+        int b_delta = p - pin;
+        assert(b_delta < 4 || b_delta > -4 && "desired B input pin is too far from this smart pin");
+
+        b_input(InputSource(b_delta & 0b111), m);
+    }
+
+    /**
+     * Set the A/B logic filter mode (if applicable)
+     * 
+     * @param: The logic/filtering applied to the A input (or both in the case of filtering)
+     */
+    void ab_logic(InputLogic logic) {
         r &= ~(0b111 << 21);
         r |= logic << 21;
         wrpin(r, pin);
@@ -115,8 +135,10 @@ public:
 
     /**
      * Set the high drive mode (if applicable)
+     * 
+     * @param h: The high drive mode
      */
-    void set_high_drive(DriveMode h) {
+    void high_drive(DriveMode h) {
         r &= ~(0b111 << 11);
         r |= h << 11;
         wrpin(r, pin);
@@ -124,8 +146,10 @@ public:
 
     /**
      * Set the low drive mode (if applicable)
+     * 
+     * @param l: The low drive mode 
      */
-    void set_low_drive(DriveMode l) {
+    void low_drive(DriveMode l) {
         r &= ~(0b111 << 8);
         r |= l << 8;
         wrpin(r, pin);
@@ -133,18 +157,45 @@ public:
 
     /**
      * Set input to be clocked (if applicable)
+     * 
+     * @param c: Should the input be clocked or not
      */
-    void set_clocked(int c);
+    void clocked(int c) {
+        r &= 1 << 16;
+        r |= c << 16;
+        wrpin(r, pin);
+    }
 
     /**
      * Set the raw input to be inverted (if applicable)
+     * 
+     * @param inv_in: Should the IN state be inverted (after the logic)
      */
-    void set_invert_input(int inv);
+    void invert_input(int inv_in) {
+        r &= 1 << 15;
+        r |= inv_in << 15;
+        wrpin(r, pin);
+    }
 
     /**
      * Set the output to be inverted (if applicable)
+     * 
+     * @param inv_out: Should the OUT state be inverted (after the pin control)
      */
-    void set_invert_output(int out);
+    void invert_output(int inv_out) {
+        r &= 1 << 14;
+        r |= inv_out << 14;
+        wrpin(r, pin);
+    }
+
+    /**
+     * Get the value of the pin's IN bit (0 or 1)
+     */
+    int get_in() {
+        int v;
+        testp(pin, v);
+        return v;
+    }
 
     /**
      * wrappers around internal instructions 
@@ -157,27 +208,142 @@ public:
     inline void drvlo() {drvl(pin);};
 };
 
-/**
- * Simple pin mode (no smart pin is active)
- */
-class SimplePin : public SmartPin {
-public:
-    SimplePin(int p);
-    void init() override;
-};
-
 class PulsePin : public SmartPin {
 public:
-    PulsePin(int p);
-    void init(int base_period, int compare); 
-    void pulse(int n);
+
+    PulsePin(int p) : SmartPin(p) {};
+
+    /**
+     * Initialize a pin in Pulse mode.
+     * 
+     * @param base_period: The 16 bit base period that the smart pin will operate at
+     * @param compare: The value the pin's counter will be compared to to determine it's high/low state
+     */
+    void init(int base_period, int compare) {
+        dirl(pin);
+        x = (base_period & 0xffff) | ((compare & 0xffff) << 16);
+        wxpin(x, pin);
+        dirh(pin);
+    }
+
+    /**
+     * Pulse the pin a given number of times
+     * 
+     * @param n: number of times to pulse
+     */
+    void pulse(int n) {
+        y = n;
+        wypin(y, pin);
+    }
 };
 
+/**
+ * ADC Mode.
+ */
 class ADCPin : public SmartPin {
+    int sample_ticks = 0;
+    int bits = 0;
 public:
-    ADCPin(int p);
-    void init(int )
+    enum ADCMode {
+        SINC2_SAMPLING = 0b00,
+        SINC2_FILTERING = 0b01,
+        SINC3_FILTERING = 0b10,
+        BITSTREAM_CAPTURE = 0b11
+    };
 
+    enum ADCSourceMode {
+        GIO = 0b100000,
+        VIO = 0b100001,
+        FLOAT = 0b100010,
+        PIN_1X = 0b100011,
+        PIN_3_16X = 0b100100,
+        PIN_10X = 0b100101,
+        PIN_31_6X = 0b100110,
+        PIN_100X = 0b100111
+    };
+
+    ADCPin(int p) : SmartPin(p) {};
+
+    void init(int sample_period, ADCMode mode, ADCSourceMode source_mode) {
+        dirl(pin);
+
+        sample_ticks = sample_period;
+        int sp = _encod(sample_period);
+        int ones = _ones(sample_period);
+
+        assert(ones == 1 && "Invalid sample period, must be a power of 2");
+        assert(sample_period <= 32768 && "Invalid sample period, must be less than 32768");
+
+        r = P_ADC | (source_mode << 15);
+
+        wrpin(r, pin);
+        wxpin(sp | (mode << 4), pin);
+
+        dirh(pin);
+
+        switch (mode) {
+            case SINC2_SAMPLING:
+                bits = sp + 1;
+                break;
+            case SINC2_FILTERING:
+                break;
+            case SINC3_FILTERING:
+                break;
+            case BITSTREAM_CAPTURE:
+                break;
+        }
+
+        printf("bits: %d\n", bits);
+    }
+
+    /**
+     * Get an ADC sample. Uses the calling cog's event 4.
+     * 
+     * @returns the raw sample
+     */
+    unsigned int raw_sample() {
+        setse4(E_IN_HIGH | pin);
+        waitse4();
+
+        unsigned int s;
+        rdpin(s, pin);
+        return s;
+    }
+
+    /**
+     * Get a precise ADC sample by measuring VIO and GIO to calibrate.
+     */
+    unsigned int sample() {
+        setse4(E_IN_RISE | pin);
+
+        int s = 0;
+        int vio = 0;
+        int gio = 0;
+
+        // get the sample
+        rdpin(s, pin);
+
+        // switch to VIO mode
+        wrpin(P_ADC | (VIO << 15), pin);
+        for (int i = 0; i < 3; i++) {
+            waitse4();
+            rdpin(vio, pin);
+        }
+
+        // switch to GIO mode
+        wrpin(P_ADC | (GIO << 15), pin);
+        for (int i = 0; i < 3; i++) {
+            waitse4();
+            rdpin(gio, pin);
+        }
+
+        // set up for next read
+        wrpin(r, pin);
+
+        int result = ((s - gio) << bits)/(vio-gio);
+
+        return result;
+    }
 };
 
 /*

@@ -128,8 +128,8 @@ class TestCase:
         results = ''
         while not done:
             l_raw = ser.readline()
-            if (verbose):
-                print(l_raw, end=': ');
+            # if (verbose):
+            #     print(l_raw, end=': ');
             l = l_raw.decode('ascii').strip() + '\n'
             if (verbose):
                 print(l.strip());

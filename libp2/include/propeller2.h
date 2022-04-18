@@ -1,7 +1,7 @@
 #ifndef _PROPELLER2_H
 #define _PROPELLER2_H
 
-#include "smartpins.h"
+#include "pins.h"
 #include "streamer.h"
 
 #define DBG_UART_RX_PIN 63
@@ -217,12 +217,35 @@ void _waitcnt(unsigned int cnt);
  */
 int _coginit(unsigned mode, void (*f)(void *), void *par) __attribute__((noinline));
 
-
-
 /**
  * reverse bits in x
  */
-unsigned int _rev(unsigned int x);
+static inline unsigned int _rev(unsigned int x) {
+    asm volatile ("rev %0" : : "r"(x));
+    return x;
+}
+
+/**
+ * get the number of ones in x
+ */
+static inline unsigned int _ones(unsigned int x) {
+    int ones = 0;
+    asm("ones %0, %1" : "=r"(ones) : "r"(x));
+    return ones;
+}
+
+/**
+ * get the position of the top-most 1 in x. If there are none, -1 is returned
+ */
+static inline int _encod(unsigned int x) {
+    int top;
+    asm volatile(
+        "encod %0, %1 wc\n"
+        "if_nc mov %0, #0" : "=r"(top) : "r"(x)
+    );
+
+    return top;
+}
 
 /**
  * initialize the given rx/tx pins in async mode (uart)

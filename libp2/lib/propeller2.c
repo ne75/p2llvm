@@ -11,8 +11,7 @@ unsigned int _cnt() {
 unsigned long long _cnt64() {
     asm volatile("getct $r30\n"
                 "getct $r31 wc\n");
-
-    // don't return on purpose, will raise error but that's okay
+    // don't return a value on purpose because we've already setup r31. will raise error but that's okay
 }
 
 void _waitcnt(unsigned int cnt) {
@@ -74,11 +73,6 @@ int _locktry(unsigned int l) {
 
 void _unlock(unsigned int l) {
     asm("lockrel %0" : : "r"(l));
-}
-
-unsigned int _rev(unsigned int x) {
-    asm("rev %0" : : "r"(x));
-    return x;
 }
 
 void _uart_init(unsigned rx, unsigned tx, unsigned baud) {

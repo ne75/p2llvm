@@ -159,8 +159,8 @@ def build_libp2pp(install_dest, llvm, clean=False, configure=True):
     install_dir = os.path.join(install_dest, "libp2")
     os.makedirs(os.path.join(install_dir, 'lib'), exist_ok=True)
 
-    if not copy(os.path.join(build_dir, 'lib', 'libp2++.a'), os.path.join(install_dir, 'lib', 'libp2++.a')):
-        return False
+    # if not copy(os.path.join(build_dir, 'lib', 'libp2++.a'), os.path.join(install_dir, 'lib', 'libp2++.a')):
+    #     return False
 
     if not copy(os.path.join(LIBP2PP_DIR, 'include'), install_dir, recurse=True):
         return False
@@ -247,10 +247,10 @@ def main():
     if not skip_libp2:
         if (install_dest):
             r = build_libp2(install_dest, llvm, clean, configure)
-            # r = build_libp2pp(install_dest, llvm, clean, configure)
+            r = build_libp2pp(install_dest, llvm, clean, configure)
         else:
             r = build_libp2(build_dir, llvm, clean, configure)
-            # r = build_libp2pp(build_dir, llvm, clean, configure)
+            r = build_libp2pp(build_dir, llvm, clean, configure)
 
         if not r:
             return
