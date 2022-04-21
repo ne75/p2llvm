@@ -26,6 +26,9 @@ add_library(builtins OBJECT
     floatsisf.c
     fp_mode.c
     lshrdi3.c
+    memcpy.c
+    memmove.c
+    memset.c
     moddi3.c
     modsi3.c
     muldf3.c
