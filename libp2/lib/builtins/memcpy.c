@@ -6,10 +6,7 @@
  * Written by Eric R. Smith, Total Spectrum Software Inc.
  * MIT licensed (see terms at end of file)
  */
-#include <string.h>
-#include <compiler.h>
 #include <propeller.h>
-
 
 __attribute__ ((section ("lut"), cogtext, no_builtin("memcpy")))
 void *memcpy(void *dst, const void *src, size_t n) {

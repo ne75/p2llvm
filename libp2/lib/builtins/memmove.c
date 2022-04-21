@@ -7,7 +7,6 @@
  * MIT licensed (see terms at end of file)
  */
 #include <propeller.h>
-#include <stdio.h>
 
 /*
  * this function has to handle overlapping regions correctly

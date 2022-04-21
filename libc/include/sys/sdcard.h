@@ -87,17 +87,9 @@ int sd_rmdir(const char *name);
 /**
  * @brief rename a file entry
  * 
-<<<<<<< HEAD
- * @param old_f path to old file
- * @param new_f new file name
- * @return int 0 on success errno set
- */
-int sd_rename(const char *old_f, const char *new_f);
-=======
  * @param old_file path to old file
  * @param new_file new file name
  * @return int 0 on success errno set
  */
 int sd_rename(const char *old_file, const char *new_file);
->>>>>>> 9a9b3d4e9288a3dd2c9cfd7de11e3cc95ef6b0c1
 

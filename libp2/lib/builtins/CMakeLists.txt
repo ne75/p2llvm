@@ -42,6 +42,8 @@ add_library(builtins OBJECT
     umoddi3.c
 )
 
+target_include_directories(builtins PRIVATE ${CMAKE_SOURCE_DIR}/include)
+
 # create a compiler_builtins library for rust
 add_library(compiler_builtins STATIC)
 

@@ -193,6 +193,10 @@ extern "C" {
  */
 #define INIT_RTLIB  asm("setq2 #0x1ff\n augs #1\n rdlong $0, #0\n")
 
+#ifndef NULL
+#define NULL (0)
+#endif
+
 #ifndef _SIZE_T
 #ifndef __SIZE_TYPE__
 #define __SIZE_TYPE__ unsigned long
@@ -200,6 +204,7 @@ extern "C" {
   typedef __SIZE_TYPE__ size_t;
 #define _SIZE_T
 #endif
+
 void *memset(void *dest, int c, size_t n);
 void *memcpy(void *dest, const void *src, size_t n);
 void *memmove(void *dest, const void *src, size_t n);
