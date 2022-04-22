@@ -66,6 +66,12 @@
 // Test
 #define testp(pin, res) asm volatile ("testp %1 wc\nwrc %0\n" : "=r"(res) : "ri"((int)pin))
 
+// CORDIC
+#define qrotate(x, y, angle) asm volatile ("setq2 %0\nqrotate %1, %2\n" : : "ri"(y), "ri"(x), "ri"(angle))
+#define qvector(x, y) asm volatile ("qvector %0, %1\n" : : "ri"(x), "ri"(y))
+#define getqx(x) asm volatile ("getqx %0" : "=r"(x))
+#define getqy(y) asm volatile ("getqy %0" : "=r"(y))
+
 // Smart pin control
 #define rdpin(v, pin) asm volatile ("rdpin %0, %1" : "=r"(v) : "ri"((int)pin))
 #define rqpin(v, pin) asm volatile ("rqpin %0, %1" : "=r"(v) : "ri"((int)pin))
@@ -237,7 +243,32 @@ int _coginit(unsigned mode, void (*f)(void *), void *par) __attribute__((noinlin
 /**
  * reverse bits in x
  */
-unsigned int _rev(unsigned int x);
+static inline unsigned int _rev(unsigned int x) {
+    asm volatile ("rev %0" : "+r"(x));
+    return x;
+}
+
+/**
+ * get the number of ones in x
+ */
+static inline unsigned int _ones(unsigned int x) {
+    int ones = 0;
+    asm("ones %0, %1" : "=r"(ones) : "r"(x));
+    return ones;
+}
+
+/**
+ * get the position of the top-most 1 in x. If there are none, -1 is returned
+ */
+static inline int _encod(unsigned int x) {
+    int top;
+    asm volatile(
+        "encod %0, %1 wc\n"
+        "if_nc mov %0, #0" : "=r"(top) : "r"(x)
+    );
+
+    return top;
+}
 
 /**
  * initialize the given rx/tx pins in async mode (uart)
