@@ -1,7 +1,4 @@
 add_library(string OBJECT
-    memcpy.c
-    memmove.c
-    memset.c
     memchr.c
     memcmp.c
 	strcat.c

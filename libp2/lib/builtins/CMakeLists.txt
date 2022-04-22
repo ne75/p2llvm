@@ -26,6 +26,9 @@ add_library(builtins OBJECT
     floatsisf.c
     fp_mode.c
     lshrdi3.c
+    memcpy.c
+    memmove.c
+    memset.c
     moddi3.c
     modsi3.c
     muldf3.c
@@ -38,6 +41,8 @@ add_library(builtins OBJECT
     udivmoddi4.c
     umoddi3.c
 )
+
+target_include_directories(builtins PRIVATE ${CMAKE_SOURCE_DIR}/include)
 
 # create a compiler_builtins library for rust
 add_library(compiler_builtins STATIC)

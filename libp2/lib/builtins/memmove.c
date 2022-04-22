@@ -6,7 +6,7 @@
  * Written by Eric R. Smith, Total Spectrum Software Inc.
  * MIT licensed (see terms at end of file)
  */
-#include <string.h>
+#include <propeller.h>
 
 /*
  * this function has to handle overlapping regions correctly
@@ -33,8 +33,8 @@ void *memmove(void *dest_p, const void *src_p, size_t n)
   else
   {
       /* copy backwards */
-      dst += n;
-      src += n;
+      dst += n-1;
+      src += n-1;
       asm volatile (
           ".L2: rdbyte %[b], %[src]\n"
           "wrbyte %[b], %[dst]\n"
