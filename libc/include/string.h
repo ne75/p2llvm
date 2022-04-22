@@ -3,13 +3,11 @@
 
 #include <sys/size_t.h>
 #include <sys/null.h>
+#include <propeller.h> // for memset, memcpy, memmove
 
 #if defined(__cplusplus)
 extern "C" {
 #endif
-
-void * memcpy(void *dest, const void *src, size_t n);
-void * memmove(void *dest, const void *src, size_t n);
 
 char * strcpy(char * __restrict dest, const char * __restrict src);
 char * strncpy(char * __restrict dest, const char * __restrict src, size_t n);
@@ -34,7 +32,6 @@ char * strstr(const char *src, const char *pattern);
 char * strtok(char * __restrict str, const char * __restrict delim);
 
 
-void * memset(void *dest, int c, size_t n);
 char * strerror(int err);
 size_t strlen(const char *s);
 
