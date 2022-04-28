@@ -240,7 +240,6 @@ void _waitcnt(unsigned int cnt);
  */
 int _coginit(unsigned mode, void (*f)(void *), void *par) __attribute__((noinline));
 
-<<<<<<< HEAD
 /**
  * reverse bits in x
  */
