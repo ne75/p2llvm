@@ -66,6 +66,12 @@
 // Test
 #define testp(pin, res) asm volatile ("testp %1 wc\nwrc %0\n" : "=r"(res) : "ri"((int)pin))
 
+// CORDIC
+#define qrotate(x, y, angle) asm volatile ("setq2 %0\nqrotate %1, %2\n" : : "ri"(y), "ri"(x), "ri"(angle))
+#define qvector(x, y) asm volatile ("qvector %0, %1\n" : : "ri"(x), "ri"(y))
+#define getqx(x) asm volatile ("getqx %0" : "=r"(x))
+#define getqy(y) asm volatile ("getqy %0" : "=r"(y))
+
 // Smart pin control
 #define rdpin(v, pin) asm volatile ("rdpin %0, %1" : "=r"(v) : "ri"((int)pin))
 #define rqpin(v, pin) asm volatile ("rqpin %0, %1" : "=r"(v) : "ri"((int)pin))
@@ -252,8 +258,6 @@ static inline unsigned int _ones(unsigned int x) {
     return ones;
 }
 
-=======
->>>>>>> master
 /**
  * get the position of the top-most 1 in x. If there are none, -1 is returned
  */

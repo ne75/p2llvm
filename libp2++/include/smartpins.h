@@ -12,11 +12,18 @@
  */
 class SmartPin {
 protected:
-    int pin;
     int sp_mode;
     int r = 0, x = 0, y = 0; // local copies of r, x, and y pin registers since we can't read them directly
 
+    void set_mode(int sp_mode) {
+        r &= ~(0b11111 << 1);
+        r |= sp_mode;
+        wrpin(r, pin);
+    }
+
 public:
+    int pin;
+    
     enum InputMode {
         TRUE = 0b0000,
         INVERT = 0b1000,
@@ -239,8 +246,17 @@ public:
      */
     void init(int base_period, int compare) {
         dirl(pin);
+<<<<<<< HEAD
         x = (base_period & 0xffff) | ((compare & 0xffff) << 16);
         wxpin(x, pin);
+=======
+
+        set_mode(P_PULSE);
+        pin_control(OutControl::OUTBIT, true);
+        x = (base_period & 0xffff) | ((compare & 0xffff) << 16);
+        wxpin(x, pin);
+
+>>>>>>> master
         dirh(pin);
     }
 
@@ -250,11 +266,19 @@ public:
      * @param n: number of times to pulse
      * @param wait: wait for pulses to send
      */
+<<<<<<< HEAD
     void pulse(int n, bool wait = false) {
         y = n;
         wypin(y, pin);
         if (wait) {
             setse4(E_IN_HIGH | pin);
+=======
+    void pulse(int n, bool wait=false) {
+        setse4(E_IN_RISE | pin);
+        y = n;
+        wypin(y, pin);
+        if (wait) {
+>>>>>>> master
             waitse4();
         }
     }
@@ -268,18 +292,32 @@ class QuadraturePin : public SmartPin {
 public:
     QuadraturePin(int p) : SmartPin(p) {};
 
+<<<<<<< HEAD
     void init(int bpin, int period = 0) {
         this->bpin = bpin;
 
         b_input_pin(bpin);
         r &= ~(0b11111 << 1);
         r |= P_QUADRATURE;
+=======
+    void init(SmartPin bpin, int period = 0) {
+        dirl(pin);
+
+        this->bpin = bpin.pin;
+
+        b_input_pin(bpin.pin);
+        set_mode(P_QUADRATURE);
+>>>>>>> master
         wrpin(r, pin);
 
         wxpin(period, pin);
 
         dirh(pin);
+<<<<<<< HEAD
         dirl(bpin); // float the B input
+=======
+        dirl(bpin.pin); // float the B input
+>>>>>>> master
     }
 
     int count() {
@@ -401,8 +439,13 @@ class SyncTXPin : public SmartPin {
     int bits;
 public:
     enum Mode {
+<<<<<<< HEAD
         START_STOP = 0,
         CONTINUOUS = 1
+=======
+        CONTINUOUS = 0,
+        START_STOP = 1
+>>>>>>> master
     };
 
     enum MSBMode {
@@ -412,8 +455,21 @@ public:
 
     SyncTXPin(int p) : SmartPin(p) {}
 
+<<<<<<< HEAD
     void init(int clk, Mode m, int bits) {
         b_input_pin(clk);
+=======
+    void init(SmartPin &clk, Mode m, int bits, bool invert=false) {
+        dirl(pin);
+
+        set_mode(P_SYNC_TX);
+
+        if (invert)
+            b_input_pin(clk.pin, INVERT);
+        else 
+            b_input_pin(clk.pin);
+
+>>>>>>> master
         pin_control(OutControl::OUTBIT, true);
 
         x &= ~(0b111111);
@@ -446,8 +502,20 @@ public:
 
     SyncRXPin(int p) : SmartPin(p) {}
 
+<<<<<<< HEAD
     void init(int clk, Mode m, int bits) {
         b_input_pin(clk);
+=======
+    void init(SmartPin &clk, Mode m, int bits, bool invert=false) {
+        dirl(pin);
+
+        set_mode(P_SYNC_RX);
+
+        if (invert)
+            b_input_pin(clk.pin, INVERT);
+        else
+            b_input_pin(clk.pin);
+>>>>>>> master
 
         x &= ~(0b111111);
         x |= (m << 5) | ((bits - 1) & 0b11111);

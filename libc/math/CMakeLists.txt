@@ -19,11 +19,11 @@ add_library(
 	# e_atanh.c
     # e_cosh.c
     # e_exp.c
-    # e_fmod.c
+    e_fmod.c
 	# e_atanhf.c
     # e_coshf.c
     # e_expf.c
-    # e_fmodf.c
+    e_fmodf.c
 	# e_hypot.c
     # e_j0.c
     # e_j1.c

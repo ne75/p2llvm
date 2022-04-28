@@ -132,11 +132,11 @@ fmod(double x, double y)
 	return x;		/* exact output */
 }
 
-#if	LDBL_MANT_DIG == 53
-#ifdef	lint
-/* PROTOLIB1 */
-long double fmodl(long double, long double);
-#else	/* lint */
-__weak_alias(fmodl, fmod);
-#endif	/* lint */
-#endif	/* LDBL_MANT_DIG == 53 */
+// #if	LDBL_MANT_DIG == 53
+// #ifdef	lint
+// /* PROTOLIB1 */
+// long double fmodl(long double, long double);
+// #else	/* lint */
+// __weak_alias(fmodl, fmod);
+// #endif	/* lint */
+// #endif	/* LDBL_MANT_DIG == 53 */
