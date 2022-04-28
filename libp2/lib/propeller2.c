@@ -76,11 +76,6 @@ void _unlock(unsigned int l) {
     asm("lockrel %0" : : "r"(l));
 }
 
-unsigned int _rev(unsigned int x) {
-    asm("rev %0" : : "r"(x));
-    return x;
-}
-
 void _uart_init(unsigned rx, unsigned tx, unsigned baud) {
     dirl(rx);
     dirl(tx);
