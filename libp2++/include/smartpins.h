@@ -246,17 +246,12 @@ public:
      */
     void init(int base_period, int compare) {
         dirl(pin);
-<<<<<<< HEAD
-        x = (base_period & 0xffff) | ((compare & 0xffff) << 16);
-        wxpin(x, pin);
-=======
 
         set_mode(P_PULSE);
         pin_control(OutControl::OUTBIT, true);
         x = (base_period & 0xffff) | ((compare & 0xffff) << 16);
         wxpin(x, pin);
 
->>>>>>> master
         dirh(pin);
     }
 
@@ -266,19 +261,11 @@ public:
      * @param n: number of times to pulse
      * @param wait: wait for pulses to send
      */
-<<<<<<< HEAD
-    void pulse(int n, bool wait = false) {
-        y = n;
-        wypin(y, pin);
-        if (wait) {
-            setse4(E_IN_HIGH | pin);
-=======
     void pulse(int n, bool wait=false) {
         setse4(E_IN_RISE | pin);
         y = n;
         wypin(y, pin);
         if (wait) {
->>>>>>> master
             waitse4();
         }
     }
@@ -292,14 +279,6 @@ class QuadraturePin : public SmartPin {
 public:
     QuadraturePin(int p) : SmartPin(p) {};
 
-<<<<<<< HEAD
-    void init(int bpin, int period = 0) {
-        this->bpin = bpin;
-
-        b_input_pin(bpin);
-        r &= ~(0b11111 << 1);
-        r |= P_QUADRATURE;
-=======
     void init(SmartPin bpin, int period = 0) {
         dirl(pin);
 
@@ -307,17 +286,12 @@ public:
 
         b_input_pin(bpin.pin);
         set_mode(P_QUADRATURE);
->>>>>>> master
         wrpin(r, pin);
 
         wxpin(period, pin);
 
         dirh(pin);
-<<<<<<< HEAD
-        dirl(bpin); // float the B input
-=======
         dirl(bpin.pin); // float the B input
->>>>>>> master
     }
 
     int count() {
@@ -333,7 +307,6 @@ public:
  */
 class ADCPin : public SmartPin {
     int sample_ticks = 0;
-    int bits = 0;
 public:
     enum ADCMode {
         SINC2_SAMPLING = 0b00,
@@ -352,6 +325,8 @@ public:
         PIN_31_6X = 0b100110,
         PIN_100X = 0b100111
     };
+
+    int bits = 0;
 
     ADCPin(int p) : SmartPin(p) {};
 
@@ -375,10 +350,13 @@ public:
                 bits = sp + 1;
                 break;
             case SINC2_FILTERING:
+                assert(false && "sinc2 filter not implemented\n");
                 break;
             case SINC3_FILTERING:
+                assert(false && "sinc3 filter not implemented\n");
                 break;
             case BITSTREAM_CAPTURE:
+                assert(false && "bitstream capture not implemented\n");
                 break;
         }
 
@@ -403,7 +381,7 @@ public:
      * Get a precise ADC sample by measuring VIO and GIO to calibrate.
      */
     unsigned int sample() {
-        setse4(E_IN_RISE | pin);
+        setse4(E_IN_HIGH | pin);
 
         int s = 0;
         int vio = 0;
@@ -439,13 +417,8 @@ class SyncTXPin : public SmartPin {
     int bits;
 public:
     enum Mode {
-<<<<<<< HEAD
-        START_STOP = 0,
-        CONTINUOUS = 1
-=======
         CONTINUOUS = 0,
         START_STOP = 1
->>>>>>> master
     };
 
     enum MSBMode {
@@ -455,10 +428,6 @@ public:
 
     SyncTXPin(int p) : SmartPin(p) {}
 
-<<<<<<< HEAD
-    void init(int clk, Mode m, int bits) {
-        b_input_pin(clk);
-=======
     void init(SmartPin &clk, Mode m, int bits, bool invert=false) {
         dirl(pin);
 
@@ -469,7 +438,6 @@ public:
         else 
             b_input_pin(clk.pin);
 
->>>>>>> master
         pin_control(OutControl::OUTBIT, true);
 
         x &= ~(0b111111);
@@ -502,10 +470,6 @@ public:
 
     SyncRXPin(int p) : SmartPin(p) {}
 
-<<<<<<< HEAD
-    void init(int clk, Mode m, int bits) {
-        b_input_pin(clk);
-=======
     void init(SmartPin &clk, Mode m, int bits, bool invert=false) {
         dirl(pin);
 
@@ -515,7 +479,6 @@ public:
             b_input_pin(clk.pin, INVERT);
         else
             b_input_pin(clk.pin);
->>>>>>> master
 
         x &= ~(0b111111);
         x |= (m << 5) | ((bits - 1) & 0b11111);
