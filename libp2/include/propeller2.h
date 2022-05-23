@@ -99,6 +99,9 @@
 #define getbrk_wc(x) asm volatile ("getbrk %0 wc" : "=r"(x))
 #define getbrk_wz(x) asm volatile ("getbrk %0 wz" : "=r"(x))
 
+// Misc math
+#define zerox(x, n) asm volatile ("zerox %0, %1" : "+r"(x) : "ri"(n))
+
 #define _clkfreq (*((int*)0x14))
 #define _clkmode (*((int*)0x18))
 #define _dbgbaud (*((int*)0x1c))

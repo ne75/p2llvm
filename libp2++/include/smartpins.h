@@ -381,7 +381,7 @@ public:
      * Get a precise ADC sample by measuring VIO and GIO to calibrate.
      */
     unsigned int sample() {
-        setse4(E_IN_HIGH | pin);
+        setse4(E_IN_RISE | pin);
 
         int s = 0;
         int vio = 0;

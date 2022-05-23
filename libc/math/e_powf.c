@@ -240,6 +240,6 @@ powf(float x, float y)
 	return s*z;
 }
 
-#if defined(__SHORT_DOUBLES_IMPL)
-__strong_alias(pow,powf);
-#endif
+// #if defined(__SHORT_DOUBLES_IMPL)
+// __strong_alias(pow,powf);
+// #endif

@@ -84,6 +84,6 @@ sqrtf(float x)
 	return z;
 }
 
-#if defined(__SHORT_DOUBLES_IMPL)
-__strong_alias(sqrt,sqrtf);
-#endif
+// #if defined(__SHORT_DOUBLES_IMPL)
+// __strong_alias(sqrt,sqrtf);
+// #endif
