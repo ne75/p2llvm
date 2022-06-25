@@ -3,7 +3,7 @@
 #include <pins.h>
 #include <propeller.h>
 #include <assert.h>
-#include <stdio.h>
+#include <stdint.h>
 
 /**
  * Abstract class representing a smart pin. 
@@ -225,17 +225,17 @@ public:
     /**
      * wrappers around internal instructions 
      */
-    inline void outhi() {outh(pin);};
-    inline void outlo() {outl(pin);};
-    inline void dirhi() {dirh(pin);};
-    inline void dirlo() {dirl(pin);};
-    inline void drvhi() {drvh(pin);};
-    inline void drvlo() {drvl(pin);};
+    inline void outhi() {outh(pin);}
+    inline void outlo() {outl(pin);}
+    inline void dirhi() {dirh(pin);}
+    inline void dirlo() {dirl(pin);}
+    inline void drvhi() {drvh(pin);}
+    inline void drvlo() {drvl(pin);}
+    inline void ack() {akpin(pin);}
 };
 
 class PulsePin : public SmartPin {
 public:
-
     PulsePin(int p) : SmartPin(p) {};
 
     /**
@@ -271,6 +271,40 @@ public:
     }
 };
 
+class PWMTrianglePin : public SmartPin {
+    int frame_period = 0;
+    int base_period = 0;
+
+public:
+    PWMTrianglePin(int p) : SmartPin(p) {};
+
+    void init(int frame_period, int base_period) {
+        this->frame_period = frame_period;
+        this->base_period = base_period;
+
+        dirl(pin);
+
+        set_mode(P_PWM_TRIANGLE);
+        pin_control(OUTBIT, true);
+        
+        x = (frame_period << 16) | base_period;
+        wxpin(x, pin);
+        
+        dirh(pin);
+    }
+
+    void sync() {
+        ack();
+        setse4(E_IN_RISE | pin);
+        waitse4();
+    }
+
+    void set_dc(int dc) {
+        y = dc;
+        wypin(y, pin);
+    }
+};
+
 /**
  * Quadrature mode
  */
@@ -286,8 +320,7 @@ public:
 
         b_input_pin(bpin.pin);
         set_mode(P_QUADRATURE);
-        wrpin(r, pin);
-
+        
         wxpin(period, pin);
 
         dirh(pin);
@@ -307,7 +340,11 @@ public:
  */
 class ADCPin : public SmartPin {
     int sample_ticks = 0;
+
 public:
+    int vio = 0;
+    int gio = 0;
+
     enum ADCMode {
         SINC2_SAMPLING = 0b00,
         SINC2_FILTERING = 0b01,
@@ -361,6 +398,25 @@ public:
         }
 
         dirh(pin);
+
+        setse4(E_IN_RISE | pin);
+        akpin(pin);
+
+        // switch to VIO mode
+        wrpin(P_ADC | (VIO << 15), pin);
+        for (int i = 0; i < 3; i++) {
+            waitse4();
+            rdpin(vio, pin);
+        }
+
+        // switch to GIO mode
+        wrpin(P_ADC | (GIO << 15), pin);
+        for (int i = 0; i < 3; i++) {
+            waitse4();
+            rdpin(gio, pin);
+        }
+
+        wrpin(r, pin);
     }
 
     /**
@@ -382,34 +438,20 @@ public:
      */
     unsigned int sample() {
         setse4(E_IN_RISE | pin);
+        akpin(pin);
 
         int s = 0;
-        int vio = 0;
-        int gio = 0;
 
         // get the sample
         rdpin(s, pin);
 
-        // switch to VIO mode
-        wrpin(P_ADC | (VIO << 15), pin);
-        for (int i = 0; i < 3; i++) {
-            waitse4();
-            rdpin(vio, pin);
-        }
-
-        // switch to GIO mode
-        wrpin(P_ADC | (GIO << 15), pin);
-        for (int i = 0; i < 3; i++) {
-            waitse4();
-            rdpin(gio, pin);
-        }
-
-        // set up for next read
-        wrpin(r, pin);
-
         int result = ((s - gio) << bits)/(vio-gio);
 
         return result;
+    }
+
+    int calibrate_sample(unsigned int s) {
+        return ((s - gio) << bits)/(vio-gio);
     }
 };
 

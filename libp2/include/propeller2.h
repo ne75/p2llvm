@@ -320,6 +320,11 @@ void _lock(unsigned int l);
  */
 void _unlock(unsigned int l);
 
+// Misc useful macros
+
+#define MIN2(a,b) (a < b ? a:b)
+#define MIN3(a,b,c) (MIN2(MIN2(a,b),c))
+
 #ifdef __cplusplus
 }
 #endif
