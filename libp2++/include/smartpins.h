@@ -22,7 +22,7 @@ protected:
     }
 
 public:
-    int pin;
+    const int pin;
     
     enum InputMode {
         TRUE = 0b0000,
