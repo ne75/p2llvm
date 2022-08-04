@@ -173,7 +173,7 @@ public:
      * @param c: Should the input be clocked or not
      */
     void clocked(int c) {
-        r &= 1 << 16;
+        r &= ~(1 << 16);
         r |= c << 16;
         wrpin(r, pin);
     }
@@ -184,7 +184,7 @@ public:
      * @param inv_in: Should the IN state be inverted (after the logic)
      */
     void invert_input(int inv_in) {
-        r &= 1 << 15;
+        r &= ~(1 << 15);
         r |= inv_in << 15;
         wrpin(r, pin);
     }
@@ -195,7 +195,7 @@ public:
      * @param inv_out: Should the OUT state be inverted (after the pin control)
      */
     void invert_output(int inv_out) {
-        r &= 1 << 14;
+        r &= ~(1 << 14);
         r |= inv_out << 14;
         wrpin(r, pin);
     }
@@ -470,7 +470,7 @@ public:
 
     SyncTXPin(int p) : SmartPin(p) {}
 
-    void init(SmartPin &clk, Mode m, int bits, bool invert=false) {
+    void init(SmartPin &clk, Mode m, int bits, bool invert=false, bool inverted_clock=false) {
         dirl(pin);
 
         set_mode(P_SYNC_TX);
@@ -482,12 +482,13 @@ public:
 
         pin_control(OutControl::OUTBIT, true);
 
+        if (inverted_clock) bits += 1;
+
         x &= ~(0b111111);
         x |= (m << 5) | ((bits - 1) & 0b11111);
         wxpin(x, pin);
 
         this->bits = bits;
-
         dirh(pin);
     }
 
@@ -512,7 +513,7 @@ public:
 
     SyncRXPin(int p) : SmartPin(p) {}
 
-    void init(SmartPin &clk, Mode m, int bits, bool invert=false) {
+    void init(SmartPin &clk, Mode m, int bits, bool invert=false, bool inverted_clock=false) {
         dirl(pin);
 
         set_mode(P_SYNC_RX);
@@ -527,7 +528,7 @@ public:
         wxpin(x, pin);
 
         this->bits = bits;
-
+        
         dirh(pin);
     }
 

@@ -40,6 +40,8 @@ add_library(builtins OBJECT
     udivdi3.c
     udivmoddi4.c
     umoddi3.c
+
+    sqrtf.c
 )
 
 target_include_directories(builtins PRIVATE ${CMAKE_SOURCE_DIR}/include)
