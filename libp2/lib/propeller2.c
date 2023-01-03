@@ -75,27 +75,32 @@ void _unlock(unsigned int l) {
     asm("lockrel %0" : : "r"(l));
 }
 
-void _uart_init(unsigned rx, unsigned tx, unsigned baud) {
+void _uart_init(unsigned rx, unsigned tx, unsigned baud, unsigned mode) {
     dirl(rx);
     dirl(tx);
 
     // see async mode for explanation of these values
-    unsigned int x = _clkfreq/baud;
-
-    x <<= 16;
+    unsigned int x = (((_clkfreq/10000) << 16)/baud)*10000;
+    
     x &= 0xfffffc00;
     x |= 7;
 
-    wrpin(P_ASYNC_TX | P_TT_01, tx);
+    int tx_mode = P_ASYNC_TX | P_TT_01;
+    int rx_mode = P_ASYNC_RX;
+
+    if (mode & UART_MODE_INVERT_TX) tx_mode |= P_INVERT_OUTPUT;
+    if (mode & UART_MODE_INVERT_RX) rx_mode |= P_INVERT_A;
+
+    wrpin(tx_mode, tx);
     wxpin(x, tx);
     dirh(tx);
 
-    wrpin(P_ASYNC_RX, rx);
+    wrpin(rx_mode, rx);
     wxpin(x, rx);
     dirh(rx);
 }
 
-void _uart_putc(char c, int p) {
+void _uart_putc(unsigned char c, int p) {
     if (p == DBG_UART_TX_PIN) {
         __lock_dbg();
     }
@@ -115,8 +120,24 @@ int _uart_checkc(int p) {
     return have_data;
 }
 
-char _uart_getc(int p) {
+unsigned char _uart_getc(int p) {
     unsigned x;
     rdpin(x, p);
     return (char)(x >> 24);
+}
+
+unsigned int crc32(unsigned char *s, int n) {
+    unsigned int crc=0xFFFFFFFF;
+    
+    for (int i = 0; i < n; i++) {
+        char ch = s[i];
+        for (int j = 0; j < 8; j++) {
+            unsigned int b = (ch^crc) & 1;
+            crc >>= 1;
+            if (b) crc = crc^0xEDB88320;
+            ch >>=1;
+        }
+    }
+    
+    return ~crc;
 }

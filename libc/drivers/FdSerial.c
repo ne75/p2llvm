@@ -38,7 +38,7 @@ __attribute__ ((cogmain)) static void _Fdserial_driver(void *p) {
         testp(rxpin, have_data);
         if (have_data) {
             // we have a character, add it to the receive buffer
-            int c = 0;
+            volatile int c = 0;
             rdpin(c, rxpin);
             dat->rxbuff[dat->rx_head] = (c>>24) & 0xff;
             dat->rx_head = (dat->rx_head+1) & FDSERIAL_BUFF_MASK;
@@ -136,7 +136,7 @@ int _FdSerial_getbyte(FILE *fp) {
 int _FdSerial_putbyte(int txbyte, FILE *fp) {
     FdSerial_t *data = (FdSerial_t *)fp->drvarg[0];
 
-    volatile char* txbuff = data->txbuff;
+    volatile unsigned char* txbuff = data->txbuff;
 
     while(data->tx_tail == ((data->tx_head+1) & FDSERIAL_BUFF_MASK)); // wait for space in queue
 
@@ -170,6 +170,7 @@ static int fdserial_fopen(FILE *fp, const char *name, const char *mode) {
     unsigned int rxpin = DBG_UART_RX_PIN;
     int setBaud = 0;
     FdSerial_t *data;
+    int mode_i = 0;
     int r;
 
     if (name && *name) {
@@ -183,6 +184,11 @@ static int fdserial_fopen(FILE *fp, const char *name, const char *mode) {
             if (*name) {
 	            name++;
 	            txpin = atoi(name);
+                while (*name && *name != ',') name++;
+                if (*name) {
+                    name++;
+                    mode_i = atoi(name);
+                }
 	        }
         }
     }
@@ -204,8 +210,8 @@ static int fdserial_fopen(FILE *fp, const char *name, const char *mode) {
         if (!data)
 	        return -1;
 
-        _uart_init(rxpin, txpin, baud);
-        r = _FdSerial_start(data, rxpin, txpin, 0, baud);
+        _uart_init(rxpin, txpin, baud, mode_i);
+        r = _FdSerial_start(data, rxpin, txpin, mode_i, baud);
         if (r <= 0) {
 	        free(data);
 	        return -1;

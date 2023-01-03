@@ -42,6 +42,7 @@ add_library(builtins OBJECT
     umoddi3.c
 
     sqrtf.c
+    powf.c
 )
 
 target_include_directories(builtins PRIVATE ${CMAKE_SOURCE_DIR}/include)

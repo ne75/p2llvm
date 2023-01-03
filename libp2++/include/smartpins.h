@@ -73,6 +73,11 @@ public:
     SmartPin(int p) : pin(p) {};
 
     /**
+     * cast to integer (return pin number)
+     */
+    operator int() const {return pin;}
+
+    /**
      * Initialize the pin and release it from reset
      */
     virtual void init() {};
@@ -482,11 +487,11 @@ public:
 
         pin_control(OutControl::OUTBIT, true);
 
-        if (inverted_clock) bits += 1;
-
         x &= ~(0b111111);
         x |= (m << 5) | ((bits - 1) & 0b11111);
         wxpin(x, pin);
+
+        if (inverted_clock) bits += 1;
 
         this->bits = bits;
         dirh(pin);
