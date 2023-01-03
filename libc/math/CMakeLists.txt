@@ -36,19 +36,19 @@ add_library(
     # e_lgammaf_r.c
 	# e_log.c
     # e_log10.c
-    e_pow.c
+    # e_pow.c
     # e_rem_pio2.c
     # e_remainder.c
 	# e_logf.c
     # e_log10f.c
-    # e_powf.c
+    e_powf.c
     # e_rem_pio2f.c
     # e_remainderf.c
 	# e_scalb.c
     # e_scalbf.c
     # e_sinh.c
     # e_sinhf.c
-    e_sqrt.c
+    # e_sqrt.c
     # e_sqrtf.c
 	# s_asinh.c
     # s_atan.c
@@ -92,7 +92,7 @@ add_library(
     # s_significand.c
     # s_sin.c
 	# s_rintf.c
-    # s_scalbnf.c
+    s_scalbnf.c
     # s_significandf.c
     # s_sinf.c
 	# s_tan.c

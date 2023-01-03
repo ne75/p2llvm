@@ -4,3 +4,6 @@
 [submodule "loadp2"]
 	path = loadp2
 	url = https://github.com/totalspectrum/loadp2.git
+[submodule "p2db-rs"]
+	path = p2db-rs
+	url = git@github.com:ne75/p2db-rs.git

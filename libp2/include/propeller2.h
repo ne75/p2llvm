@@ -1,12 +1,15 @@
 #ifndef _PROPELLER2_H
 #define _PROPELLER2_H
 
-#include "smartpins.h"
+#include "pins.h"
 #include "streamer.h"
 
 #define DBG_UART_RX_PIN 63
 #define DBG_UART_TX_PIN 62
 #define DBG_UART_BAUD 2000000
+
+#define UART_MODE_INVERT_RX 1
+#define UART_MODE_INVERT_TX 2
 
 #define SPI_FLASH_MISO  58
 #define SPI_FLASH_MOSI  59
@@ -42,6 +45,23 @@
 #define waitse2() asm volatile ("waitse2")
 #define waitse3() asm volatile ("waitse3")
 #define waitse4() asm volatile ("waitse4")
+
+#define pollint() ({ int r = 0; asm volatile ("pollint wc\nwrc %0" : "=r"(r)); r; })
+#define pollct1() ({ int r = 0; asm volatile ("pollct1 wc\nwrc %0" : "=r"(r)); r; })
+#define pollct2() ({ int r = 0; asm volatile ("pollct2 wc\nwrc %0" : "=r"(r)); r; })
+#define pollct3() ({ int r = 0; asm volatile ("pollct3 wc\nwrc %0" : "=r"(r)); r; })
+#define pollse1() ({ int r = 0; asm volatile ("pollse1 wc\nwrc %0" : "=r"(r)); r; })
+#define pollse2() ({ int r = 0; asm volatile ("pollse2 wc\nwrc %0" : "=r"(r)); r; })
+#define pollse3() ({ int r = 0; asm volatile ("pollse3 wc\nwrc %0" : "=r"(r)); r; })
+#define pollse4() ({ int r = 0; asm volatile ("pollse4 wc\nwrc %0" : "=r"(r)); r; })
+#define pollpat() ({ int r = 0; asm volatile ("pollpat wc\nwrc %0" : "=r"(r)); r; })
+#define pollfbw() ({ int r = 0; asm volatile ("pollfbw wc\nwrc %0" : "=r"(r)); r; })
+#define pollxmt() ({ int r = 0; asm volatile ("pollxmt wc\nwrc %0" : "=r"(r)); r; })
+#define pollxfi() ({ int r = 0; asm volatile ("pollxfi wc\nwrc %0" : "=r"(r)); r; })
+#define pollxro() ({ int r = 0; asm volatile ("pollxro wc\nwrc %0" : "=r"(r)); r; })
+#define pollxrl() ({ int r = 0; asm volatile ("pollxrl wc\nwrc %0" : "=r"(r)); r; })
+#define pollatn() ({ int r = 0; asm volatile ("pollatn wc\nwrc %0" : "=r"(r)); r; })
+#define pollqmt() ({ int r = 0; asm volatile ("pollqmt wc\nwrc %0" : "=r"(r)); r; })
 
 #define wrc(x) asm volatile ("wrc %0" : "=r"(x))
 #define wrnc(x) asm volatile ("wrnc %0" : "=r"(x))
@@ -99,11 +119,16 @@
 #define getbrk_wc(x) asm volatile ("getbrk %0 wc" : "=r"(x))
 #define getbrk_wz(x) asm volatile ("getbrk %0 wz" : "=r"(x))
 
+// Misc math
+#define zerox(x, n) asm volatile ("zerox %0, %1" : "+r"(x) : "ri"(n))
+
 #define _clkfreq (*((int*)0x14))
 #define _clkmode (*((int*)0x18))
 #define _dbgbaud (*((int*)0x1c))
 
 #define _dbg_lock (*((int*)0x3c))
+
+#define reboot() hubset(0x10000000)
 
 register volatile int R0 asm ("r0");
 register volatile int R1 asm ("r1");
@@ -274,12 +299,12 @@ static inline int _encod(unsigned int x) {
  * initialize the given rx/tx pins in async mode (uart)
  * this needs to be called again if using UART and clkset is called to adjust baud rates
  */
-void _uart_init(unsigned rx, unsigned tx, unsigned baud);
+void _uart_init(unsigned rx, unsigned tx, unsigned baud, unsigned mode);
 
 /**
  * write a character to the builtin UART
  */
-void _uart_putc(char c, int p);
+void _uart_putc(unsigned char c, int p);
 
 /**
  * check if there's a character in the buffer for pin p. 0 if there's no data, 1 if there is data
@@ -290,7 +315,7 @@ int _uart_checkc(int p);
  * read a character from the builtin UART. If no character is avilable, then return is undefined, so be sure to check
  * if anything's available wiht _uart_checkc first
  */
-char _uart_getc(int p);
+unsigned char _uart_getc(int p);
 
 /**
  * request a new hardware lock
@@ -316,6 +341,18 @@ void _lock(unsigned int l);
  * release the lock
  */
 void _unlock(unsigned int l);
+
+/**
+ * compute a crc32
+ * 
+ * TODO: use propeller's CRC instructions
+ */
+unsigned int crc32(unsigned char *s, int n);
+
+// Misc useful macros
+
+#define MIN2(a,b) (a < b ? a:b)
+#define MIN3(a,b,c) (MIN2(MIN2(a,b),c))
 
 #ifdef __cplusplus
 }

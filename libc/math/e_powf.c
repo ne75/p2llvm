@@ -50,7 +50,7 @@ ivln2_h  =  1.4426879883e+00, /* 0x3fb8aa00 =16b 1/ln2*/
 ivln2_l  =  7.0526075433e-06; /* 0x36eca570 =1/ln2 tail*/
 
 float
-powf(float x, float y)
+__powf(float x, float y)
 {
 	float z,ax,z_h,z_l,p_h,p_l;
 	float yy1,t1,t2,r,s,t,u,v,w;
@@ -240,6 +240,6 @@ powf(float x, float y)
 	return s*z;
 }
 
-#if defined(__SHORT_DOUBLES_IMPL)
-__strong_alias(pow,powf);
-#endif
+// #if defined(__SHORT_DOUBLES_IMPL)
+// __strong_alias(pow,powf);
+// #endif

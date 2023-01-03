@@ -41,6 +41,6 @@ scalbf(float x, float fn)
 #endif
 
 
-#if defined(__SHORT_DOUBLES_IMPL)
-__strong_alias(scalb,scalbf);
-#endif
+// #if defined(__SHORT_DOUBLES_IMPL)
+// __strong_alias(scalb,scalbf);
+// #endif

@@ -83,7 +83,3 @@ sqrtf(float x)
 	SET_FLOAT_WORD(z,ix);
 	return z;
 }
-
-#if defined(__SHORT_DOUBLES_IMPL)
-__strong_alias(sqrt,sqrtf);
-#endif
