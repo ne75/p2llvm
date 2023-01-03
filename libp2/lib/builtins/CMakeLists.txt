@@ -29,11 +29,11 @@ add_library(builtins OBJECT
     memcpy.c
     memmove.c
     memset.c
-    #moddi3.c
-    #modsi3.c
-    #muldf3.c
-    #mulsf3.c
-    #muldi3.c
+    moddi3.c
+    modsi3.c
+    muldf3.c
+    mulsf3.c
+    muldi3.c
     negdi2.c
     subdf3.c
     subsf3.c
