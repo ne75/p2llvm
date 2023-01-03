@@ -1,14 +1,14 @@
 add_library(builtins OBJECT
-    #adddf3.c
-    #addsf3.c
-    #ashldi3.c
-    #ashrdi3.c
+    adddf3.c
+    addsf3.c
+    ashldi3.c
+    ashrdi3.c
     comparedf2.c
     comparesf2.c
-    #divdi3.c
-    #divdf3.c
-    #divsi3.c
-    #divsf3.c
+    divdi3.c
+    divdf3.c
+    divsi3.c
+    divsf3.c
     extendsfdf2.c
     fixdfsi.c
     fixsfdi.c
@@ -25,7 +25,7 @@ add_library(builtins OBJECT
     floatunsisf.c
     floatsisf.c
     fp_mode.c
-    #lshrdi3.c
+    lshrdi3.c
     memcpy.c
     memmove.c
     memset.c
@@ -35,11 +35,11 @@ add_library(builtins OBJECT
     #mulsf3.c
     #muldi3.c
     negdi2.c
-    #subdf3.c
-    #subsf3.c
-    #udivdi3.c
+    subdf3.c
+    subsf3.c
+    udivdi3.c
     udivmoddi4.c
-    #umoddi3.c
+    umoddi3.c
 
     sqrtf.c
     powf.c

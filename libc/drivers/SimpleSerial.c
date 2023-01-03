@@ -161,7 +161,7 @@ static int _serial_fopen(FILE *fp, const char *name, const char *mode)
 		fp->drvarg[1] = (txpin);
 		fp->drvarg[2] = baud;
 
-		_uart_init(rxpin, txpin, baud);
+		_uart_init(rxpin, txpin, baud, 0);
 	#else
 		fp->drvarg[0] = (1U<<rxpin);
 		fp->drvarg[1] = (1U<<txpin);
