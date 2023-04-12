@@ -23,7 +23,7 @@ class TestCase:
         self.name = name
         self.ref_file = os.path.join('ref', name + '.yaml')
 
-        self.ref = yaml.load(open(self.ref_file, 'r'))
+        self.ref = yaml.safe_load(open(self.ref_file, 'r'))
         self.expected_output = None if self.ref['expected_output'] == '' else self.ref['expected_output']
 
         self.compile_success = False

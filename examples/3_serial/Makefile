@@ -4,11 +4,11 @@ LD = $(LLVM_BASE)/bin/ld.lld
 LOAD = $(LLVM_BASE)/bin/loadp2
 
 TARGET = serial
-OBJDIR = ../build
+OBJDIR = build
 
-CFLAGS = -Os --target=p2 -Dprintf=__simple_printf
+CFLAGS = -Os --target=p2
 LFLAGS = --target=p2 -Wl,--gc-sections
-LOADFLAGS = -v -ZERO -b 2000000 -f 200000000 -m 1000ef8 -PATCH -t -FIFO 1024
+LOADFLAGS = -v -ZERO -b 2000000 -t -FIFO 1024
 
 .PHONY: all setup clean load
 

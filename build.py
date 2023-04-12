@@ -64,9 +64,9 @@ def build_llvm(configure=True, debug=False, install_dest=None):
 
     # build LLVM, optionally installing it
     if (install_dest):
-        p = subprocess.Popen(['make', 'install', '-j8'], cwd=build_dir)
+        p = subprocess.Popen(['make', 'install', '-j32'], cwd=build_dir)
     else:
-        p = subprocess.Popen(['make', '-j8'], cwd=build_dir)
+        p = subprocess.Popen(['make', '-j32'], cwd=build_dir)
 
     p.wait()
 

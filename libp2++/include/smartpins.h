@@ -267,10 +267,10 @@ public:
      * @param wait: wait for pulses to send
      */
     void pulse(int n, bool wait=false) {
-        setse4(E_IN_RISE | pin);
         y = n;
         wypin(y, pin);
         if (wait) {
+            setse4(E_IN_RISE | pin);
             waitse4();
         }
     }
