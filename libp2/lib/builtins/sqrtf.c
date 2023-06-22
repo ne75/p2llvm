@@ -1,8 +1,6 @@
 #define SINGLE_PRECISION
 #include "fp_lib.h"
 
-#include <stdio.h>
-
 static const fp_t one = 1.0, tiny=1.0e-30;
 
 fp_t __attribute__ ((noinline)) __sqrtf(fp_t x) {
@@ -13,7 +11,7 @@ fp_t __attribute__ ((noinline)) __sqrtf(fp_t x) {
     fp_t z;
 	int32_t s,q,m,t,i;
 	uint32_t r;
-    
+
     // handle Inf/NaN
     if (exp == maxExponent) {
         if (ix & signBit) return 0.0f/0.0f; // -Inf or NaN, return NaN
@@ -46,12 +44,12 @@ fp_t __attribute__ ((noinline)) __sqrtf(fp_t x) {
 	r = 0x01000000;		/* r = moving bit from right to left */
 
 	while(r!=0) {
-	    t = s+r; 
-	    if(t<=ix) { 
-		s    = t+r; 
-		ix  -= t; 
-		q   += r; 
-	    } 
+	    t = s+r;
+	    if(t<=ix) {
+		s    = t+r;
+		ix  -= t;
+		q   += r;
+	    }
 	    ix += ix;
 	    r>>=1;
 	}
