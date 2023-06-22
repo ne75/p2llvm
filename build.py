@@ -17,10 +17,7 @@ def copy(src, dst, cwd=None, recurse=False):
 
     cmd += [src, dst]
 
-    p = subprocess.Popen(cmd, cwd=cwd)
-    p.wait()
-    if p.returncode != 0:
-        return False
+    subprocess.run(cmd, cwd=cwd, check=True)
 
     return True
 
@@ -56,22 +53,13 @@ def build_llvm(configure=True, debug=False, install_dest=None):
 
     # run cmake
     if (configure):
-        p = subprocess.Popen(cmake_cmd, cwd=build_dir)
-        p.wait()
-
-        if p.returncode != 0:
-            return False
+        subprocess.run(cmake_cmd, cwd=build_dir, check=True)
 
     # build LLVM, optionally installing it
     if (install_dest):
-        p = subprocess.Popen(['make', 'install', '-j32'], cwd=build_dir)
+        subprocess.run(['make', 'install', '-j32'], cwd=build_dir, check=True)
     else:
-        p = subprocess.Popen(['make', '-j32'], cwd=build_dir)
-
-    p.wait()
-
-    if p.returncode != 0:
-        return False
+        subprocess.run(['make', '-j32'], cwd=build_dir, check=True)
 
     # install the linker script to either the install destination or the build directory
     if (install_dest):
@@ -96,23 +84,13 @@ def build_libp2(install_dest, llvm, clean=False, configure=True):
     if configure:
         cmake_cmd = ['cmake', '-Dllvm=' + str(os.path.join(install_dest, 'bin')), '../']
 
-        p = subprocess.Popen(cmake_cmd, cwd=build_dir)
-        p.wait()
-
-        if p.returncode != 0:
-            return False
-        
+        subprocess.run(cmake_cmd, cwd=build_dir, check=True)
 
     if clean:
-        p = subprocess.Popen(['make', 'clean'], cwd=build_dir)
-        p.wait()
-        if p.returncode != 0:
-            return False
+        subprocess.run(['make', 'clean'], cwd=build_dir, check=True)
 
-    p = subprocess.Popen(['make', 'LLVM=' + llvm, '-j8'], cwd=build_dir)
-    p.wait()
-    if p.returncode != 0:
-        return False
+    llvm_cmd = ['make', f'LLVM={llvm}', '-j32']
+    subprocess.run(llvm_cmd, cwd=build_dir, check=True)
 
     # install libp2
     install_dir = os.path.join(install_dest, "libp2")
@@ -136,24 +114,12 @@ def build_libp2pp(install_dest, llvm, clean=False, configure=True):
     # build libp2++
     if configure:
         cmake_cmd = ['cmake', '-Dllvm=' + str(os.path.join(install_dest, 'bin')), '../']
-
-        p = subprocess.Popen(cmake_cmd, cwd=build_dir)
-        p.wait()
-
-        if p.returncode != 0:
-            return False
-        
+        subprocess.run(cmake_cmd, cwd=build_dir, check=True)
 
     if clean:
-        p = subprocess.Popen(['make', 'clean'], cwd=build_dir)
-        p.wait()
-        if p.returncode != 0:
-            return False
+        subprocess.run(['make', 'clean'], cwd=build_dir, check=True)
 
-    p = subprocess.Popen(['make', 'LLVM=' + llvm, '-j8'], cwd=build_dir)
-    p.wait()
-    if p.returncode != 0:
-        return False
+    subprocess.run(['make', f'LLVM={llvm}', '-j32'], cwd=build_dir, check=True)
 
     # install libp2
     install_dir = os.path.join(install_dest, "libp2")
@@ -175,24 +141,12 @@ def build_libc(install_dest, llvm, clean=False, configure=True):
     if configure:
         cmake_cmd = ['cmake', '-Dllvm=' + str(os.path.join(install_dest, 'bin')), '../']
 
-        p = subprocess.Popen(cmake_cmd, cwd=build_dir)
-        p.wait()
-
-        if p.returncode != 0:
-            return False
-        
+        subprocess.run(cmake_cmd, cwd=build_dir, check=True)
 
     if clean:
-        p = subprocess.Popen(['make', 'clean'], cwd=build_dir)
-        p.wait()
-        if p.returncode != 0:
-            return False
+        subprocess.run(['make', 'clean'], cwd=build_dir, check=True)
 
-    p = subprocess.Popen(['make', 'LLVM=' + llvm, '-j8'], cwd=build_dir)
-    p.wait()
-    if p.returncode != 0:
-        return False
-
+    subprocess.run(['make', f'LLVM={llvm}', '-j32'], cwd=build_dir, check=True)
     # install libc
     install_dir = os.path.join(install_dest, "libc")
     os.makedirs(os.path.join(install_dir, 'lib'), exist_ok=True)
