@@ -1,12 +1,15 @@
 import argparse
 import os
 import subprocess
+import multiprocessing
 
 DEBUG_BUILD_DIR = "llvm-project/build_debug"
 RELEASE_BUILD_DIR = "llvm-project/build_release"
 LIBP2_DIR = "libp2"
 LIBP2PP_DIR = "libp2++"
 LIBC_DIR = "libc"
+
+CPU_COUNT = multiprocessing.cpu_count()
 
 build_dir = ""
 
@@ -30,8 +33,8 @@ def build_llvm(configure=True, debug=False, install_dest=None):
     os.makedirs(build_dir, exist_ok=True)
 
     # setup cmake command
-    cmake_cmd = [   'cmake', 
-                    '-G', 
+    cmake_cmd = [   'cmake',
+                    '-G',
                     'Unix Makefiles',
 		            '-DCMAKE_OSX_ARCHITECTURES=arm64',
                     '-DLLVM_INSTALL_UTILS=true'
@@ -57,9 +60,9 @@ def build_llvm(configure=True, debug=False, install_dest=None):
 
     # build LLVM, optionally installing it
     if (install_dest):
-        subprocess.run(['make', 'install', '-j32'], cwd=build_dir, check=True)
+        subprocess.run(['make', 'install', f'-j{CPU_COUNT}'], cwd=build_dir, check=True)
     else:
-        subprocess.run(['make', '-j32'], cwd=build_dir, check=True)
+        subprocess.run(['make', f'-j{CPU_COUNT}'], cwd=build_dir, check=True)
 
     # install the linker script to either the install destination or the build directory
     if (install_dest):
@@ -89,7 +92,7 @@ def build_libp2(install_dest, llvm, clean=False, configure=True):
     if clean:
         subprocess.run(['make', 'clean'], cwd=build_dir, check=True)
 
-    llvm_cmd = ['make', f'LLVM={llvm}', '-j32']
+    llvm_cmd = ['make', f'LLVM={llvm}', f'-j{CPU_COUNT}']
     subprocess.run(llvm_cmd, cwd=build_dir, check=True)
 
     # install libp2
@@ -119,7 +122,7 @@ def build_libp2pp(install_dest, llvm, clean=False, configure=True):
     if clean:
         subprocess.run(['make', 'clean'], cwd=build_dir, check=True)
 
-    subprocess.run(['make', f'LLVM={llvm}', '-j32'], cwd=build_dir, check=True)
+    subprocess.run(['make', f'LLVM={llvm}', f'-j{CPU_COUNT}'], cwd=build_dir, check=True)
 
     # install libp2
     install_dir = os.path.join(install_dest, "libp2")
@@ -146,7 +149,7 @@ def build_libc(install_dest, llvm, clean=False, configure=True):
     if clean:
         subprocess.run(['make', 'clean'], cwd=build_dir, check=True)
 
-    subprocess.run(['make', f'LLVM={llvm}', '-j32'], cwd=build_dir, check=True)
+    subprocess.run(['make', f'LLVM={llvm}', f'-j{CPU_COUNT}'], cwd=build_dir, check=True)
     # install libc
     install_dir = os.path.join(install_dest, "libc")
     os.makedirs(os.path.join(install_dir, 'lib'), exist_ok=True)
@@ -170,7 +173,7 @@ def main():
     parser.add_argument('--clean', nargs='?', const=True, default=False)
     parser.add_argument('--debug', nargs='?', const=True, default=False)
     parser.add_argument('--install', type=str, required=False)
-    
+
     args = parser.parse_args()
 
     configure = args.configure
