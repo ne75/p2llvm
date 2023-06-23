@@ -1,7 +1,9 @@
 import argparse
+import logging
+import multiprocessing
 import os
 import subprocess
-import multiprocessing
+import sys
 
 DEBUG_BUILD_DIR = "llvm-project/build_debug"
 RELEASE_BUILD_DIR = "llvm-project/build_release"
@@ -13,6 +15,15 @@ CPU_COUNT = multiprocessing.cpu_count()
 
 build_dir = ""
 
+def logged_run(*a, **kw):
+    logging.debug(f"RUNNING: {a}, {kw}")
+    if 'cwd' in kw and kw['cwd'] is not None:
+        logging.debug(f'CWD: {kw["cwd"]}')
+    if len(a) == 1 and isinstance(a[0], list):
+        logging.debug(f'CMD: {" ".join(a[0])}')
+    subprocess.run(*a, **kw)
+
+
 def copy(src, dst, cwd=None, recurse=False):
     cmd = ['cp']
     if (recurse):
@@ -20,7 +31,7 @@ def copy(src, dst, cwd=None, recurse=False):
 
     cmd += [src, dst]
 
-    subprocess.run(cmd, cwd=cwd, check=True)
+    logged_run(cmd, cwd=cwd, check=True)
 
     return True
 
@@ -56,13 +67,13 @@ def build_llvm(configure=True, debug=False, install_dest=None):
 
     # run cmake
     if (configure):
-        subprocess.run(cmake_cmd, cwd=build_dir, check=True)
+        logged_run(cmake_cmd, cwd=build_dir, check=True)
 
     # build LLVM, optionally installing it
     if (install_dest):
-        subprocess.run(['make', 'install', f'-j{CPU_COUNT}'], cwd=build_dir, check=True)
+        logged_run(['make', 'install', f'-j{CPU_COUNT}'], cwd=build_dir, check=True)
     else:
-        subprocess.run(['make', f'-j{CPU_COUNT}'], cwd=build_dir, check=True)
+        logged_run(['make', f'-j{CPU_COUNT}'], cwd=build_dir, check=True)
 
     # install the linker script to either the install destination or the build directory
     if (install_dest):
@@ -87,13 +98,13 @@ def build_libp2(install_dest, llvm, clean=False, configure=True):
     if configure:
         cmake_cmd = ['cmake', '-Dllvm=' + str(os.path.join(install_dest, 'bin')), '../']
 
-        subprocess.run(cmake_cmd, cwd=build_dir, check=True)
+        logged_run(cmake_cmd, cwd=build_dir, check=True)
 
     if clean:
-        subprocess.run(['make', 'clean'], cwd=build_dir, check=True)
+        logged_run(['make', 'clean'], cwd=build_dir, check=True)
 
     llvm_cmd = ['make', f'LLVM={llvm}', f'-j{CPU_COUNT}']
-    subprocess.run(llvm_cmd, cwd=build_dir, check=True)
+    logged_run(llvm_cmd, cwd=build_dir, check=True)
 
     # install libp2
     install_dir = os.path.join(install_dest, "libp2")
@@ -117,12 +128,12 @@ def build_libp2pp(install_dest, llvm, clean=False, configure=True):
     # build libp2++
     if configure:
         cmake_cmd = ['cmake', '-Dllvm=' + str(os.path.join(install_dest, 'bin')), '../']
-        subprocess.run(cmake_cmd, cwd=build_dir, check=True)
+        logged_run(cmake_cmd, cwd=build_dir, check=True)
 
     if clean:
-        subprocess.run(['make', 'clean'], cwd=build_dir, check=True)
+        logged_run(['make', 'clean'], cwd=build_dir, check=True)
 
-    subprocess.run(['make', f'LLVM={llvm}', f'-j{CPU_COUNT}'], cwd=build_dir, check=True)
+    logged_run(['make', f'llvm={llvm}', f'-j{CPU_COUNT}'], cwd=build_dir, check=True)
 
     # install libp2
     install_dir = os.path.join(install_dest, "libp2")
@@ -144,12 +155,12 @@ def build_libc(install_dest, llvm, clean=False, configure=True):
     if configure:
         cmake_cmd = ['cmake', '-Dllvm=' + str(os.path.join(install_dest, 'bin')), '../']
 
-        subprocess.run(cmake_cmd, cwd=build_dir, check=True)
+        logged_run(cmake_cmd, cwd=build_dir, check=True)
 
     if clean:
-        subprocess.run(['make', 'clean'], cwd=build_dir, check=True)
+        logged_run(['make', 'clean'], cwd=build_dir, check=True)
 
-    subprocess.run(['make', f'LLVM={llvm}', f'-j{CPU_COUNT}'], cwd=build_dir, check=True)
+    logged_run(['make', f'LLVM={llvm}', f'-j{CPU_COUNT}'], cwd=build_dir, check=True)
     # install libc
     install_dir = os.path.join(install_dest, "libc")
     os.makedirs(os.path.join(install_dir, 'lib'), exist_ok=True)
@@ -162,9 +173,8 @@ def build_libc(install_dest, llvm, clean=False, configure=True):
 
     return True
 
-def main():
-    global build_dir
 
+def parse_args():
     parser = argparse.ArgumentParser(description='P2 LLVM Build Script')
     parser.add_argument('--configure', nargs='?', const=True, default=False)
     parser.add_argument('--skip_llvm', nargs='?', const=True, default=False)
@@ -173,9 +183,18 @@ def main():
     parser.add_argument('--clean', nargs='?', const=True, default=False)
     parser.add_argument('--debug', nargs='?', const=True, default=False)
     parser.add_argument('--install', type=str, required=False)
+    parser.add_argument('-v', '--verbose', action='store_true')
+    return parser.parse_args()
 
-    args = parser.parse_args()
 
+def main():
+    global build_dir
+
+    args = parse_args()
+    logging.basicConfig(
+        stream=sys.stderr,
+        level=logging.DEBUG if args.verbose else logging.INFO
+    )
     configure = args.configure
     skip_llvm = args.skip_llvm
     skip_libc = args.skip_libc
