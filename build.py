@@ -35,42 +35,35 @@ def copy(src, dst, cwd=None, recurse=False):
 
     return True
 
-def build_llvm(configure=True, debug=False, install_dest=None):
-    '''
-    if install_dest is None, then don't run install
-    '''
-
+def build_llvm(args):
     # create the build directory
     os.makedirs(build_dir, exist_ok=True)
 
     # setup cmake command
-    cmake_cmd = [   'cmake',
-                    '-G',
-                    'Unix Makefiles',
-		            '-DCMAKE_OSX_ARCHITECTURES=arm64',
-                    '-DLLVM_INSTALL_UTILS=true'
-                    '-DCMAKE_CXX_COMPILER=/opt/homebrew/opt/llvm/bin/clang++',
-                    '-DLLVM_ENABLE_PROJECTS=lld;clang',
-                    '-DLLVM_EXPERIMENTAL_TARGETS_TO_BUILD=P2',
-                    '-DLLVM_TARGETS_TO_BUILD='
-                    ]
+    cmake_cmd = [
+        'cmake',
+        '-G',
+        'Unix Makefiles',
+        '-DCMAKE_OSX_ARCHITECTURES=arm64',
+        '-DLLVM_INSTALL_UTILS=true'
+        '-DCMAKE_CXX_COMPILER=/opt/homebrew/opt/llvm/bin/clang++',
+        '-DLLVM_ENABLE_PROJECTS=lld;clang',
+        '-DLLVM_EXPERIMENTAL_TARGETS_TO_BUILD=P2',
+        '-DLLVM_TARGETS_TO_BUILD=',
+        f'-DCMAKE_BUILD_TYPE={"Debug" if args.debug else "Release"}',
+        ]
 
-    if debug:
-        cmake_cmd.append("-DCMAKE_BUILD_TYPE=" + "Debug")
-    else:
-        cmake_cmd.append("-DCMAKE_BUILD_TYPE=" + "Release")
-
-    if install_dest:
-        cmake_cmd.append("-DCMAKE_INSTALL_PREFIX=" + install_dest)
+    if args.install:
+        cmake_cmd.append(f"-DCMAKE_INSTALL_PREFIX={args.install}")
 
     cmake_cmd.append("../llvm")
 
     # run cmake
-    if (configure):
+    if args.configure:
         logged_run(cmake_cmd, cwd=build_dir, check=True)
 
     # build LLVM, optionally installing it
-    if (install_dest):
+    if args.install:
         logged_run(['make', 'install', f'-j{CPU_COUNT}'], cwd=build_dir, check=True)
     else:
         logged_run(['make', f'-j{CPU_COUNT}'], cwd=build_dir, check=True)
@@ -216,7 +209,7 @@ def main():
 
     # build LLVM
     if not skip_llvm:
-        if not build_llvm(configure, debug, install_dest):
+        if not build_llvm(args):
             return
 
     # build libp2
@@ -234,12 +227,10 @@ def main():
     # build libc
     if not skip_libc:
         if (install_dest):
-            r = build_libc(install_dest, llvm, clean, configure)
+            build_libc(install_dest, llvm, clean, configure)
         else:
-            r = build_libc(build_dir, llvm, clean, configure)
+            build_libc(build_dir, llvm, clean, configure)
 
-        if not r:
-            return
 
 
 if __name__ == "__main__":
