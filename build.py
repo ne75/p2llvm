@@ -21,7 +21,7 @@ def logged_run(*a, **kw):
         logging.debug(f'CWD: {kw["cwd"]}')
     if len(a) == 1 and isinstance(a[0], list):
         logging.debug(f'CMD: {" ".join(a[0])}')
-    subprocess.run(*a, **kw)
+    return subprocess.run(*a, **kw)
 
 
 def copy(src, dst, cwd=None, recurse=False):
