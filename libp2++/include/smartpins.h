@@ -403,25 +403,7 @@ public:
         }
 
         dirh(pin);
-
-        setse4(E_IN_RISE | pin);
-        akpin(pin);
-
-        // switch to VIO mode
-        wrpin(P_ADC | (VIO << 15), pin);
-        for (int i = 0; i < 3; i++) {
-            waitse4();
-            rdpin(vio, pin);
-        }
-
-        // switch to GIO mode
-        wrpin(P_ADC | (GIO << 15), pin);
-        for (int i = 0; i < 3; i++) {
-            waitse4();
-            rdpin(gio, pin);
-        }
-
-        wrpin(r, pin);
+        calibrate_pin();
     }
 
     /**
@@ -453,6 +435,45 @@ public:
         int result = ((s - gio) << bits)/(vio-gio);
 
         return result;
+    }
+
+    void calibrate_pin() {
+        setse4(E_IN_RISE | pin);
+        akpin(pin);
+
+        // switch to VIO mode
+        int vio_data;
+        wrpin(P_ADC | (VIO << 15), pin);
+        for (int i = 0; i < 3; i++) {
+            waitse4();
+            rdpin(vio, pin);
+        }
+
+        for (int i = 0; i < 10; i++) {
+            waitse4();
+            rdpin(vio, pin);
+            vio_data += vio;
+        }
+
+        vio = vio_data/10;
+
+        // switch to GIO mode
+        int gio_data;
+        wrpin(P_ADC | (GIO << 15), pin);
+        for (int i = 0; i < 3; i++) {
+            waitse4();
+            rdpin(gio, pin);
+        }
+
+        for (int i = 0; i < 10; i++) {
+            waitse4();
+            rdpin(gio, pin);
+            gio_data += gio;
+        }
+
+        gio = gio_data/10;
+
+        wrpin(r, pin);
     }
 
     int calibrate_sample(unsigned int s) {
