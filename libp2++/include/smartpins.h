@@ -276,6 +276,43 @@ public:
     }
 };
 
+class TransitionPin : public SmartPin {
+public:
+    TransitionPin(int p) : SmartPin(p) {};
+
+    /**
+     * Initialize a pin in Transition mode.
+     * 
+     * @param base_period: The 16 bit base period that the smart pin will operate at
+     * @param compare: The value the pin's counter will be compared to to determine it's high/low state
+     */
+    void init(int base_period) {
+        dirl(pin);
+
+        set_mode(P_TRANSITION);
+        pin_control(OutControl::OUTBIT, true);
+        x = (base_period & 0xffff);
+        wxpin(x, pin);
+
+        dirh(pin);
+    }
+
+    /**
+     * Pulse the pin a given number of times. Uses event 4
+     * 
+     * @param n: number of times to pulse
+     * @param wait: wait for pulses to send
+     */
+    void transition(int n, bool wait=false) {
+        y = n;
+        wypin(y, pin);
+        if (wait) {
+            setse4(E_IN_RISE | pin);
+            waitse4();
+        }
+    }
+};
+
 class PWMTrianglePin : public SmartPin {
     int frame_period = 0;
     int base_period = 0;
@@ -496,7 +533,7 @@ public:
 
     SyncTXPin(int p) : SmartPin(p) {}
 
-    void init(SmartPin &clk, Mode m, int bits, bool invert=false, bool inverted_clock=false) {
+    void init(SmartPin &clk, Mode m, int bits, bool invert=false) {
         dirl(pin);
 
         set_mode(P_SYNC_TX);
@@ -511,8 +548,6 @@ public:
         x &= ~(0b111111);
         x |= (m << 5) | ((bits - 1) & 0b11111);
         wxpin(x, pin);
-
-        if (inverted_clock) bits += 1;
 
         this->bits = bits;
         dirh(pin);
@@ -539,7 +574,7 @@ public:
 
     SyncRXPin(int p) : SmartPin(p) {}
 
-    void init(SmartPin &clk, Mode m, int bits, bool invert=false, bool inverted_clock=false) {
+    void init(SmartPin &clk, Mode m, int bits, bool invert=false) {
         dirl(pin);
 
         set_mode(P_SYNC_RX);
