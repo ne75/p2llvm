@@ -11,7 +11,7 @@ no_opt_build_dir = 'build/no_opt'
 opt_build_dir = 'build/opt'
 
 load_cmd = '/opt/p2llvm/bin/loadp2'
-load_args = ['-ZERO', '-l', '2000000', '-v', '-FIFO', '2048', '-b', '2000000']
+load_args = ['-ZERO', '-l', '2000000', '-v', '-FIFO', '2048', '-b', '2000000', '-m', '0x1000bf8', '-f', '240000000', '-PATCH']
 
 verbose = False
 
