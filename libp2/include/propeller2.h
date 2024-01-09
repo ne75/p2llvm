@@ -289,7 +289,7 @@ static inline int _encod(unsigned int x) {
     int top;
     asm volatile(
         "encod %0, %1 wc\n"
-        "if_nc mov %0, #0" : "=r"(top) : "r"(x)
+        "if_nc mov %0, #-1" : "=r"(top) : "r"(x)
     );
 
     return top;
