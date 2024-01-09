@@ -71,8 +71,11 @@ void __start() {
     // init the debug lock
     _dbg_lock = _locknew();
 
-    // if settings weren't patched in, set to a default
-    if (_clkfreq == 0) _clkfreq = 24000000;
+    // if we patched in clock settings, run clkset to actually set them
+    if (_clkmode && _clkfreq)
+        _clkset(_clkmode, _clkfreq);
+        
+    // if we didn't patched in a serial baud rate, set the default
     if (_dbgbaud == 0) _dbgbaud = DBG_UART_BAUD;
 
     // setup c standard library
