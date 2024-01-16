@@ -68,9 +68,8 @@ static __inline fixuint_t __umodXi3(fixuint_t n, fixuint_t d) {
   }
   return r;
 }
-
 #ifdef COMPUTE_UDIV
-static __inline fixint_t __divXi3(fixint_t a, fixint_t b) {
+static __attribute__((noinline)) fixint_t __divXi3(fixint_t a, fixint_t b) {
   const int N = (int)(sizeof(fixint_t) * CHAR_BIT) - 1;
   fixint_t s_a = a >> N;                            // s_a = a < 0 ? -1 : 0
   fixint_t s_b = b >> N;                            // s_b = b < 0 ? -1 : 0
@@ -82,7 +81,7 @@ static __inline fixint_t __divXi3(fixint_t a, fixint_t b) {
 #endif // COMPUTE_UDIV
 
 #ifdef ASSIGN_UMOD
-static __inline fixint_t __modXi3(fixint_t a, fixint_t b) {
+static __attribute__((noinline)) fixint_t __modXi3(fixint_t a, fixint_t b) {
   const int N = (int)(sizeof(fixint_t) * CHAR_BIT) - 1;
   fixint_t s = b >> N;                              // s = b < 0 ? -1 : 0
   fixuint_t b_u = (fixuint_t)(b ^ s) + (-s);        // negate if s == -1
