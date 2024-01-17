@@ -47,7 +47,7 @@ char *test_str =
 "ch9.persistence_u64:0000000a0000000a\n"
 "ch9.default_on_b:1\n";
 
-char test_dst[1100] = {0};
+// char *test_str = "123";
 
 __attribute__((noinline)) int test_cpy(char *d, char *s, int l) {
     int t = CNT;
@@ -62,15 +62,17 @@ int main(void) {
 
     auto len = strlen(test_str) + 1;
 
+    char *test_dst = (char*)malloc(len);
+
     printf("length of test: %d\n", len);
 
     int t = test_cpy(test_dst, test_str, len);
 
-    for (int i = 0; i < 1062; i++) {
+    for (int i = 0; i < 1070; i++) {
         if (test_str[i] != test_dst[i]) {
             printf("mismatch at %d: ", i);
-            printf("%x ?= %x\n", test_str[i], test_dst[i]);
         }
+        printf("%x ?= %x\n", test_str[i], test_dst[i]);
     }
 
     printf("%d\n", t);

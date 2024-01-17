@@ -37,6 +37,8 @@ add_executable(t35 t35.cpp)
 add_executable(t36 t36.cpp)
 add_executable(t37 t37.cpp)
 add_executable(t38 t38.cpp)
+add_executable(t39 t39.cpp)
+add_executable(t40 t40.cpp)
 
 add_executable(t100 t100.cpp)
 add_executable(t101 t101.cpp)

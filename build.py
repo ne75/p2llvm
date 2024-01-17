@@ -41,13 +41,11 @@ def build_llvm(configure=True, debug=False, install_dest=None):
                     '-DCMAKE_CXX_COMPILER=/opt/homebrew/opt/llvm/bin/clang++',
                     '-DLLVM_ENABLE_PROJECTS=lld;clang',
                     '-DLLVM_EXPERIMENTAL_TARGETS_TO_BUILD=P2',
-                    '-DLLVM_TARGETS_TO_BUILD='
+                    '-DLLVM_TARGETS_TO_BUILD=',
+                    '-DCMAKE_BUILD_TYPE=Release'
                     ]
 
-    if debug:
-        cmake_cmd.append("-DCMAKE_BUILD_TYPE=" + "Debug")
-    else:
-        cmake_cmd.append("-DCMAKE_BUILD_TYPE=" + "Release")
+    # cmake_cmd.append("-DLLVM_ENABLE_ASSERTIONS=ON")
 
     if install_dest:
         cmake_cmd.append("-DCMAKE_INSTALL_PREFIX=" + install_dest)
