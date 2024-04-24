@@ -87,7 +87,7 @@
 #define testp(pin, res) asm volatile ("testp %1 wc\nwrc %0\n" : "=r"(res) : "ri"((int)pin))
 
 // CORDIC
-#define qrotate(x, y, angle) asm volatile ("setq2 %0\nqrotate %1, %2\n" : : "ri"(y), "ri"(x), "ri"(angle))
+#define qrotate(x, y, angle) asm volatile ("setq %0\nqrotate %1, %2\n" : : "ri"(y), "ri"(x), "ri"(angle))
 #define qvector(x, y) asm volatile ("qvector %0, %1\n" : : "ri"(x), "ri"(y))
 #define qdiv(x, y) asm volatile ("qdiv %0, %1" :: "ri"(x), "ri"(y))
 #define qfrac(x, y) asm volatile ("qfrac %0, %1" :: "ri"(x), "ri"(y))
@@ -284,6 +284,19 @@ static inline unsigned int _ones(unsigned int x) {
     int ones = 0;
     asm("ones %0, %1" : "=r"(ones) : "r"(x));
     return ones;
+}
+
+/**
+ * return the parity of the given number. 
+ * @returns 1 if there's an odd number of ones, 0 if even
+ */
+static inline int _parity(unsigned int x) {
+    int par = 0;
+    asm("ones %[x], %[x] wc\n"
+        "wrc %[par]"
+         : [x]"+r"(x), [par]"=r"(par));
+
+    return par;
 }
 
 /**
