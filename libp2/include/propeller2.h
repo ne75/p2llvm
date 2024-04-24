@@ -89,6 +89,10 @@
 // CORDIC
 #define qrotate(x, y, angle) asm volatile ("setq2 %0\nqrotate %1, %2\n" : : "ri"(y), "ri"(x), "ri"(angle))
 #define qvector(x, y) asm volatile ("qvector %0, %1\n" : : "ri"(x), "ri"(y))
+#define qdiv(x, y) asm volatile ("qdiv %0, %1" :: "ri"(x), "ri"(y))
+#define qfrac(x, y) asm volatile ("qfrac %0, %1" :: "ri"(x), "ri"(y))
+#define qlog(x) asm volatile ("qlog %0" :: "ri"(x))
+#define qexp(x) asm volatile ("qexp %0" :: "ri"(x))
 #define getqx(x) asm volatile ("getqx %0" : "=r"(x))
 #define getqy(y) asm volatile ("getqy %0" : "=r"(y))
 
