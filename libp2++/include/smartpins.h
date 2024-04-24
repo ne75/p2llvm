@@ -15,7 +15,7 @@ protected:
     int sp_mode;
     int r = 0, x = 0, y = 0; // local copies of r, x, and y pin registers since we can't read them directly
 
-    void set_mode(int sp_mode) {
+void set_mode(int sp_mode) {
         r &= ~(0b11111 << 1);
         r |= sp_mode;
         wrpin(r, pin);
@@ -306,10 +306,15 @@ public:
     void transition(int n, bool wait=false) {
         y = n;
         wypin(y, pin);
-        if (wait) {
-            setse4(E_IN_RISE | pin);
-            waitse4();
-        }
+        if (wait) this->wait();
+    }
+    
+    /**
+     * Wait for the transition to complete.
+     */
+    inline void wait() {
+        setse4(E_IN_HIGH | pin);
+        waitse4();
     }
 };
 
@@ -382,6 +387,28 @@ public:
  */
 class ADCPin : public SmartPin {
     int sample_ticks = 0;
+    int filt_mode = 0;
+
+public:
+    enum ADCSourceMode {
+        GIO = 0b100000,
+        VIO = 0b100001,
+        FLOAT = 0b100010,
+        PIN_1X = 0b100011,
+        PIN_3_16X = 0b100100,
+        PIN_10X = 0b100101,
+        PIN_31_6X = 0b100110,
+        PIN_100X = 0b100111
+    };
+
+private:
+    ADCSourceMode source_mode;
+
+    void _set_source_mode(ADCSourceMode m) {
+        r &= ~(0b111111 << 15);
+        r |= m << 15;
+        wrpin(r, pin);
+    }
 
 public:
     int vio = 0;
@@ -394,22 +421,12 @@ public:
         BITSTREAM_CAPTURE = 0b11
     };
 
-    enum ADCSourceMode {
-        GIO = 0b100000,
-        VIO = 0b100001,
-        FLOAT = 0b100010,
-        PIN_1X = 0b100011,
-        PIN_3_16X = 0b100100,
-        PIN_10X = 0b100101,
-        PIN_31_6X = 0b100110,
-        PIN_100X = 0b100111
-    };
 
     int bits = 0;
 
     ADCPin(int p) : SmartPin(p) {};
 
-    void init(int sample_period, ADCMode mode, ADCSourceMode source_mode) {
+    void init(int sample_period, ADCMode mode, ADCSourceMode source_mode, bool cal=true) {
         dirl(pin);
 
         sample_ticks = sample_period;
@@ -419,17 +436,19 @@ public:
         assert(ones == 1 && "Invalid sample period, must be a power of 2");
         assert(sample_period <= 32768 && "Invalid sample period, must be less than 32768");
 
-        r = P_ADC | (source_mode << 15);
+        filt_mode = mode;
+        x = sp | (mode << 4);
 
-        wrpin(r, pin);
-        wxpin(sp | (mode << 4), pin);
+        set_mode(P_ADC);
+        set_source_mode(source_mode);
+        wxpin(x, pin);
 
         switch (mode) {
             case SINC2_SAMPLING:
                 bits = sp + 1;
                 break;
             case SINC2_FILTERING:
-                assert(false && "sinc2 filter not implemented\n");
+                bits = sp + 1;
                 break;
             case SINC3_FILTERING:
                 assert(false && "sinc3 filter not implemented\n");
@@ -440,7 +459,18 @@ public:
         }
 
         dirh(pin);
-        calibrate_pin();
+        if (cal) calibrate_pin();
+    }
+
+    void set_source_mode(ADCSourceMode m) {
+        source_mode = m;
+        _set_source_mode(source_mode);
+    }
+
+    void wait_for_sample() {
+        setse4(E_IN_RISE | pin);
+        akpin(pin);
+        waitse4();
     }
 
     /**
@@ -449,11 +479,28 @@ public:
      * @returns the raw sample
      */
     unsigned int raw_sample() {
-        setse4(E_IN_HIGH | pin);
-        waitse4();
+        int s = 0;
+        if (filt_mode == SINC2_SAMPLING) {
+            // get the sample
+            rdpin(s, pin);            
+        } else if (filt_mode == SINC2_FILTERING) {
+            int s1 = 0;
 
-        unsigned int s;
-        rdpin(s, pin);
+            int bits2 = bits - 2;
+            int bits1 = bits - 1;
+            wait_for_sample();
+
+            asm volatile (
+                "rdpin %[s1], %[pin]\n"
+                "waitse4\n"
+                "rdpin %[s], %[pin]\n"
+                "sub %[s], %[s1]\n"
+                "shr %[s], %[bits2]\n"
+                "zerox %[s], %[bits1]\n"
+                : [s1]"+r"(s1), [s]"+r"(s) : [bits2]"r"(bits2), [bits1]"r"(bits1), [pin]"r"(pin)
+            );
+        }
+
         return s;
     }
 
@@ -461,56 +508,43 @@ public:
      * Get a precise ADC sample by measuring VIO and GIO to calibrate.
      */
     unsigned int sample() {
-        setse4(E_IN_RISE | pin);
-        akpin(pin);
-
-        int s = 0;
-
-        // get the sample
-        rdpin(s, pin);
-
+        int s = raw_sample();
         int result = ((s - gio) << bits)/(vio-gio);
-
         return result;
     }
 
     void calibrate_pin() {
-        setse4(E_IN_RISE | pin);
-        akpin(pin);
-
         // switch to VIO mode
-        int vio_data;
-        wrpin(P_ADC | (VIO << 15), pin);
+        int vio_data = 0;
+        _set_source_mode(VIO);
         for (int i = 0; i < 3; i++) {
-            waitse4();
-            rdpin(vio, pin);
+            wait_for_sample();
+            raw_sample();
         }
 
-        for (int i = 0; i < 10; i++) {
-            waitse4();
-            rdpin(vio, pin);
-            vio_data += vio;
+        for (int i = 0; i < 100; i++) {
+            wait_for_sample();
+            vio_data += raw_sample();
         }
 
-        vio = vio_data/10;
+        vio = vio_data/100;
 
         // switch to GIO mode
-        int gio_data;
-        wrpin(P_ADC | (GIO << 15), pin);
+        int gio_data = 0;
+        _set_source_mode(GIO);
         for (int i = 0; i < 3; i++) {
-            waitse4();
-            rdpin(gio, pin);
+            wait_for_sample();
+            raw_sample();
         }
 
-        for (int i = 0; i < 10; i++) {
-            waitse4();
-            rdpin(gio, pin);
-            gio_data += gio;
+        for (int i = 0; i < 100; i++) {
+            wait_for_sample();
+            gio_data += raw_sample();
         }
 
-        gio = gio_data/10;
+        gio = gio_data/100;
 
-        wrpin(r, pin);
+        _set_source_mode(source_mode);
     }
 
     int calibrate_sample(unsigned int s) {
@@ -561,6 +595,7 @@ public:
 
 class SyncRXPin : public SmartPin {
     int bits;
+    int mask;
 public:
     enum Mode {
         PRE_EDGE = 0,
@@ -589,6 +624,10 @@ public:
         wxpin(x, pin);
 
         this->bits = bits;
+        if (bits < 32)
+            this->mask = ~(0xffffffff << bits);
+        else 
+            this->mask = 0xffffffff;
         
         dirh(pin);
     }
@@ -597,7 +636,7 @@ public:
         uint32_t v;
         rdpin(v, pin);
         
-        if (msb_mode == MSB_FIRST) v = _rev(v) & ~(0xffffffff << bits);
+        if (msb_mode == MSB_FIRST) v = _rev(v) & this->mask;
         else v = v >> (32-bits);
 
         return v;
