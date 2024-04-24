@@ -94,7 +94,7 @@ static void _free(MemHeap *heap, void *ptr) {
     if (!heap->free) {
         /* no freelist, so just release this right away */
         heap->free = thisp;
-        //__unlock(&malloc_lock);
+        __unlock(malloc_lock);
         return;
     }
 
@@ -114,7 +114,7 @@ static void _free(MemHeap *heap, void *ptr) {
 	            nextp->next = NULL;
 	        }
 
-            //__unlock(&malloc_lock);
+            __unlock(malloc_lock);
 	        return;
 	    }
 
@@ -122,7 +122,7 @@ static void _free(MemHeap *heap, void *ptr) {
             *prev = thisp;
             thisp->next = p->next;
             thisp->len += p->len;
-            //__unlock(&malloc_lock);
+            __unlock(malloc_lock);
             return;
 	    }
 
