@@ -87,6 +87,8 @@
 #define testp(pin, res) asm volatile ("testp %1 wc\nwrc %0\n" : "=r"(res) : "ri"((int)pin))
 
 // CORDIC
+#define qcos(x, angle, r) asm volatile ("qrotate %[amp], %[ang]\ngetqx %[res]" : [res]"=r"(r) : [amp]"ri"(x), [ang]"ri"(angle))
+#define qsin(x, angle, r) asm volatile ("qrotate %[amp], %[ang]\ngetqy %[res]" : [res]"=r"(r) : [amp]"ri"(x), [ang]"ri"(angle))
 #define qrotate(x, y, angle) asm volatile ("setq %0\nqrotate %1, %2\n" : : "ri"(y), "ri"(x), "ri"(angle))
 #define qvector(x, y) asm volatile ("qvector %0, %1\n" : : "ri"(x), "ri"(y))
 #define qdiv(x, y) asm volatile ("qdiv %0, %1" :: "ri"(x), "ri"(y))
