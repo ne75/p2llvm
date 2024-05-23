@@ -29,6 +29,8 @@ void _InitIO(void)
   /* open stderr */
   __fopen_driver(stderr, _driverlist[0], "", "w");
 
+  stdout->_flag |= _IOCOOKED;
+
   // make sure there clear to use
   for (int i=3;i<FOPEN_MAX;i++)
   {

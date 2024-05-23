@@ -12,6 +12,7 @@ int _term_write(FILE *fp, unsigned char *buf, int size)
     int count = 0;
     int c;
     int (*putbyte)(int, FILE *);
+    int cooked = fp->_flag & _IOCOOKED;
 
     putbyte = fp->_drv->putbyte;
     if (!putbyte)
@@ -19,7 +20,7 @@ int _term_write(FILE *fp, unsigned char *buf, int size)
     while (count < size)
         {
             c = *buf++;
-            if (c == '\n') putbyte('\r', fp);
+            if (cooked && c == '\n') putbyte('\r', fp);
             putbyte(c, fp);
             count++;
         }

@@ -80,7 +80,7 @@ void _uart_init(unsigned rx, unsigned tx, unsigned baud, unsigned mode) {
     dirl(tx);
 
     // see async mode for explanation of these values
-    unsigned int x = (((_clkfreq/10000) << 16)/baud)*10000;
+    unsigned int x = (_clkfreq/baud) << 16;
     
     x &= 0xfffffc00;
     x |= 7;
