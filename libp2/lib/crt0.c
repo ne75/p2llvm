@@ -29,6 +29,8 @@ extern char _bss_end[];
 extern unsigned _libcall_start[];
 extern int __enable_p2db;
 
+int __sys_lock;
+
 
 // basic entry code to jump to our resuable startup code. we do this by restarting cog 0, copying in
 // the code in the cog section (our reusable startup code). The linker will place _start0() at 0x40, so jump to 0x10 since this is in cog mode
@@ -70,6 +72,9 @@ void __start() {
 
     // init the debug lock
     _dbg_lock = _locknew();
+
+    // init the system lock
+    __sys_lock = _locknew();
 
     // if we patched in clock settings, run clkset to actually set them
     if (_clkmode && _clkfreq)
@@ -113,4 +118,12 @@ void __unreachable() {
 
 void __cxa_pure_virtual() {
     __unreachable();
+}
+
+void __cxa_guard_acquire() {
+    _lock(__sys_lock);
+}
+
+void __cxa_guard_release() {
+    _unlock(__sys_lock);
 }

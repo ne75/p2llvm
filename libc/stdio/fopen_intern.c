@@ -12,9 +12,6 @@
 #include <compiler.h>
 //#include <propeller.h>
 
-/* lock for stdio functions */
-int __stdio_lock;
-
 /* force _InitIO to be linked */
 extern void _InitIO(void);
 long __dummy = (long)&_InitIO;

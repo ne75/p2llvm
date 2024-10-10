@@ -26,7 +26,7 @@ MemHeap _malloc_heap = {
     .free = NULL
 };
 
-int malloc_lock;
+extern int __sys_lock;
 
 /* local functions */
 static void _free(MemHeap *heap, void *ptr);
@@ -38,7 +38,7 @@ void *_malloc(MemHeap *heap, size_t n) {
 
     numunits = (n + sizeof(MemHeader)-1)/sizeof(MemHeader) + 1;
 
-    _lock(malloc_lock);
+    _lock(__sys_lock);
     prevp = &heap->free;
 
     for (p = (*prevp); p; prevp = &p->next, p = p->next) {
@@ -61,7 +61,7 @@ void *_malloc(MemHeap *heap, size_t n) {
         p = (*heap->sbrk)(numunits * sizeof(MemHeader));
     }
 
-    _unlock(malloc_lock);
+    _unlock(__sys_lock);
     if (!p)
         return NULL;
     p->next = MAGIC;
@@ -89,12 +89,12 @@ static void _free(MemHeap *heap, void *ptr) {
 
     thisp->next = NULL;
 
-    _lock(malloc_lock);
+    _lock(__sys_lock);
     /* see if we can merge this into a block on the free list */
     if (!heap->free) {
         /* no freelist, so just release this right away */
         heap->free = thisp;
-        __unlock(malloc_lock);
+        __unlock(__sys_lock);
         return;
     }
 
@@ -114,7 +114,7 @@ static void _free(MemHeap *heap, void *ptr) {
 	            nextp->next = NULL;
 	        }
 
-            __unlock(malloc_lock);
+            __unlock(__sys_lock);
 	        return;
 	    }
 
@@ -122,7 +122,7 @@ static void _free(MemHeap *heap, void *ptr) {
             *prev = thisp;
             thisp->next = p->next;
             thisp->len += p->len;
-            __unlock(malloc_lock);
+            __unlock(__sys_lock);
             return;
 	    }
 
@@ -137,7 +137,7 @@ static void _free(MemHeap *heap, void *ptr) {
     /* just add it to the free list */
     thisp->next = *prev;
     *prev = thisp;
-    _unlock(malloc_lock);
+    _unlock(__sys_lock);
 }
 
 
