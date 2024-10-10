@@ -313,7 +313,7 @@ public:
      * Wait for the transition to complete.
      */
     inline void wait() {
-        setse4(E_IN_HIGH | pin);
+        setse4(E_IN_RISE | pin);
         waitse4();
     }
 };
@@ -451,7 +451,9 @@ public:
                 bits = sp + 1;
                 break;
             case SINC3_FILTERING:
-                assert(false && "sinc3 filter not implemented\n");
+                // assert(false && "sinc3 filter not implemented\n");
+                // SINC3 filtering is enabled for manual use but most library functions won't work
+                // use rdpin and such manually
                 break;
             case BITSTREAM_CAPTURE:
                 assert(false && "bitstream capture not implemented\n");
@@ -507,7 +509,7 @@ public:
     /**
      * Get a precise ADC sample by measuring VIO and GIO to calibrate.
      */
-    unsigned int sample() {
+    int sample() {
         int s = raw_sample();
         int result = ((s - gio) << bits)/(vio-gio);
         return result;
