@@ -223,6 +223,7 @@ static int fdserial_fopen(FILE *fp, const char *name, const char *mode) {
   
     fp->drvarg[0] = (unsigned long)data;
     fp->_flag |= _IODEV;
+    fp->_lock = -1;
     return 0;
 }
 
