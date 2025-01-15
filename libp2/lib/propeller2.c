@@ -8,11 +8,14 @@ unsigned int _cnt() {
     return x;
 }
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wreturn-type"
 unsigned long long _cnt64() {
     asm volatile("getct $r30\n"
                 "getct $r31 wc\n");
     // don't return a value on purpose because we've already setup r31. will raise error but that's okay
 }
+#pragma clang diagnostic pop
 
 void _waitcnt(unsigned int cnt) {
     // ADDCT1 D,#0; WAITCT1
@@ -59,6 +62,7 @@ void _lockret(unsigned int l) {
 }
 
 void _lock(unsigned int l) {
+    if (l > 15) return;
     asm(".L_locktry%=:\n"
         "locktry %0 wc\n"
         "if_nc jmp #.L_locktry%=" : : "r"(l));

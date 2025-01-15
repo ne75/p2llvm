@@ -201,8 +201,8 @@ extern "C" {
 
   /* lock used to let multiple threads work together nicer */
   extern int __sys_lock;
-#define __lock_stdio()   __lock(__sys_lock)
-#define __unlock_stdio() __unlock(__sys_lock)
+#define __lock_stdio()   _lock(__sys_lock)
+#define __unlock_stdio() _unlock(__sys_lock)
 
 #if defined(__cplusplus)
 }

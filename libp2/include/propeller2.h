@@ -68,6 +68,7 @@
 #define wrz(x) asm volatile ("wrz %0" : "=r"(x))
 #define wrnz(x) asm volatile ("wrnz %0" : "=r"(x))
 
+#define cogid(x) asm volatile("cogid %0" : "=r"(x))
 #define cogstop(x) asm volatile("cogstop %0" :: "ri"(x))
 
 // branching
