@@ -4,9 +4,9 @@ add_library(
     # k_cos.c
     # k_sin.c
     # k_tan.c
-	# k_rem_pio2f.c
-    # k_cosf.c
-    # k_sinf.c
+	k_rem_pio2f.c
+    k_cosf.c
+    k_sinf.c
     # k_tanf.c
 	# e_acos.c
     # e_acosh.c
@@ -42,7 +42,7 @@ add_library(
 	# e_logf.c
     # e_log10f.c
     e_powf.c
-    # e_rem_pio2f.c
+    e_rem_pio2f.c
     # e_remainderf.c
 	# e_scalb.c
     # e_scalbf.c
@@ -67,13 +67,13 @@ add_library(
     # s_fmax.c
     # s_fmin.c
     # s_floor.c
-	# s_cosf.c
+	s_cosf.c
     # s_erff.c
     # s_expm1f.c
     # s_fabsf.c
     # s_fmaxf.c
     # s_fminf.c
-    # s_floorf.c
+    s_floorf.c
 	# s_frexp.c
     # s_ilogb.c
 	# s_frexpf.c
@@ -94,7 +94,7 @@ add_library(
 	# s_rintf.c
     s_scalbnf.c
     # s_significandf.c
-    # s_sinf.c
+    s_sinf.c
 	# s_tan.c
     # s_tanh.c
 	# s_tanf.c
