@@ -318,6 +318,34 @@ public:
     }
 };
 
+class NCOFrequencyPin : public SmartPin {
+    // update to allow phase setting via x
+    int frame_period = 0;
+    int base_period = 0;
+
+public:
+    NCOFrequencyPin(int p) : SmartPin(p) {};
+
+    void init(int base_period) {
+        this->base_period = base_period;
+
+        dirl(pin);
+
+        set_mode(P_NCO_FREQ);
+        pin_control(OUTBIT, true);
+        
+        x = base_period;
+        wxpin(x, pin);
+        
+        dirh(pin);
+    }
+
+    void set_freq(int f) {
+        y = f;
+        wypin(y, pin);
+    }
+};
+
 class PWMTrianglePin : public SmartPin {
     int frame_period = 0;
     int base_period = 0;
@@ -332,6 +360,40 @@ public:
         dirl(pin);
 
         set_mode(P_PWM_TRIANGLE);
+        pin_control(OUTBIT, true);
+        
+        x = (frame_period << 16) | base_period;
+        wxpin(x, pin);
+        
+        dirh(pin);
+    }
+
+    void sync() {
+        ack();
+        setse4(E_IN_RISE | pin);
+        waitse4();
+    }
+
+    void set_dc(int dc) {
+        y = dc;
+        wypin(y, pin);
+    }
+};
+
+class PWMSawtoothPin : public SmartPin {
+    int frame_period = 0;
+    int base_period = 0;
+
+public:
+    PWMSawtoothPin(int p) : SmartPin(p) {};
+
+    void init(int frame_period, int base_period) {
+        this->frame_period = frame_period;
+        this->base_period = base_period;
+
+        dirl(pin);
+
+        set_mode(P_PWM_SAWTOOTH);
         pin_control(OUTBIT, true);
         
         x = (frame_period << 16) | base_period;
@@ -380,6 +442,52 @@ public:
         return v;
     }
 
+};
+
+/**
+ * @brief Count up on A edge, down on B edge
+ * 
+ * Optionally use a period to accumulate during a period  
+ */
+
+class EdgeCounterPin : public SmartPin {
+    int bpin = -1;
+    
+public:
+    EdgeCounterPin(int p) : SmartPin(p) {};
+
+    void init_a(int period = 0) {
+        dirl(pin);
+
+        set_mode(P_COUNT_RISES);
+        x = period;
+        wxpin(period, pin);
+
+        y = 0;
+        wypin(y, pin);
+
+        dirh(pin);
+    }
+
+    void init_ab(SmartPin bpin, int period = 0) {
+        dirl(pin);
+
+        set_mode(P_COUNT_RISES);
+        x = period;
+        wxpin(period, pin);
+
+        this->bpin = bpin.pin;
+        y = 1;
+        wypin(y, pin);
+
+        dirh(pin);
+    }
+
+    int count() {
+        int v;
+        rdpin(v, pin);
+        return v;
+    }
 };
 
 /**
@@ -656,8 +764,8 @@ pulse/cycle output
 transition output
 NCO frequency
 NCO duty
-PWM triangle
-PWM sawtooth
+-PWM triangle
+-PWM sawtooth
 PWM switch-mode power supply, V and I feedback
 periodic/continuous: A-B quadrature encoder
 periodic/continuous: inc on A-rise & B-high
