@@ -15,6 +15,11 @@ Run `python build.py`. The following options can be given:
 
 If `--install` is not provided, libc and libp2 will be installed to where llvm was build (if they are being built), which is hardcoded to `llvm-project/build_release` (or `llvm-project/build_debug` for a debug build)
 
+If you get errors about needing a `<bits/...` header when building on Linux install `gcc-multilib`:
+```
+sudo apt install gcc-multilib
+```
+
 ### Build LLVM
 0. Make sure you have the reuqired dependancies listed here https://llvm.org/docs/GettingStarted.html#software
 1. Initialize the llvm-project submodule in this repo.
