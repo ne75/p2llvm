@@ -200,7 +200,7 @@ extern "C" {
   FILE *__string_file(FILE *fp, char *str, const char *mode, size_t len);
 
   /* lock used to let multiple threads work together nicer */
-  extern int __sys_lock;
+  extern volatile int __sys_lock;
 #define __lock_stdio()   _lock(__sys_lock)
 #define __unlock_stdio() _unlock(__sys_lock)
 

@@ -7,13 +7,13 @@
 #include <stdarg.h>
 
 int printf(const char *fmt, ...) {
-    __lock_stdio();
+    _lock(stdout->_lock);
     va_list args;
     int r;
     va_start(args, fmt);
     r = vfprintf(stdout, fmt, args);
     va_end(args);
-    __unlock_stdio();
+    _unlock(stdout->_lock);
     return r;
 }
 

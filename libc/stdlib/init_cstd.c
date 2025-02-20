@@ -5,7 +5,7 @@
 // extern int malloc_lock;
 // extern int __stdio_lock;
 
-extern int __sys_lock;
+// extern volatile int __sys_lock;
 
 // function to call to initialize necessary things for the C standard library (such as locks and default drivers, etc)
 void _cstd_init() {

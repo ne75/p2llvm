@@ -29,7 +29,7 @@ extern char _bss_end[];
 extern unsigned _libcall_start[];
 extern int __enable_p2db;
 
-int __sys_lock;
+volatile int __sys_lock;
 
 
 // basic entry code to jump to our resuable startup code. we do this by restarting cog 0, copying in

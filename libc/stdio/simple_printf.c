@@ -257,13 +257,13 @@ we can ignore one 'l' flag; use long long if two
 }
 
 int __simple_printf(const char *fmt, ...) {   
-    __lock_stdio(); // lock so that print statements don't get mangles when multiple cogs print
+    _lock(stdout->_lock);
     va_list args;
     int r;
     va_start(args, fmt);
     r = _doprnt(fmt, args);
     va_end(args);
-    __unlock_stdio();
+    _unlock(stdout->_lock);
     return r;
 }
 
