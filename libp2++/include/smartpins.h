@@ -444,6 +444,33 @@ public:
 
 };
 
+class EdgeCounterUpDownPin : public SmartPin {
+    int bpin = -1;
+
+public:
+    EdgeCounterUpDownPin(int p) : SmartPin(p) {};
+
+    void init(SmartPin bpin, int period = 0) {
+        dirl(pin);
+
+        this->bpin = bpin.pin;
+
+        b_input_pin(bpin.pin);
+        set_mode(P_REG_UP_DOWN);
+        
+        wxpin(period, pin);
+
+        dirh(pin);
+        dirl(bpin.pin); // float the B input
+    }
+
+    int count() {
+        int v;
+        rdpin(v, pin);
+        return v;
+    }
+};
+
 /**
  * @brief Count up on A edge, down on B edge
  * 
