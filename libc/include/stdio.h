@@ -26,6 +26,8 @@
 #ifndef _STDIO_H
 #define _STDIO_H
 
+#include <propeller.h>
+
 #if defined(__cplusplus)
 extern "C" {
 #endif
@@ -39,7 +41,6 @@ extern "C" {
 #include <sys/null.h>
 #include <sys/sdcard.h>
 #include <sys/syslimits.h>
-#include <propeller.h>
 #include <sys/thread.h>
 
 #if defined(__GNUC__)
