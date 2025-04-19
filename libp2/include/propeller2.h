@@ -208,6 +208,60 @@ void __unreachable();
 typedef volatile int _atomic_t;
 typedef _atomic_t atomic_t;
 
+#if defined(__cplusplus)
+//
+// is_lvalue_reference<T>
+//
+template<typename T> struct is_lvalue_reference      { static constexpr bool value = false; };
+template<typename T> struct is_lvalue_reference<T&>  { static constexpr bool value = true; };
+
+
+//
+// remove_reference<T>
+//
+template<typename T> struct remove_reference      { using type = T; };
+template<typename T> struct remove_reference<T&>  { using type = T; };
+template<typename T> struct remove_reference<T&&> { using type = T; };
+
+template<typename T>using remove_reference_t = typename remove_reference<T>::type;
+
+//
+// is_same<T, U>
+//
+template<typename T, typename U> struct is_same {
+    static constexpr bool value = false;
+};
+
+template<typename T> struct is_same<T, T> {
+    static constexpr bool value = true;
+};
+
+//
+// move (like std::move)
+//
+template<typename T> constexpr remove_reference_t<T>&& move(T&& t) noexcept {
+    return static_cast<remove_reference_t<T>&&>(t);
+}
+
+//
+// forward (like std::forward)
+//
+template<typename T> constexpr T&& forward(remove_reference_t<T>& t) noexcept {
+    return static_cast<T&&>(t);
+}
+
+template<typename T> constexpr T&& forward(remove_reference_t<T>&& t) noexcept {
+    static_assert(!is_lvalue_reference<T>::value, "bad forward of rvalue as lvalue");
+    return static_cast<T&&>(t);
+}
+
+inline void* operator new(unsigned long l, void* ptr) {
+  return ptr;
+}
+
+inline void operator delete(void*, void*) {}
+#endif
+
 #ifdef __cplusplus
 extern "C" {
 #endif

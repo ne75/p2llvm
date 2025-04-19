@@ -10,10 +10,6 @@
 extern "C" {
 #endif
 
-#if defined(__cplusplus)
-#define move(x) static_cast<typeof(x)&&>(x);
-#endif
-
 #define EXIT_FAILURE 1
 #define EXIT_SUCCESS 0
 
