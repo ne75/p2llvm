@@ -13,78 +13,12 @@
 */
 
 #include <stdio.h>
-#include <stdint.h>
-#include <string.h>
-#include <stdlib.h>
-#include <sys/driver.h>
-#include <compiler.h>
-#include <errno.h>
-//#include <propeller.h>
-#include <sys/sd.h>
-#include "../drivers/sd_internal.h"
+#include <sys/sdcard.h>
 
-void dfs_resolve_path(const char *fname, char *path);
 
 int rmdir(const char *path1)
 {
-    uint8_t *ptr;
-    DIRENT dirent;
-    DIRINFO dirinfo;
-    FILEINFO fileinfo;
-    int dirsector, diroffset;
-    char path[MAX_PATH];
-
-    if (!dfs_mountflag && dfs_mount_defaults() != DFS_OK)
-    {
-        errno = EIO;
-        return -1;
-    }
-
-    dfs_resolve_path((char *)path1, path);
-
-    dirinfo.scratch = dfs_scratch;
-
-    // Open the directory
-    if (DFS_OK != DFS_OpenDir(&dfs_volinfo, (uint8_t *)path, &dirinfo))
-    {
-        // Try opening as a file
-        if (DFS_OK == DFS_OpenFile(&dfs_volinfo, (uint8_t *)path, DFS_READ, dfs_scratch, &fileinfo))
-            errno = ENOTDIR;
-        else
-            errno = ENOENT;
-        return -1;
-    }
-
-    // Check if directory is empty
-    while (DFS_OK == DFS_GetNext(&dfs_volinfo, &dirinfo, &dirent))
-    {
-        if (dirent.name[0] && !(strncmp((char*)dirent.name, ".          ", 11) == 0 ||
-                                strncmp((char*)dirent.name, "..         ", 11) == 0))
-        {
-            errno = ENOTEMPTY;
-            return -1;
-        }
-    }
-
-    // Open the directory as a file
-    if (DFS_OK != DFS_OpenFile(&dfs_volinfo, (uint8_t *)path, DFS_DIRECTORY, dfs_scratch, &fileinfo))
-    {
-        errno = ENOENT;
-        return -1;
-    }
-
-    // Remove the directory attribute so we can delete it
-    dirsector = fileinfo.dirsector;
-    diroffset = fileinfo.diroffset;
-    ptr = &dfs_scratch[diroffset*32];
-    DFS_ReadSector(0, dfs_scratch, dirsector, 1);
-    ptr[11] = 0;
-    DFS_WriteSector(0, dfs_scratch, dirsector, 1);
-
-    // Delete the directory
-    DFS_UnlinkFile(&dfs_volinfo, (uint8_t *)path, dfs_scratch);
-
-    return DFS_OK;
+    return sd_rmdir(path1);
 }
 
 /*

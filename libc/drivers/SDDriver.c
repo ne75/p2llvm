@@ -1,6 +1,11 @@
 /**
  * @brief SD File System Driver Library
+ * @date March 28, 2022
+ * Supports multi drive access
+ * @version 1.1
  */
+
+//#define _DEBUG
 
 #define _FILE_DEFINED
 
@@ -18,7 +23,6 @@
 #include "sd_mmc.h"
 #include "../include/sys/sdcard.h"
 
-//#define _DEBUG
 
 #define FILE_BUFFER_SIZE 64
 
@@ -40,31 +44,63 @@ typedef struct fat_file {
     FIL fil;
 } FAT_FIL;
 
-static FATFS FatFs;
+FATFS *FatFs;
+char Vol[5];
 
-static const char sd_prefix[] = "SD:";
+static const char sd_prefix[] = "SD";
 extern _Driver *_driverlist[];
 
-int sd_mount(int cs, int clk, int mosi, int miso)
+int sd_mount(int volume, int cs, int clk, int mosi, int miso)
 {
     int r;
     int i = 0;
 
-    SetSD(cs, clk, mosi, miso);
-    r = f_mount(&FatFs, "", 0);
+    Vol[0] = '0' + volume;
+    Vol[1] = ':';
+    Vol[2] = 0;
+
+    FatFs = malloc(sizeof(FATFS));
+
+    SetSD(volume, cs, clk, mosi, miso);
+    r = f_mount(FatFs, Vol, 0);
     if (r != 0) {
 #ifdef _DEBUG
-       __builtin_printf("sd card fs_init failed: result=[%d]\n", r);
-       _wait(1000);
+       __builtin_printf("sd card mount failed: result=[%d]\n", r);
+       wait(1000);
 #endif      
        _seterror(-r);
        return 0;
     }
 
-    //Add sd driver to the list
+    //Add SD driver to the list if not already
     while (_driverlist[i] != NULL)
+    {
+        if (_driverlist[i] == &_SDDriver)
+            break;
         i++;
+    }
     _driverlist[i] = &_SDDriver;
+
+    return r;
+}
+
+int sd_unmount(int volume)
+{
+    int r;
+    
+    Vol[0] = '0' + volume;
+    Vol[1] = ':';
+    Vol[2] = 0;
+
+    r = f_mount(NULL, "", 0);
+    if (r != 0) {
+#ifdef _DEBUG
+       __builtin_printf("sd card fs_init failed: result=[%d]\n", r);
+       wait(1000);
+#endif      
+       _seterror(-r);
+       return 0;
+    }
 
     return r;
 }
@@ -216,6 +252,7 @@ int sd_readdir(DIR *dir, struct dirent *ent)
     ent->d_type = finfo.fattrib;
     ent->d_date = finfo.fdate;
     ent->d_time = finfo.ftime;
+    ent->d_size = finfo.fsize;
     return 0;
 }
 
