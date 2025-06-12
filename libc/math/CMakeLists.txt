@@ -39,7 +39,7 @@ add_library(
     # e_pow.c
     # e_rem_pio2.c
     # e_remainder.c
-	# e_logf.c
+	e_logf.c
     # e_log10f.c
     e_powf.c
     e_rem_pio2f.c
