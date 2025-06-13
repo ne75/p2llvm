@@ -17,6 +17,8 @@ add_library(misc OBJECT
     sbrk.c
     locale.c
     thread.c
+    # mkdir.c
+    # rmdir.c
 )
 
 target_include_directories(misc PRIVATE ${CMAKE_SOURCE_DIR}/include)

@@ -10,13 +10,11 @@
  * all threads share stdin
  */
 static unsigned char linebuf[80];
+extern volatile int __sys_lock;
 
 /* initialize I/O */
 void _InitIO(void)
 {
-  int _flock;
-
-  _flock = _locknew();
   /* open stdin */
   __fopen_driver(stdin, _driverlist[0], "", "r");
   /* make it "cooked" input, and give it a decent sized buffer */
@@ -38,6 +36,6 @@ void _InitIO(void)
     __files[i]._ptr = NULL;
     __files[i]._flag = 0;
     __files[i]._drv = 0;
-    __files[i]._lock = _flock;
+    __files[i]._lock = -1;
   }
 }

@@ -53,6 +53,7 @@ extern "C" {
 
 #define EOF       (-1)
 #define BUFSIZ     512
+#define FOPEN_MAX    8
 
 #define SEEK_SET 0
 #define SEEK_CUR 1
@@ -90,7 +91,7 @@ extern "C" {
     /* driver for this file */
     struct __driver *_drv;
 
-    #define _SMALL_BUFSIZ 8
+    #define _SMALL_BUFSIZ 32
     /* a default buffer for character I/O */
     unsigned char _chbuf[_SMALL_BUFSIZ];
 
