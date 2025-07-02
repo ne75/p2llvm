@@ -27,6 +27,8 @@ add_library(stdlib OBJECT
     mblencur.c
     init_cstd.c
     c++.cpp
+    errno.c
+    getenv.c
 )
 
 target_include_directories(stdlib PRIVATE ${CMAKE_SOURCE_DIR}/include)

@@ -5,7 +5,7 @@
  * @version 1.1
  */
 
-//#define _DEBUG
+// #define _DEBUG
 
 #define _FILE_DEFINED
 
@@ -18,10 +18,10 @@
 #include <stdlib.h>
 #include <string.h>
 #include <driver.h>
-#include "ff.h"
+#include "sys/ff.h"
 #include "diskio.h"
 #include "sd_mmc.h"
-#include "../include/sys/sdcard.h"
+#include "sys/sdcard.h"
 
 
 #define FILE_BUFFER_SIZE 64
@@ -66,7 +66,7 @@ int sd_mount(int volume, int cs, int clk, int mosi, int miso)
     if (r != 0) {
 #ifdef _DEBUG
        __builtin_printf("sd card mount failed: result=[%d]\n", r);
-       wait(1000);
+        waitx(CLKFREQ/1000);
 #endif      
        _seterror(-r);
        return 0;
@@ -96,7 +96,7 @@ int sd_unmount(int volume)
     if (r != 0) {
 #ifdef _DEBUG
        __builtin_printf("sd card fs_init failed: result=[%d]\n", r);
-       wait(1000);
+       waitx(CLKFREQ/1000);
 #endif      
        _seterror(-r);
        return 0;
@@ -392,6 +392,9 @@ static int sd_write(FILE *fil, unsigned char *buf, int siz)
         //fil->state |= _VFS_STATE_ERR;
         return _set_dos_error(r);
     }
+
+    r = f_sync(&f->fil);
+    if (r) return _set_dos_error(r);
     return x;
 }
 

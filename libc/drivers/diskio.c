@@ -11,7 +11,7 @@
 
 #define WAITS asm("augd #3\nwaitx #464\n")
 
-#include "ff.h"			/* Obtains integer types */
+#include "sys/ff.h"			/* Obtains integer types */
 #include "diskio.h"		/* Declarations of disk functions */
 #include "sd_mmc.h"
 

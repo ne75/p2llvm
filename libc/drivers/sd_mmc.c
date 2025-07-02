@@ -24,15 +24,13 @@ void EnableSD(int drive)
 {
     int cs, clk, mosi, miso;
 
-    wait(10);
+    // wait(10);
     cs = Pins[drive] & 0xff;
     clk = (Pins[drive] >> 8) & 0xff;
     mosi = (Pins[drive] >> 16) & 0xff;
     miso = (Pins[drive] >> 24) & 0xff;
-    dirh(cs);
-    pinh(cs);
-    dirh(clk);
-    pinl(clk);
+    drvh(cs);
+    drvl(clk);
     dirh(mosi);
     dirl(miso);
 }
@@ -95,6 +93,8 @@ void SendSDB(int drive, const BYTE* buff, unsigned int bc)
     int clk = (Pins[drive] >> 8) & 0xff;
     int j;
 
+    printf("send SDB\n");
+
     asm volatile (
             "rdfast #0, %[b]\n"
             "mov   %[i], %[t]\n"
@@ -122,6 +122,8 @@ void ReceiveSDB(int drive, BYTE *buff, unsigned int bc)
     int clk = (Pins[drive] >> 8) & 0xff;
     int j;
     unsigned int v;
+
+    printf("receive SDB\n");
 
     asm volatile (
            "wrfast #0, %[b]\n"
@@ -164,7 +166,7 @@ void ReleaseSD(int drive)
     BYTE b;
     
     cs = Pins[drive] & 0xff;
-    pinh(cs);
+    drvh(cs);
     ReceiveSD(drive, &b, 1);
 }
 
@@ -174,7 +176,7 @@ int SelectSD(int drive)
     BYTE b;
     
     cs = Pins[drive] & 0xff;
-    pinl(cs);
+    drvl(cs);
     ReceiveSD(drive, &b, 1);
     if (GetStatus(drive))
     	return 1;

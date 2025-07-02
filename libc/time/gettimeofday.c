@@ -10,6 +10,10 @@ static unsigned int lastsec = 1000000000; // Sept. 9, 2001
 // microsecond counter reading at last second
 static unsigned int lastus = 0;
 
+static int getus() {
+    return CNT/(CLKFREQ/1000000);
+}
+
 int gettimeofday(struct timeval *tv, void *unused)
 {
     uint32_t now = getus();  // current microsecond count

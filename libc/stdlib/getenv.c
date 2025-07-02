@@ -7,7 +7,7 @@
 #include <stdlib.h>
 
 char **_environ_ptr;
-extern char *_environ[];
+char _environ[8][64]; // 8 environment variables of max length 64
 
 char *
 getenv(const char *tag)
@@ -17,7 +17,7 @@ getenv(const char *tag)
 	size_t len = strlen(tag);
 
 	if (!_environ_ptr)
-	  _environ_ptr = _environ;
+	  _environ_ptr = (char**)_environ;
 
 	for (var = _environ_ptr; (name = *var) != 0; var++) {
 		if (!strncmp(name, tag, len) && name[len] == '=')
