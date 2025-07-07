@@ -8,7 +8,7 @@
 #include <sys/ff.h>
 #include <dirent.h>
 #include <sys/stat.h>
-
+#include <stdio.h>
 
 /**
  * @brief mount sd card file system
@@ -100,3 +100,12 @@ int sd_rmdir(const char *name);
  */
 int sd_rename(const char *old_file, const char *new_file);
 
+/**
+ * @brief wrapper around f_expand
+ */
+int sd_expand(FILE *fp, int size, char opt);
+
+/**
+ * @brief wrapper around f_sync
+ */
+int sd_sync(FILE *fp);

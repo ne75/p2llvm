@@ -7,14 +7,14 @@
 /* storage control modules to the FatFs module with a defined API.       */
 /*-----------------------------------------------------------------------*/
 
-//#define _DEBUG
+// #define _DEBUG
+// #define _DEBUG_ERROR
 
 #define WAITS asm("augd #3\nwaitx #464\n")
 
 #include "sys/ff.h"			/* Obtains integer types */
 #include "diskio.h"		/* Declarations of disk functions */
 #include "sd_mmc.h"
-
 
 static char CardType;			/* b0:MMC, b1:SDv1, b2:SDv2, b3:Block addressing */
 
@@ -150,8 +150,12 @@ DRESULT disk_read (
 #ifdef _DEBUG
     __builtin_printf("Reading Sector(s) %d: %d\n", sect, count);
 #endif
-    if (i != count)
-    	return RES_ERROR;
+    if (i != count) {
+#ifdef _DEBUG_ERROR
+        __builtin_printf("Error in disk_read\n");
+#endif
+        return RES_ERROR;
+    }
     
     return RES_OK;
 }
@@ -204,8 +208,12 @@ DRESULT disk_write (
 #ifdef _DEBUG
     __builtin_printf("Writing sector(s) %d: %d\n", sect, i);
 #endif
-    if (count != i)
+    if (count != i) {
+#ifdef _DEBUG_ERROR
+        __builtin_printf("Error in disk_write\n");
+#endif
     	return RES_ERROR;
+    }
     
     return RES_OK;
 }
@@ -263,6 +271,11 @@ DRESULT disk_ioctl (
     ReleaseSD(pdrv);
 #ifdef _DEBUG
     __builtin_printf("IOCTL: ctrl:%d %d\n", ctrl, res);
+#endif
+#ifdef _DEBUG_ERROR
+    if (res != RES_OK) {
+        __builtin_printf("Error in disk_ioctl\n");
+    }
 #endif
     return res;
 }

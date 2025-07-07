@@ -24,7 +24,7 @@
 #include "sys/sdcard.h"
 
 
-#define FILE_BUFFER_SIZE 64
+#define FILE_BUFFER_SIZE 4096
 
 extern _Driver _SDDriver;
 
@@ -42,10 +42,11 @@ struct _default_buffer {
 typedef struct fat_file {
     //struct _default_buffer b;
     FIL fil;
+    int bytes_since_sync;
 } FAT_FIL;
 
-FATFS *FatFs;
-char Vol[5];
+static FATFS FatFs;
+static char Vol[5];
 
 static const char sd_prefix[] = "SD";
 extern _Driver *_driverlist[];
@@ -59,10 +60,8 @@ int sd_mount(int volume, int cs, int clk, int mosi, int miso)
     Vol[1] = ':';
     Vol[2] = 0;
 
-    FatFs = malloc(sizeof(FATFS));
-
     SetSD(volume, cs, clk, mosi, miso);
-    r = f_mount(FatFs, Vol, 0);
+    r = f_mount(&FatFs, Vol, 0);
     if (r != 0) {
 #ifdef _DEBUG
        __builtin_printf("sd card mount failed: result=[%d]\n", r);
@@ -393,7 +392,6 @@ static int sd_write(FILE *fil, unsigned char *buf, int siz)
         return _set_dos_error(r);
     }
 
-    r = f_sync(&f->fil);
     if (r) return _set_dos_error(r);
     return x;
 }
@@ -459,6 +457,22 @@ int sd_rmdir(const char *name)
 int sd_rename(const char *old, const char *new)
 {
     int r = f_rename(old, new);
+    return _set_dos_error(r);
+}
+
+int sd_expand(FILE *fp, int size, char opt) {
+    FAT_FIL *vf = (FAT_FIL *)fp->drvarg[0];  //get ff saved information
+    FIL *f = &vf->fil;
+
+    int r = f_expand(f, size, opt);
+    return _set_dos_error(r);
+}
+
+int sd_sync(FILE *fp) {
+    FAT_FIL *vf = (FAT_FIL *)fp->drvarg[0];  //get ff saved information
+    FIL *f = &vf->fil;
+
+    int r = f_sync(f);
     return _set_dos_error(r);
 }
 
