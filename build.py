@@ -37,12 +37,13 @@ def build_llvm(configure=True, debug=False, install_dest=None):
                     '-G', 
                     'Unix Makefiles',
 		            '-DCMAKE_OSX_ARCHITECTURES=arm64',
-                    '-DLLVM_INSTALL_UTILS=true'
+                    '-DLLVM_INSTALL_UTILS=true',
                     '-DCMAKE_CXX_COMPILER=/opt/homebrew/opt/llvm/bin/clang++',
                     '-DLLVM_ENABLE_PROJECTS=lld;clang',
                     '-DLLVM_EXPERIMENTAL_TARGETS_TO_BUILD=P2',
                     '-DLLVM_TARGETS_TO_BUILD=',
-                    '-DCMAKE_BUILD_TYPE=Release'
+                    '-DCMAKE_BUILD_TYPE=Release',
+                    '-DLLVM_ENABLE_BINDINGS=OFF',
                     ]
 
     # cmake_cmd.append("-DLLVM_ENABLE_ASSERTIONS=ON")
