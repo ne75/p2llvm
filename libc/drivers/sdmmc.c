@@ -204,9 +204,8 @@ int sd_init(BYTE *card_type) {
 #ifdef _DEBUG_SDMM
 			printf("SDv2\n");
 #endif	
-			printf("start RX\n");
+
 			sd_rcvr_mmc(buf, 4);							/* Get trailing return value of R7 resp */
-			printf("done RX\n");
 			waitx(CLKFREQ/100);
 			if (buf[2] == 0x01 && buf[3] == 0xAA) {		/* The card can work at vdd range of 2.7-3.6V */
 				for (tmr = 1000; tmr; tmr--) {			/* Wait for leaving idle state (ACMD41 with HCS bit) */
