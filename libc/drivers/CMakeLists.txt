@@ -7,7 +7,7 @@ add_library(drivers OBJECT
     diskio.c
     ff.c
     ffunicode.c
-    sd_mmc.c
+    sdmmc.c
 )
 
 target_include_directories(drivers PRIVATE ${CMAKE_SOURCE_DIR}/include)

@@ -83,6 +83,8 @@
 #define drvh(pin) asm volatile ("drvh %0" : : "ri"((int)pin))
 #define drvl(pin) asm volatile ("drvl %0" : : "ri"((int)pin))
 #define drvnot(pin) asm volatile ("drvnot %0" : : "ri"((int)pin))
+#define flth(pin) asm volatile ("flth %0" : : "ri"((int)pin))
+#define fltl(pin) asm volatile ("fltl %0" : : "ri"((int)pin))
 
 // Test
 #define testp(pin, res) asm volatile ("testp %1 wc\nwrc %0\n" : "=r"(res) : "ri"((int)pin))
@@ -367,6 +369,20 @@ static inline int _encod(unsigned int x) {
     );
 
     return top;
+}
+
+/**
+ * take the integer absolute value
+ */
+static inline int _abs(int x) {
+    int a;
+    asm volatile (
+        "abs %[a], %[x]"
+        : [a]"=r"(a) 
+        : [x]"ri"(x)
+    );
+
+    return a;
 }
 
 /**

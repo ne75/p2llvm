@@ -19,8 +19,7 @@
 #include <string.h>
 #include <driver.h>
 #include "sys/ff.h"
-#include "diskio.h"
-#include "sd_mmc.h"
+#include "sdmmc.h"
 #include "sys/sdcard.h"
 
 
@@ -51,8 +50,7 @@ static char Vol[5];
 static const char sd_prefix[] = "SD";
 extern _Driver *_driverlist[];
 
-int sd_mount(int volume, int cs, int clk, int mosi, int miso)
-{
+int sd_mount(int volume, int cs, int clk, int mosi, int miso) {
     int r;
     int i = 0;
 
@@ -60,8 +58,8 @@ int sd_mount(int volume, int cs, int clk, int mosi, int miso)
     Vol[1] = ':';
     Vol[2] = 0;
 
-    SetSD(volume, cs, clk, mosi, miso);
-    r = f_mount(&FatFs, Vol, 0);
+    sd_setpins(volume, clk, cs, mosi, miso);
+    r = f_mount(&FatFs, Vol, 1);
     if (r != 0) {
 #ifdef _DEBUG
        __builtin_printf("sd card mount failed: result=[%d]\n", r);
@@ -83,8 +81,7 @@ int sd_mount(int volume, int cs, int clk, int mosi, int miso)
     return r;
 }
 
-int sd_unmount(int volume)
-{
+int sd_unmount(int volume) {
     int r;
     
     Vol[0] = '0' + volume;
@@ -104,8 +101,7 @@ int sd_unmount(int volume)
     return r;
 }
 
-static int _set_dos_error(int derr)
-{
+static int _set_dos_error(int derr) {
     int r;
 #ifdef _DEBUG
     __builtin_printf("_set_dos_error(%d)\n", derr);
@@ -150,8 +146,7 @@ static int _set_dos_error(int derr)
     return _seterror(r);
 }
 
-int sd_creat(FILE *fil, const char *pathname, mode_t mode)
-{
+int sd_creat(FILE *fil, const char *pathname, mode_t mode) {
   int r;
   FAT_FIL *f = malloc(sizeof(*f));
   int fatmode;

@@ -1,10 +1,8 @@
-/*-----------------------------------------------------------------------/
-/  Low level disk interface modlue include file   (C)ChaN, 2019          /
-/-----------------------------------------------------------------------*/
+/**
+ * SD card IO driver based on https://obex.parallax.com/obex/sdsd-cc/
+ */
 
-
-#ifndef _DISKIO_DEFINED
-#define _DISKIO_DEFINED
+#pragma once
 
 #ifdef __cplusplus
 extern "C" {
@@ -32,7 +30,8 @@ DSTATUS disk_status (BYTE pdrv);
 DRESULT disk_read (BYTE pdrv, BYTE* buff, LBA_t sector, UINT count);
 DRESULT disk_write (BYTE pdrv, const BYTE* buff, LBA_t sector, UINT count);
 DRESULT disk_ioctl (BYTE pdrv, BYTE cmd, void* buff);
-
+DRESULT disk_setpins(int drv, int pclk, int pss, int pdi, int pdo);
+DSTATUS disk_deinitialize(BYTE drv);
 
 /* Disk Status Bits (DSTATUS) */
 
@@ -75,14 +74,12 @@ DRESULT disk_ioctl (BYTE pdrv, BYTE cmd, void* buff);
 #define CT_MMC3		0x01		/* MMC ver 3 */
 #define CT_MMC4		0x02		/* MMC ver 4+ */
 #define CT_MMC		0x03		/* MMC */
-#define CT_SDC1		0x04		/* SDC ver 1 */
-#define CT_SDC2		0x08		/* SDC ver 2+ */
+#define CT_SD1		0x04		/* SDC ver 1 */
+#define CT_SD2		0x08		/* SDC ver 2+ */
 #define CT_SDC		0x0C		/* SDC */
 #define CT_BLOCK	0x10		/* Block addressing */
 
 
 #ifdef __cplusplus
 }
-#endif
-
 #endif
