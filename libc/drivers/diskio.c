@@ -39,7 +39,7 @@ DSTATUS disk_status(BYTE pdrv) {
 DSTATUS disk_initialize(BYTE pdrv) {
 	if (pdrv) { // drv must be 0
 #ifdef _DEBUG_SDMM
-		__builtin_printf("deinitialize: bad drv %d\n", pdrv);
+		__builtin_printf("initialize: bad drv %d\n", pdrv);
 #endif
 		return RES_NOTRDY;
 	}

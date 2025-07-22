@@ -51,7 +51,7 @@ static const char sd_prefix[] = "SD";
 extern _Driver *_driverlist[];
 
 int sd_mount(int volume, int cs, int clk, int mosi, int miso) {
-    int r;
+    int r = 0;
     int i = 0;
 
     Vol[0] = '0' + volume;
