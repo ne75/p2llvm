@@ -9,8 +9,6 @@
 #include "sdmmc.h"
 #include "diskio.h"
 
-#define _USE_SMARTPINS
-
 int _pin_clk = 61;
 int _pin_ss = 60;
 int _pin_di = 59;
@@ -104,13 +102,12 @@ int sd_setpins(int drv, int pclk, int pss, int pdi, int pdo) {
 
 int sd_init(BYTE *card_type) {
     BYTE ty, cmd, buf[10];
-	UINT tmr, ck_div, spm_ck, spm_tx, spm_rx;
+	UINT tmr;
 	DSTATUS s;
 	int PIN_CLK = _pin_clk;
 	int PIN_SS = _pin_ss;
 	int PIN_DI = _pin_di;
 	int PIN_DO = _pin_do;
-	int SMPIN_DO;
 
 	s = STA_NOINIT;
 
@@ -120,41 +117,14 @@ int sd_init(BYTE *card_type) {
 
 	dly_us(10000);			/* 10ms */
 
-#ifdef _USE_SMARTPINS
-	if (_abs(PIN_CLK - PIN_DI) > 3)  return s;
+	UINT ck_div, spm_ck, spm_tx, spm_rx;
+	int SMPIN_DO;
+	if (_abs(PIN_CLK - PIN_DI) > 3) return s;
+	if (_abs(PIN_CLK - PIN_DO) > 3) return s;
 
-	if (_abs(PIN_CLK - PIN_DO) <= 3) {
-		spm_rx = ((PIN_CLK - PIN_DO) & 7) << 24;  // clock pin offset for smartB input to rx smartpin
-		spm_rx |= P_SYNC_RX | P_OE | P_INVERT_OUTPUT | P_HIGH_15K | P_LOW_15K;  // rx smartpin mode, with 15 k pull-up
-		_pin_do_in = _pin_do = SMPIN_DO = PIN_DO;  // rx pin is smartpin
-	} else {
-        // ???? what is this magic? 
-		if (PIN_CLK > PIN_DO)  { // NOTE:  This can only be accomplished for input pins!
-			SMPIN_DO = PIN_CLK - 3;
-			if ((SMPIN_DO == PIN_DI) || (SMPIN_DO == PIN_SS))
-				SMPIN_DO++;
-			if ((SMPIN_DO == PIN_DI) || (SMPIN_DO == PIN_SS))
-				SMPIN_DO++;
-		} else {
-			SMPIN_DO = PIN_CLK + 3;
-			if ((SMPIN_DO == PIN_DI) || (SMPIN_DO == PIN_SS))
-				SMPIN_DO--;
-			if ((SMPIN_DO == PIN_DI) || (SMPIN_DO == PIN_SS))
-				SMPIN_DO--;
-		}
-
-		if (_abs(PIN_DO - SMPIN_DO) > 3)  return s;
-
-#ifdef _DEBUG_SDMM
-		printf("remapped PINS=%d %d %d %d %d\n", PIN_CLK, PIN_SS, PIN_DI, PIN_DO, SMPIN_DO);
-#endif
-
-		spm_rx = ((PIN_DO - SMPIN_DO) & 7) << 28;  // rx data pin offset for smartA input to rx smartpin
-		spm_rx |= ((PIN_CLK - SMPIN_DO) & 7) << 24;  // clock pin offset for smartB input to rx smartpin
-		spm_rx |= P_SYNC_RX;  // rx smartpin mode
-		_pin_do_in = PIN_DO;  // remember rx input mapping for later de-init
-		_pin_do = SMPIN_DO;  // smartpin in place of the rx pin
-	}
+	spm_rx = ((PIN_CLK - PIN_DO) & 7) << 24;  // clock pin offset for smartB input to rx smartpin
+	spm_rx |= P_SYNC_RX | P_OE | P_INVERT_OUTPUT | P_HIGH_15K | P_LOW_15K;  // rx smartpin mode, with 15 k pull-up
+	_pin_do_in = _pin_do = SMPIN_DO = PIN_DO;  // rx pin is smartpin
 
 	wrpin(0, PIN_SS);
 	drvh(PIN_SS);  // Deselect SD card
@@ -176,13 +146,6 @@ int sd_init(BYTE *card_type) {
 	printf("smartpin modes:  %d=%08x  %d=%08x  %d=%08x\n", PIN_CLK, spm_ck, PIN_DI, spm_tx, SMPIN_DO, spm_rx);
 #endif
 
-#else // not using smart pins
-	CS_INIT(); CS_H();		/* Initialize port pin tied to CS */
-	CK_INIT(); CK_L();		/* Initialize port pin tied to SCLK */
-	DI_INIT();				/* Initialize port pin tied to DI */
-	DO_INIT();				/* Initialize port pin tied to DO */
-#endif
-
 	sd_rcvr_mmc(buf, 10);  // Apply 80 dummy clocks and the card gets ready to receive command
 	sd_send_cmd(CMD0, 0);  // Enter Idle state
 	sd_deselect();
@@ -192,12 +155,8 @@ int sd_init(BYTE *card_type) {
 
 	ty = 0;
 	if (sd_send_cmd(CMD0, 0) == 1) {			/* Enter Idle state */
-
-#ifdef _DEBUG_SDMM
-		printf("idle OK\n");
-#endif
-
 		if (sd_send_cmd(CMD8, 0x1AA) == 1) {	/* SDv2? */
+
 #ifdef _DEBUG_SDMM
 			printf("SDv2\n");
 #endif	
@@ -215,7 +174,6 @@ int sd_init(BYTE *card_type) {
 					ty = (buf[0] & 0x40) ? CT_SD2 | CT_BLOCK : CT_SD2;	/* SDv2 */
 				}
 
-#ifdef _USE_SMARTPINS // if using smart pins, set up based on system frequency
 				tmr = CLKFREQ;
     #ifdef _SDHC_45MHZ
 			// Performance option for "Default Speed" (Up to 50 MHz SPI clock)
@@ -238,7 +196,6 @@ int sd_init(BYTE *card_type) {
     #ifdef _DEBUG_SDMM
 				printf("SDHC %d MHz selected\n", tmr / ((ck_div&0xffff) * 1000000));
     #endif
-#endif
 			}
 		} else {							/* SDv1 or MMCv3 */
 #ifdef _DEBUG_SDMM
@@ -260,7 +217,6 @@ int sd_init(BYTE *card_type) {
 				ty = 0;
 			}
 
-#ifdef _USE_SMARTPINS
 			tmr = CLKFREQ;
 			if (tmr <= 100000000)  spm_tx |= P_INVERT_B;  // falling clock + 4 tick lag + 1 tick (smartB registration)
 			else if ( tmr <= 200000000)  spm_tx |= P_INVERT_B | P_SYNC_IO;  // falling clock + 5 tick lag + 1 tick
@@ -275,7 +231,6 @@ int sd_init(BYTE *card_type) {
     #ifdef _DEBUG_SDMM
 			printf("SDSC %d MHz selected\n", tmr / ((ck_div&0xffff) * 1000000));
     #endif
-#endif
 		}
 	}
 
@@ -288,7 +243,6 @@ int sd_init(BYTE *card_type) {
 
 	sd_deselect();
 
-#ifdef _USE_SMARTPINS
 	wxpin(ck_div, PIN_CLK);  // update clock smartpin sysclock divider
 	wrpin(spm_tx, PIN_DI);  // update tx smartpin clock inversion and data registration
     
@@ -296,19 +250,15 @@ int sd_init(BYTE *card_type) {
 	printf( "SPI clock ratio = sysclock/%d\n", ck_div & 0xffff );
     #endif
 
-#endif
-
 	return s;
 }
 
 int sd_deinit() {
 	int PIN_CLK = _pin_clk;
-    int PIN_SS = _pin_ss;
-    int PIN_DI = _pin_di;
-    int PIN_DO = _pin_do_in;
-    int SMPIN_DO = _pin_do;
-
-#ifdef _USE_SMARTPINS
+	int PIN_SS = _pin_ss;
+	int PIN_DI = _pin_di;
+	int PIN_DO = _pin_do_in;
+	int SMPIN_DO = _pin_do;
 	#ifdef _DEBUG_SDMM
 	printf("clear pins %d %d %d %d %d\n", PIN_CLK, PIN_SS, PIN_DI, PIN_DO, SMPIN_DO);
 	#endif
@@ -320,7 +270,6 @@ int sd_deinit() {
     _pinclear(PIN_SS);
 
     dly_us(10000);
-#endif
     return 0;
 }
 
@@ -328,166 +277,127 @@ void sd_xmit_mmc(const BYTE* buff, UINT bc) {
 	int PIN_CLK = _pin_clk;
 	int PIN_DI = _pin_di;
 
-#ifdef _USE_SMARTPINS
 // Smartpin SPI transmitter using "continuous" mode and 32-bit word size
 //   NOTE: data out always has at least a 4 sysclock lag
 	asm volatile (
-        "dirl %[PIN_DI]\n"		// reset tx smartpin, clears excess data
-        "setq #1\n"
-        "rdlong	r2, %[buff]\n"	// fetch first data. will write to r2 and r3
-        "rev r2\n"
-        "movbyts r2, #0x1b\n"	// endian swap
-        "wypin	r2, %[PIN_DI]\n"	// first data to tx shifter
+			"drvh #57\n"
 
-        "mov r2, %[bc]\n"
-        "shr %[bc], #2  wz\n"	// longword count (rounded down)
-        "shl r2, #3\n"		// bit count (exact)
-        "wypin r2, %[PIN_CLK]\n"	// begin SPI clocks
+			"dirl %[PIN_DI]\n"		// reset tx smartpin, clears excess data
+			"setq #1\n"
+			"rdlong	r2, %[buff]\n"	// fetch first data. will write to r2 and r3
+			"rev r2\n"
+			"movbyts r2, #0x1b\n"	// endian swap
+			"wypin	r2, %[PIN_DI]\n"	// first data to tx shifter
 
-        "dirh %[PIN_DI]\n"		// liven tx buffer, continuous mode
-        "add %[buff], #8\n"
-        "rev r3\n"
-        "movbyts r3, #0x1b\n"	// endian swap
+			"mov r2, %[bc]\n"
+			"shr %[bc], #2  wz\n"	// longword count (rounded down)
+			"shl r2, #3\n"		// bit count (exact)
+			"wypin r2, %[PIN_CLK]\n"	// begin SPI clocks
 
-        ".Ltx_loop%=:\n"
-        "if_nz wypin r3, %[PIN_DI]\n"	// data to tx buffer
-        "if_nz rdlong r3, %[buff]\n"		// fetch next data
-        "if_nz add %[buff], #4\n"
-        "if_nz rev r3\n"
-        "if_nz movbyts r3, #0x1b\n"	// endian swap
+			"dirh %[PIN_DI]\n"		// liven tx buffer, continuous mode
+			"add %[buff], #8\n"
+			"rev r3\n"
+			"movbyts r3, #0x1b\n"	// endian swap
 
-        ".Ltx_wait%=:\n"
-	    "if_nz testp %[PIN_DI]  wc\n"	// wait for tx buffer empty
-        "if_nc_and_nz jmp #.Ltx_wait%=\n"
-	    "if_nz djnz %[bc], #.Ltx_loop%=\n"
+	"if_z 	jmp #.Ltx_wait_done\n"
 
-// Wait for completion
-        ".Ltx_wait_done%=:\n"
-		"testp %[PIN_CLK]  wc\n"
-	    "if_nc jmp	#.Ltx_wait_done%=\n"
+	".Ltx_loop:\n"
+			"wypin r3, %[PIN_DI]\n"	// data to tx buffer
+			"rdlong r3, %[buff]\n"		// fetch next data
+			"add %[buff], #4\n"
+			"rev r3\n"
+			"movbyts r3, #0x1b\n"	// endian swap
 
-		"dirl %[PIN_DI]\n"		// reset tx smartpin to clear excess data
-		"wypin ##-1, %[PIN_DI]\n"	// TX 0xFF, continuous mode
+	".Ltx_wait:\n"
+	    	"testp %[PIN_DI]  wc\n"	// wait for tx buffer empty
+	"if_nc 	jmp #.Ltx_wait\n"
+	    	
+			"djnz %[bc], #.Ltx_loop\n"
+
+		// Wait for completion
+	".Ltx_wait_done:\n"
+			"testp %[PIN_CLK]  wc\n"
+	"if_nc 	jmp #.Ltx_wait_done\n"
+
+			"dirl %[PIN_DI]\n"		// reset tx smartpin to clear excess data
+			"wypin ##-1, %[PIN_DI]\n"	// TX 0xFF, continuous mode
+
+			"drvl #57\n"
 
         : [buff]"+&r"(buff), [bc]"+&r"(bc)
         : [PIN_DI]"ri"(PIN_DI), [PIN_CLK]"ri"(PIN_CLK) 
 		: "r2", "r3"
-    );
-
-#else        
-	do {
-		d = *buff++;	/* Get a byte to be sent */
-		if (d & 0x80) DI_H(); else DI_L();	/* bit7 */
-		CK_H(); CK_L();
-		if (d & 0x40) DI_H(); else DI_L();	/* bit6 */
-		CK_H(); CK_L();
-		if (d & 0x20) DI_H(); else DI_L();	/* bit5 */
-		CK_H(); CK_L();
-		if (d & 0x10) DI_H(); else DI_L();	/* bit4 */
-		CK_H(); CK_L();
-		if (d & 0x08) DI_H(); else DI_L();	/* bit3 */
-		CK_H(); CK_L();
-		if (d & 0x04) DI_H(); else DI_L();	/* bit2 */
-		CK_H(); CK_L();
-		if (d & 0x02) DI_H(); else DI_L();	/* bit1 */
-		CK_H(); CK_L();
-		if (d & 0x01) DI_H(); else DI_L();	/* bit0 */
-		CK_H(); CK_L();
-	} while (--bc);
-#endif   
-
+    ); 
 }
 
 void sd_rcvr_mmc(BYTE *buff, UINT bc) {
-    int r, bc2;
     int PIN_CLK = _pin_clk;
     int PIN_DO = _pin_do;
     int PIN_DI = _pin_di;
 
-#ifdef _USE_SMARTPINS
+	int r, bc2;
     drvl(PIN_CLK);    // smartpin enable, added to support multi-cog operation
 
 // Smartpin SPI byte receiver,
 //  SPI clock mode is selected in disk_initialize()
 //  NOTE: Has hard coded mode select for post-clock "late" sampling
 //
-
     asm volatile (
-		"drvl	%[PIN_DO]\n"
-		"drvl	%[PIN_DI]\n"    // enable tx smartpin, DI pin stays high while not transmitting
-		"mov	%[bc2], %[bc]  wz\n"
+			"drvh #56\n"
+			"drvl %[PIN_DO]\n"
+			"drvl %[PIN_DI]\n"    // enable tx smartpin, DI pin stays high while not transmitting
+			"mov %[bc2], %[bc]  wz\n"
 
 // 32-bit rx (WFLONG), about 10% faster than 8-bit code
-		"shr	%[bc2], #2  wz\n"
-	    "if_z	jmp	#.Lrx_bytes%=\n"
+			"shr %[bc2], #2  wz\n"
+			"if_z	jmp #.Lrx_bytes\n"
 
-		"mov	%[r], %[bc2]\n"
-		"shl	%[r], #5\n"			// bit count
-		"wypin	%[r], %[PIN_CLK]\n"		// begin SPI clocks
-		"wxpin	#63, %[PIN_DO]\n"	// 32 bits, sample after rising clock
+			"mov %[r], %[bc2]\n"
+			"shl %[r], #5\n"			// bit count
+			"wypin %[r], %[PIN_CLK]\n"		// begin SPI clocks
+			"wxpin #63, %[PIN_DO]\n"	// 32 bits, sample after rising clock
 
-        ".Lrx_loop_a%=:\n"
-        ".Lrx_wait_a%=:\n"
-		"testp	%[PIN_DO]  wc\n"		// wait for received byte
-	    "if_nc	jmp	#.Lrx_wait_a%=\n"
+	".Lrx_loop_a:\n"
+	".Lrx_wait_a:\n"
+			"testp %[PIN_DO]  wc\n"		// wait for received byte
+	"if_nc	jmp #.Lrx_wait_a\n"
+		// "waitse3\n"
 
-		"rdpin	%[r], %[PIN_DO]\n"		// longword from rx buffer
-		"rev	%[r]\n"
-		"movbyts %[r], #0x1b\n"			// endian swap
-		"wrlong	%[r], %[buff]\n"			// store longword
-		"add	%[buff], #4\n"
-		"djnz	%[bc2], #.Lrx_loop_a%=\n"
+			"rdpin %[r], %[PIN_DO]\n"		// longword from rx buffer
+			"rev %[r]\n"
+			"movbyts %[r], #0x1b\n"			// endian swap
+			"wrlong	%[r], %[buff]\n"			// store longword
+			"add %[buff], #4\n"
+			"djnz %[bc2], #.Lrx_loop_a\n"
 
 // 8-bit rx (WFBYTE)
-        ".Lrx_bytes%=:\n"
-		"and	%[bc], #3  wz\n"		// up to 3 bytes
-	    "if_z	jmp #.Lrx_done%=\n"
-		"wxpin	#39, %[PIN_DO]\n"		// 8 bits, sample after rising clock
+	".Lrx_bytes:\n"
+			"and %[bc], #3	wz\n"		// up to 3 bytes
+	"if_z	jmp #.Lrx_done\n"
+			"wxpin #39, %[PIN_DO]\n"		// 8 bits, sample after rising clock
         
-        ".Lrx_loop%=:\n"
-		"wypin	#8, %[PIN_CLK]\n"		// begin SPI clocks
+	".Lrx_loop:\n"
+			"wypin #8, %[PIN_CLK]\n"		// begin SPI clocks
 
-        ".Lrx_wait%=:\n"
-		"testp	%[PIN_DO]  wc\n"		// wait for received byte
-	    "if_nc	jmp	#.Lrx_wait%=\n"
+	".Lrx_wait:\n"
+			"testp %[PIN_DO]	wc\n"		// wait for received byte
+			"if_nc jmp #.Lrx_wait\n"
 
-		"rdpin	%[r], %[PIN_DO]\n"		// byte from rx buffer
-		"rev	%[r]\n"
-		"wrbyte	%[r], %[buff]\n"			// store byte
-		"add	%[buff], #1\n"
-		"djnz	%[bc], #.Lrx_loop%=\n"
+			// "waitse3\n"
 
-		".Lrx_done%=:\n"
+			"rdpin %[r], %[PIN_DO]\n"		// byte from rx buffer
+			"rev %[r]\n"
+			"wrbyte %[r], %[buff]\n"			// store byte
+			"add %[buff], #1\n"
+			"djnz %[bc], #.Lrx_loop\n"
 
-		"dirl	%[PIN_DO]\n"			// clear rx buffer
+	".Lrx_done:\n"
+
+			"dirl %[PIN_DO]\n"			// clear rx buffer
+			"drvl #56\n"
         : [bc2]"+&r"(bc2), [buff]"+&r"(buff), [bc]"+&r"(bc), [r]"+&r"(r)
         : [PIN_DO]"ri"(PIN_DO), [PIN_DI]"ri"(PIN_DI), [PIN_CLK]"ri"(PIN_CLK) 
-    );
-
-#else
-
-	DI_H();	/* Send 0xFF */
-
-	do {
-		r = 0;	 if (DO) r++;	/* bit7 */
-		CK_H(); CK_L();
-		r <<= 1; if (DO) r++;	/* bit6 */
-		CK_H(); CK_L();
-		r <<= 1; if (DO) r++;	/* bit5 */
-		CK_H(); CK_L();
-		r <<= 1; if (DO) r++;	/* bit4 */
-		CK_H(); CK_L();
-		r <<= 1; if (DO) r++;	/* bit3 */
-		CK_H(); CK_L();
-		r <<= 1; if (DO) r++;	/* bit2 */
-		CK_H(); CK_L();
-		r <<= 1; if (DO) r++;	/* bit1 */
-		CK_H(); CK_L();
-		r <<= 1; if (DO) r++;	/* bit0 */
-		CK_H(); CK_L();
-		*buff++ = r;			/* Store a received byte */
-	} while (--bc);
-#endif     
+    );   
 }
 
 int sd_wait_ready() {
@@ -513,24 +423,19 @@ void sd_deselect() {
     CS_H();				/* Set CS# high */
     sd_rcvr_mmc(&d, 1);	/* Dummy clock (force DO hi-z for multiple slave SPI) */
 
-#ifdef _USE_SMARTPINS
     // added to support multi-cog operation
     flth(PIN_SS);    // disable SPI interface
     fltl(PIN_CLK);    // disable clock smartpin
     fltl(PIN_DI);    // disable tx smartpin
-    fltl(PIN_DO);    // disable rx smartpin
-#endif        
+    fltl(PIN_DO);    // disable rx smartpin       
 }
 
 int sd_select() {
     BYTE d = 0;
     int PIN_SS = _pin_ss;
 
-#ifdef _USE_SMARTPINS
     drvl(PIN_SS);    // pin low
-#else
-    CS_L();    // Set CS# low
-#endif
+	
 	sd_rcvr_mmc(&d, 1);    // Dummy clock (force DO enabled)
     if (sd_wait_ready()) return 1;    // Wait for card ready
 

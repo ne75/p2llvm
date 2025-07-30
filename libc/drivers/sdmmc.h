@@ -110,7 +110,7 @@ typedef BYTE	DSTATUS;
  * @param buff: data to be sent
  * @param bc: number of bytes to send
  */
-void sd_xmit_mmc(const BYTE* buff, UINT bc);
+__attribute__((noinline)) void sd_xmit_mmc(const BYTE* buff, UINT bc);
 
 /**
  * @brief Receive bytes from the card
@@ -118,7 +118,7 @@ void sd_xmit_mmc(const BYTE* buff, UINT bc);
  * @param buff: Pointer to read buffer
  * @param bc: Number of bytes to receive
  */
-void sd_rcvr_mmc(BYTE *buff, UINT bc);
+__attribute__((noinline)) void sd_rcvr_mmc(BYTE *buff, UINT bc);
 
 /**
  * @brief wait for card ready
