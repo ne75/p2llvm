@@ -35,7 +35,7 @@ COMPILER_RT_ABI di_int __ashrdi3(di_int a, int b) {
             "sar r31, r2\n"
 
             "mov r30, r0\n"
-            "sar r30, r2\n"
+            "shr r30, r2\n"
             "shl r1, r3\n"
             "or r30, r1\n"
 
