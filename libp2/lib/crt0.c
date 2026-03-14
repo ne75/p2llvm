@@ -4,6 +4,7 @@
 
 #include "propeller2.h"
 #include "debug.h"
+#include <stdint.h>
 
 typedef void (*func_ptr)(void);
 
@@ -120,10 +121,36 @@ void __cxa_pure_virtual() {
     __unreachable();
 }
 
-void __cxa_guard_acquire() {
+int __cxa_guard_acquire(uint64_t *guard_object) {
+    uint8_t *guard = (uint8_t *)guard_object;
+
     _lock(__sys_lock);
+
+    if (guard[0]) {
+        _unlock(__sys_lock);
+        return 0;
+    }
+
+    if (guard[1]) {
+        _unlock(__sys_lock);
+        __unreachable();
+    }
+
+    guard[1] = 1;
+    return 1;
 }
 
-void __cxa_guard_release() {
+void __cxa_guard_release(uint64_t *guard_object) {
+    uint8_t *guard = (uint8_t *)guard_object;
+
+    guard[0] = 1;
+    guard[1] = 0;
+    _unlock(__sys_lock);
+}
+
+void __cxa_guard_abort(uint64_t *guard_object) {
+    uint8_t *guard = (uint8_t *)guard_object;
+
+    guard[1] = 0;
     _unlock(__sys_lock);
 }
