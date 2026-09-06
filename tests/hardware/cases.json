@@ -8,6 +8,49 @@
   },
   "suites": [
     {
+      "id": "select-compare",
+      "sources": [
+        "llvm-project/llvm/test/CodeGen/P2/select-compare.ll"
+      ],
+      "driver": "select-driver.c",
+      "expected": {
+        "slt.true": "0x13",
+        "slt.false": "0x17",
+        "slt.negative_true": "0x13",
+        "slt.negative_false": "0x17",
+        "slt.min_max": "0x13",
+        "slt.max_min": "0x17",
+        "slt.equal": "0x17",
+        "sle.equal": "0x13",
+        "sle.true": "0x13",
+        "sle.false": "0x17",
+        "sgt.false": "0x17",
+        "sgt.true": "0x13",
+        "sgt.equal": "0x17",
+        "sge.false": "0x17",
+        "sge.true": "0x13",
+        "sge.equal": "0x13",
+        "ult.false": "0x17",
+        "ult.true": "0x13",
+        "ult.equal": "0x17",
+        "slt.imm_true": "0x13",
+        "slt.imm_equal": "0x17",
+        "ult.imm_false": "0x17",
+        "ult.imm_true": "0x13",
+        "ult.imm_equal": "0x17",
+        "slt64.low_sign": "0x17",
+        "slt64.borrow": "0x17",
+        "slt64.negative": "0x13",
+        "slt64.min_max": "0x13",
+        "ult64.high_sign": "0x17",
+        "ult64.true": "0x13",
+        "slt64.imm_low_sign": "0x17",
+        "slt64.imm_below": "0x13",
+        "slt64.imm_equal": "0x17",
+        "slt64.imm_negative": "0x13"
+      }
+    },
+    {
       "id": "runtime-signed-remainder",
       "host_portable": false,
       "sources": [
