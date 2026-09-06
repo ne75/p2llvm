@@ -70,3 +70,37 @@ Minimum acceptance cases: the arithmetic and ABI counterexamples tracked in
 memory/string and float helpers, cog startup/return, locks, interrupts/debugging,
 and CORDIC/FIFO-sensitive sequences. The production baseline retains the old
 board-specific experiments for reference; they are not automated assertions.
+
+## Instruction semantics and coverage gate
+
+`python3 tests/hardware/run.py --mode build --isa` includes generated instruction
+scenarios. Use the same `--isa` flag in hardware mode. TableGen supplies the
+inventory and operand syntax; `isa_model.py` and `isa_scenarios.py` supply
+independent expected register values, flags, memory results, and branch outcomes.
+The generated assembly, drivers, expectations, and oracle hashes are reviewable
+under `build/phase0-llvm/p2-isa/`. Memory/LUT scratch contents are restored.
+
+`python3 tests/hardware/coverage.py` writes a per-record CSV and missing-record
+JSON under the normal test-results directory. `--require-complete` fails if any
+instruction lacks an executable fixture. This checks fixture readiness; only a
+matching hardware-mode result establishes execution. Coverage remains incomplete.
+
+Counter expectations use bounded raw elapsed counts; the host checks the range.
+The short counter fixture does not validate a low-word rollover. A dedicated
+rollover run and accurate peripheral/interrupt timing need the actual board.
+The COG/lock fixture starts a separate cog, observes contention and release,
+and stops the worker; its handshake is covered by the host's hard timeout.
+
+`isa_events.py` checks counter targets and selectable LUT-read events without
+GPIO wiring. `isa_fifo.py` executes from LUT RAM because HUB execution owns the
+FIFO; it waits for pending writes before readback and return. QROTATE/QVECTOR
+fixtures use coarse quadrant/scale windows (ideal result ±4096 units), not a
+silicon accuracy specification. Exact edge/rounding and saturation cases remain
+additional work. XORO32's model is based on the chip designer's published
+[Rev B/C implementation](https://forums.parallax.com/discussion/comment/1448460/)
+and checks the published seed-1 output before generating fixtures.
+
+The coverage gate currently tracks instruction-record readiness, not exhaustive
+operand, flag, predicate, address-mode, or timing coverage. A ready record can
+still need boundary cases. Hardware runs must review actual mismatches before
+changing an expectation; a compiler-produced value is not an independent oracle.
