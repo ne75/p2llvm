@@ -23,9 +23,12 @@ python3 tests/run.py --suite integration --filter signed
   and ELF-link tests. `%llc` enables `-verify-machineinstrs`; C tests should also
   request machine verification. Tests inspect object bytes and relocations as
   well as assembly when encoding matters.
-- **Hardware semantics:** programs and a documented opt-in interface under
-  `hardware/` are separate from host tests. Host success does not mean these
-  have run. Hardware tests must use bounded execution and explicit result codes.
+- **Hardware semantics:** each executable regression requires a corresponding
+  observation fixture under `hardware/`. Shared C/C++ sources run on the host
+  and P2 at O0/O2/Os, with expected values checked on the host. The bounded
+  runner records firmware identity and individual observations. Building
+  firmware is reported as `BUILT_NOT_RUN`; host success never implies a chip
+  run. Instruction-level semantic coverage is tracked separately from encoding.
 
 The generated instruction matrix is structural coverage, not proof that the
 TableGen definitions are correct. Keep independently calculated ISA boundary
