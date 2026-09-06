@@ -32,6 +32,8 @@ records the submodule commits independently of branch names.
 2. `tests/README.md`: test architecture and reproducible commands.
 3. `tests/legacy-coverage.md`: disposition of the former numbered test programs.
 4. `docs/phase0/findings.md`: review findings, regression tests, and fix status.
+5. [Validation checkpoint](validation.md): recorded results, review order, and
+   outstanding hardware acceptance work.
 
 Each compiler fix is committed in the LLVM submodule; corresponding root commits
 advance its gitlink. Test/build output is kept under `build/`, not checked in as
