@@ -219,6 +219,20 @@
         "absolute.load": "0x12345678",
         "absolute.store": "0x7b"
       }
+    },
+    {
+      "id": "stack-alignment",
+      "sources": [
+        "tests/codegen/stack-alignment.c"
+      ],
+      "driver": "alignment-driver.c",
+      "expected": {
+        "alignment.locals": "0x7",
+        "alignment.all_stack_residues": "0x0"
+      },
+      "p2_sources": [
+        "tests/hardware/alignment-call.s"
+      ]
     }
   ]
 }
