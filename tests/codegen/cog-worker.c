@@ -19,6 +19,10 @@ void cog_worker(void *p) {
     m->high = (unsigned)(product >> 32);
     _unlock(m->lock);
     m->stage = 2;
+#ifdef P2_INIT_FORM
+    while (1) { }
+#else
     __asm__ volatile("cogstop %0" : : "r"(id) : "memory");
     __builtin_unreachable();
+#endif
 }

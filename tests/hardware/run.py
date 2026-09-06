@@ -96,6 +96,7 @@ def main():
                     obj = case_dir / (str(index) + '.o')
                     flags = ['-' + opt, '-I', HERE, '-ffunction-sections', '-fdata-sections',
                              '-DP2_TEST_RUN_ID="' + run_id + '"', '-DP2_TEST_BAUD=' + str(args.baud)]
+                    flags += suite.get('cflags', [])
                     if cxx:
                         flags += ['-fno-exceptions', '-fno-rtti']
                     if args.mode == 'host':

@@ -342,6 +342,90 @@
         "pool.immediate_taken": "0xe",
         "pool.reusable": "0x1"
       }
+    },
+    {
+      "id": "cog-init-ii",
+      "sources": [
+        "tests/codegen/cog-worker.c"
+      ],
+      "driver": "cog-driver.c",
+      "host_portable": false,
+      "expected": {
+        "lock.allocated": "0x1",
+        "lock.first": "0x1",
+        "cog.started": "0x1",
+        "cog.distinct": "0x1",
+        "lock.other_blocked": "0x0",
+        "lock.after_release": "0x1",
+        "lock.after_worker": "0x1",
+        "cog.value.lo": "0x9",
+        "cog.value.hi": "0x493e0",
+        "cog.after_stop": "0x0"
+      },
+      "instruction_records": [
+        "COGINITii",
+        "COGSTOPi",
+        "COGIDr"
+      ],
+      "cflags": [
+        "-DP2_INIT_FORM=1"
+      ]
+    },
+    {
+      "id": "cog-init-ir",
+      "sources": [
+        "tests/codegen/cog-worker.c"
+      ],
+      "driver": "cog-driver.c",
+      "host_portable": false,
+      "expected": {
+        "lock.allocated": "0x1",
+        "lock.first": "0x1",
+        "cog.started": "0x1",
+        "cog.distinct": "0x1",
+        "lock.other_blocked": "0x0",
+        "lock.after_release": "0x1",
+        "lock.after_worker": "0x1",
+        "cog.value.lo": "0x9",
+        "cog.value.hi": "0x493e0",
+        "cog.after_stop": "0x0"
+      },
+      "instruction_records": [
+        "COGINITir",
+        "COGSTOPi",
+        "COGIDr"
+      ],
+      "cflags": [
+        "-DP2_INIT_FORM=2"
+      ]
+    },
+    {
+      "id": "cog-init-ri",
+      "sources": [
+        "tests/codegen/cog-worker.c"
+      ],
+      "driver": "cog-driver.c",
+      "host_portable": false,
+      "expected": {
+        "lock.allocated": "0x1",
+        "lock.first": "0x1",
+        "cog.started": "0x1",
+        "cog.distinct": "0x1",
+        "lock.other_blocked": "0x0",
+        "lock.after_release": "0x1",
+        "lock.after_worker": "0x1",
+        "cog.value.lo": "0x9",
+        "cog.value.hi": "0x493e0",
+        "cog.after_stop": "0x0"
+      },
+      "instruction_records": [
+        "COGINITri",
+        "COGSTOPi",
+        "COGIDr"
+      ],
+      "cflags": [
+        "-DP2_INIT_FORM=3"
+      ]
     }
   ]
 }
