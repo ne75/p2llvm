@@ -1,0 +1,1 @@
+# RUN: %python %root/tests/hardware/test_isa_model.py
