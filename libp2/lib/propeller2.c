@@ -35,11 +35,12 @@ void _clkset(unsigned clkmode, unsigned clkfreq) {
 
 int _coginit(unsigned mode, void (*f)(void *), void *par) {
     int res;
-    asm("setq %2\n"
+    asm volatile("setq %2\n"
         "coginit %1, %3 wc\n"
         "wrc %0\n"
         : "=r"(res), "+r"(mode)
         : "r"(par), "r"(f)
+        : "memory"
         );
 
     return !res ? mode : -1;
@@ -53,30 +54,29 @@ int cogstart(void (*f)(void *), int par, int *stack, unsigned int stacksize) {
 
 unsigned int _locknew() {
     int x;
-    asm("locknew %0" : "=r"(x) : );
+    asm volatile("locknew %0" : "=r"(x) : : "memory");
     return x;
 }
 
 void _lockret(unsigned int l) {
-    asm("lockret %0" : : "r"(l));
+    asm volatile("lockret %0" : : "r"(l) : "memory");
 }
 
 void _lock(unsigned int l) {
     if (l > 15) return;
-    asm(".L_locktry%=:\n"
+    asm volatile(".L_locktry%=:\n"
         "locktry %0 wc\n"
-        "if_nc jmp #.L_locktry%=" : : "r"(l));
+        "if_nc jmp #.L_locktry%=" : : "r"(l) : "memory");
 }
 
 int _locktry(unsigned int l) {
     int x;
-    asm("locktry %0 wc" : : "r"(l));
-    wrc(x);
+    asm volatile("locktry %1 wc\nwrc %0" : "=r"(x) : "r"(l) : "memory");
     return x;
 }
 
 void _unlock(unsigned int l) {
-    asm("lockrel %0" : : "r"(l));
+    asm volatile("lockrel %0" : : "r"(l) : "memory");
 }
 
 void _uart_init(unsigned rx, unsigned tx, unsigned baud, unsigned mode) {
