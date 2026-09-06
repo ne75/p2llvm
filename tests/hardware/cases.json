@@ -8,6 +8,34 @@
   },
   "suites": [
     {
+      "id": "runtime-signed-remainder",
+      "host_portable": false,
+      "sources": [
+        "libp2/lib/builtins/modsi3.c"
+      ],
+      "driver": "remainder-driver.c",
+      "expected": {
+        "positive_positive": "0x2",
+        "negative_positive": "0xfffffffe",
+        "positive_negative": "0x2",
+        "negative_negative": "0xfffffffe",
+        "zero_positive": "0x0",
+        "zero_negative": "0x0",
+        "exact": "0x0",
+        "unit_divisor": "0x0",
+        "negative_unit_divisor": "0x0",
+        "smaller_dividend": "0xfffffffe",
+        "min_positive": "0xfffffffe",
+        "min_negative": "0xfffffffe",
+        "max_positive": "0x1",
+        "max_negative": "0x1",
+        "min_min": "0x0",
+        "max_min": "0x7fffffff",
+        "negative_min": "0xffffffff",
+        "min_unit": "0x0"
+      }
+    },
+    {
       "id": "c-patterns",
       "sources": [
         "tests/codegen/c-patterns.c"

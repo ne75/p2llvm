@@ -1,0 +1,14 @@
+# RUN: %clang -O0 -Werror=return-type -mllvm -verify-machineinstrs -S %root/libp2/lib/builtins/modsi3.c -o %t.O0.s
+# RUN: FileCheck %s < %t.O0.s
+# RUN: %clang -O2 -Werror=return-type -mllvm -verify-machineinstrs -S %root/libp2/lib/builtins/modsi3.c -o %t.O2.s
+# RUN: FileCheck %s < %t.O2.s
+# RUN: %clang -Os -Werror=return-type -mllvm -verify-machineinstrs -S %root/libp2/lib/builtins/modsi3.c -o %t.Os.s
+# RUN: FileCheck %s < %t.Os.s
+# CHECK-LABEL: __modsi3:
+# CHECK-NOT: calla
+# CHECK: qdiv
+# CHECK-NEXT: getqx r31
+# CHECK-NEXT: getqy r31
+# CHECK-NEXT: if_nz {{.*}}neg r31, r31
+# CHECK-NOT: calla
+# CHECK: reta

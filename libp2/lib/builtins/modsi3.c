@@ -16,18 +16,20 @@
 
 // Returns: a % b
 
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wreturn-type"
 COMPILER_RT_ABI si_int __modsi3(si_int a, si_int b) {
-    asm(
-            "mov r2, r0\n"
-            "shr r2, #31 wz\n"    // r2 = 1: result is negative, z = result is positive
-            "abs r0, r0\n"
-            "abs r1, r1\n"
-            "abs r0, r0\n"
-            "qdiv r0, r1\n"
-            "getqx r31\n"
-    "if_nz  neg r31, r31\n"
-    : : : "r0", "r1", "r2");  
+    // Declare the ABI return register and modified inputs to the compiler.
+    register si_int result __asm__("r31");
+    __asm__ volatile(
+            "mov r2, %1\n"
+            "shr r2, #31 wz\n"  // The remainder has the dividend's sign.
+            "abs %1, %1\n"      // P2 ABS also gives INT_MIN's unsigned magnitude.
+            "abs %2, %2\n"
+            "qdiv %1, %2\n"
+            "getqx %0\n"        // Consume the quotient before reading the remainder.
+            "getqy %0\n"
+    "if_nz  neg %0, %0\n"
+    : "=r"(result), "+r"(a), "+r"(b)
+    :
+    : "r2", "cc");
+    return result;
 }
-#pragma clang diagnostic pop
