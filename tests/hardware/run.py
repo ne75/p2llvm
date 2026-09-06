@@ -1,8 +1,10 @@
 #!/usr/bin/env python3
 """Build and run shared semantic fixtures, on the host or a P2 over loadp2."""
 import argparse
+from contextlib import ExitStack
 import hashlib
 import json
+import os
 from pathlib import Path
 import subprocess
 import sys
@@ -20,15 +22,36 @@ def digest(path):
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
-def command(argv, log, timeout=120):
-    result = subprocess.run(list(map(str, argv)), stdout=subprocess.PIPE,
-                            stderr=subprocess.STDOUT, timeout=timeout)
+class CommandFailure(RuntimeError):
+    def __init__(self, message, output, returncode=None):
+        super().__init__(message)
+        self.output, self.returncode = output, returncode
+
+
+def command(argv, log, timeout=120, keep_input_open=False):
     with log.open('ab') as stream:
         stream.write((repr(list(map(str, argv))) + '\n').encode())
-        stream.write(result.stdout)
-    if result.returncode:
-        raise RuntimeError('command failed; see ' + str(log))
-    return result.stdout
+    with ExitStack() as stack:
+        stdin = subprocess.DEVNULL
+        if keep_input_open:
+            # loadp2 leaves terminal mode on stdin EOF. Hold a pipe open until
+            # the firmware exit sequence or the hard deadline ends the run.
+            read_fd, write_fd = os.pipe()
+            stdin = stack.enter_context(os.fdopen(read_fd, 'rb'))
+            stack.enter_context(os.fdopen(write_fd, 'wb'))
+        try:
+            result = subprocess.run(list(map(str, argv)), stdin=stdin,
+                                    stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
+                                    timeout=timeout)
+            output, returncode, timed_out = result.stdout, result.returncode, False
+        except subprocess.TimeoutExpired as error:
+            output, returncode, timed_out = error.output or b'', None, True
+    with log.open('ab') as stream:
+        stream.write(output)
+    if timed_out or returncode:
+        reason = f'command timed out after {timeout}s' if timed_out else f'command exited {returncode}'
+        raise CommandFailure(reason + '; see ' + str(log), output, returncode)
+    return output
 
 
 def main():
@@ -89,6 +112,7 @@ def main():
                       'status': 'FAIL', 'log': str(log)}
             results['cases'].append(record)
             started = time.monotonic()
+            stage = 'compile'
             try:
                 if args.mode == 'host' and not suite.get('host_portable', True):
                     record['status'] = 'NOT_APPLICABLE'
@@ -125,6 +149,7 @@ def main():
                         command([compiler, *flags, '-c', source, '-o', obj], log)
                     objects.append(obj)
                 elf = case_dir / 'test.elf'
+                stage = 'link'
                 if args.mode == 'host':
                     linker = 'clang++' if any(p.suffix == '.cpp' for p in sources) else 'clang'
                     command([linker, *objects, '-o', elf], log)
@@ -142,19 +167,29 @@ def main():
                     output = command([elf], log, args.timeout)
                 else:
                     binary = case_dir / 'test.bin'
+                    stage = 'binary conversion'
                     command([build / 'bin/llvm-objcopy', '-O', 'binary', elf, binary], log)
                     record['firmware_sha256'] = digest(binary)
                     results['hardware_execution_attempted'] = True
                     argv = loader.arguments(args, binary)
                     record['loader_command'] = argv
-                    output = command(argv, log, args.timeout)
+                    stage = 'hardware execution'
+                    output = command(argv, log, args.timeout, keep_input_open=True)
                     record.update(loader.identity(output))
                 (case_dir / 'observations.log').write_bytes(output)
                 expected = dict(manifest['transport_expected'], **suite['expected'])
+                stage = 'observation protocol'
                 record['observed'], record['mismatches'] = compare(output, run_id, expected)
                 record['status'] = 'FAIL' if record['mismatches'] else 'PASS'
+                if record['mismatches']:
+                    record['failure_stage'] = 'semantic comparison'
             except (OSError, ValueError, RuntimeError, subprocess.TimeoutExpired) as error:
                 record['error'] = str(error)
+                record['failure_stage'] = stage
+                if isinstance(error, CommandFailure) and stage == 'hardware execution':
+                    (case_dir / 'observations.log').write_bytes(error.output)
+                    record.update(loader.identity(error.output))
+                    record['loader_returncode'] = error.returncode
             finally:
                 record['seconds'] = round(time.monotonic() - started, 3)
                 (out / 'results.json').write_text(json.dumps(results, indent=2) + '\n')
