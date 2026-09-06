@@ -11,6 +11,7 @@ add_library(builtins OBJECT
     divsf3.c
     extendsfdf2.c
     fixdfsi.c
+    fixdfdi.c
     fixsfdi.c
     fixsfsi.c
     fixunsdfdi.c
@@ -18,6 +19,7 @@ add_library(builtins OBJECT
     fixunssfdi.c
     fixunssfsi.c
     floatdisf.c
+    floatdidf.c
     floatsidf.c
     floatundidf.c
     floatundisf.c
@@ -45,7 +47,8 @@ add_library(builtins OBJECT
     powf.c
 )
 
-target_include_directories(builtins PRIVATE ${CMAKE_SOURCE_DIR}/include)
+target_include_directories(builtins PRIVATE ${CMAKE_SOURCE_DIR}/include
+    ${CMAKE_SOURCE_DIR}/../libc/include)
 
 # create a compiler_builtins library for rust
 add_library(compiler_builtins STATIC)
