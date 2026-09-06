@@ -5,7 +5,7 @@
 static void put(unsigned char c) { putchar(c); }
 #else
 // Keep the transport small and independently reviewable. No printf, malloc,
-// formatter, locks, or expected-result comparisons execute on the chip.
+// formatter or expected-result comparisons execute on the chip.
 extern void _uart_init(unsigned, unsigned, unsigned, unsigned);
 extern void _uart_putc(unsigned char, int);
 static void put(unsigned char c) { _uart_putc(c, 62); }

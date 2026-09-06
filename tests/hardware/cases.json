@@ -142,7 +142,9 @@
         "remainder": "0x2",
         "call": "0x2f",
         "memory.lo": "0x89abcdef",
-        "memory.hi": "0x1234567"
+        "memory.hi": "0x1234567",
+        "carry.sum.lo": "0x0",
+        "carry.sum.hi": "0x1"
       }
     },
     {
