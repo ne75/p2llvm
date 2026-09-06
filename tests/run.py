@@ -33,15 +33,12 @@ def main():
         suites.append(('llvm', [ROOT / 'llvm-project/llvm/test/MC/P2',
                                ROOT / 'llvm-project/llvm/test/CodeGen/P2']))
     for name, paths in suites:
-        command = [sys.executable, str(lit), '-sv', '-j', str(args.jobs),
+        suite_lit = build / 'bin/llvm-lit' if name == 'llvm' else lit
+        command = [sys.executable, str(suite_lit), '-sv', '-j', str(args.jobs),
                    '--param', 'p2_build=' + str(build),
-                   '--param', 'build_mode=Release',
                    '--output', str(out / (name + '.json'))]
         if args.filter:
             command.extend(['--filter', args.filter])
-        # LLVM's site config selects the build and tools for its own test suites.
-        if name == 'llvm':
-            command.extend(['--param', 'llvm_site_config=' + str(build / 'test/lit.site.cfg.py')])
         command.extend(map(str, paths))
         failed |= subprocess.run(command, cwd=ROOT, env=env).returncode != 0
     print('Results:', out)
