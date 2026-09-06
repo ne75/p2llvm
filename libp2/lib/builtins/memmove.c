@@ -16,6 +16,8 @@ __attribute__ ((section ("lut"), cogtext, no_builtin("memmove")))
 void *memmove(void *dest_p, const void *src_p, size_t n)
 {
   void *orig_dest = dest_p;
+  if (n == 0 || dest_p == src_p)
+    return orig_dest;
   unsigned int b;
 
   const char *src = src_p;
@@ -28,7 +30,7 @@ void *memmove(void *dest_p, const void *src_p, size_t n)
                   "wrbyte %[b], %[dst]\n"
                   "add %[dst], #1\n"
                   "djnz %[n], #.L1\n"
-                  :[src]"+r"(src), [dst]"+r"(dst), [b]"+r"(b), [n]"+r"(n):);
+                  :[src]"+r"(src), [dst]"+r"(dst), [b]"=&r"(b), [n]"+r"(n) : : "memory");
   }
   else
   {
@@ -41,7 +43,7 @@ void *memmove(void *dest_p, const void *src_p, size_t n)
           "sub %[src], #1\n"
           "sub %[dst], #1\n"
           "djnz %[n], #.L2\n"
-          :[src]"+r"(src), [dst]"+r"(dst), [b]"+r"(b), [n]"+r"(n):);
+          :[src]"+r"(src), [dst]"+r"(dst), [b]"=&r"(b), [n]"+r"(n) : : "memory");
 
   }
 

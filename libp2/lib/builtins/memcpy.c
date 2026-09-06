@@ -70,7 +70,7 @@ void *memcpy(void *dst, const void *src, size_t n) {
             [extra_longs]"+r"(extra_longs), 
             [extra_bytes]"+r"(extra_bytes),
             [setq_size]"+r"(setq_size)
-        ::
+        : : "pb", "ptrb", "memory"
     );
 
 #else

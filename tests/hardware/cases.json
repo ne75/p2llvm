@@ -235,6 +235,29 @@
       "p2_sources": [
         "tests/hardware/alignment-call.s"
       ]
+    },
+    {
+      "id": "runtime-memory",
+      "sources": [
+        "tests/codegen/runtime-memory.c"
+      ],
+      "driver": "memory-driver.c",
+      "expected": {
+        "copy.zero": "0xee21e640",
+        "copy.one": "0x5c78c7ef",
+        "copy.three": "0x1b183600",
+        "copy.four": "0xfb093e1e",
+        "copy.511": "0x1fa88d5e",
+        "copy.512": "0x8b3ee540",
+        "copy.513": "0xdbd86ef",
+        "copy.return": "0x1",
+        "move.left": "0x37f94e84",
+        "move.right": "0x6269e388",
+        "move.return": "0x1",
+        "move.zero": "0xb09b44c6",
+        "set.zero": "0x7c42",
+        "set.return": "0x1"
+      }
     }
   ]
 }

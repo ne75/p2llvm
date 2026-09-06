@@ -11,11 +11,11 @@
 
 __attribute__ ((section ("lut"), cogtext, no_builtin("memset")))
 void *memset(void *dst, int c, size_t n) {
-    // this can certainly be rewritten using the FIFO with wfbyte
-    asm volatile ("wrfast #0, %[dst]\n"
-             ".L1: wfbyte %[c]\n"
-                  " djnz %[n], #.L1\n"
-                  :[dst]"+r"(dst), [c]"+r"(c), [n]"+r"(n):);
+    // Direct byte stores complete before return and naturally handle n == 0.
+    // Volatile prevents loop-idiom recognition from recursively calling memset.
+    volatile unsigned char *p = dst;
+    while (n--)
+        *p++ = (unsigned char)c;
     return dst;
 }
 
