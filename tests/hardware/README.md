@@ -112,7 +112,25 @@ The COG/lock fixture starts a separate cog, observes contention and release,
 and stops the worker; its handshake is covered by the host's hard timeout.
 
 `isa_events.py` checks counter targets and selectable LUT-read events without
-GPIO wiring. `isa_fifo.py` executes from LUT RAM because HUB execution owns the
+GPIO wiring. Counter tests follow the Rev B/C v35 reference, printed pages
+42-46: POLL/WAIT clear an event unless its sensor sets it again. A past CT target
+keeps asserting the event; ADDCT with a future target clears and rearms it.
+The fixtures check before the deadline, after it, a repeated poll with the
+target still in the past, and after rearming 65,536 ticks into the future.
+
+| Counter fixture | Low return word | High return word |
+|---|---|---|
+| POLLCT1/2/3 | C at each phase, bits 0-3: `0b0110` | Z at each phase, bits 0-3: `0b0110` |
+| ADDCT1/2/3 and WAITCT1/2/3 | Elapsed ticks: `0x10000..0x10400` | C,Z pairs at each phase, bits 0-7: `0x3c` |
+
+The first phase occupies the low bit/pair. POLLCT uses WAITX to let the deadline
+pass independently of WAITCT. ADDCT/WAITCT retain their elapsed-time check and
+test both flags after WAITCT. Both paths rearm before the final poll so an event
+that never clears fails as well as one that never asserts. These expected values
+come from the documented event conditions; a successful build is still
+`BUILT_NOT_RUN` until the updated fixtures execute on the chip.
+
+`isa_fifo.py` executes from LUT RAM because HUB execution owns the
 FIFO; it waits for pending writes before readback and return. QROTATE/QVECTOR
 fixtures use coarse quadrant/scale windows (ideal result ±4096 units), not a
 silicon accuracy specification. Exact edge/rounding and saturation cases remain
