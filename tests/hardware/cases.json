@@ -1,0 +1,113 @@
+{
+  "version": 1,
+  "oracle": "Handwritten C/ISA expectations; never generated from P2 assembly or P2 execution.",
+  "transport_expected": {
+    "transport.zero": "0x0",
+    "transport.ones": "0xffffffff",
+    "transport.alternating": "0xa55a5aa5"
+  },
+  "suites": [
+    {
+      "id": "c-patterns",
+      "sources": [
+        "tests/codegen/c-patterns.c"
+      ],
+      "driver": "c-patterns-driver.c",
+      "expected": {
+        "arithmetic": "0x10",
+        "shifts": "0x40000002",
+        "signed_shift.lo": "0x7fffffff",
+        "signed_shift.hi": "0xffffffff",
+        "wide.lo": "0x6543210c",
+        "wide.hi": "0x12345679",
+        "signed64.low_sign": "0x0",
+        "signed64.negative": "0x1",
+        "unsigned64.high": "0x0",
+        "quotient": "0xe",
+        "remainder": "0x2",
+        "signed_quotient": "0xfffffff2",
+        "signed_remainder": "0xfffffffe",
+        "clz.zero": "0x20",
+        "clz.one": "0x1f",
+        "clz.top": "0x0",
+        "smul.negative_no_overflow": "0x0",
+        "smul.positive_overflow": "0x1",
+        "select.true": "0x13",
+        "select.false": "0x17",
+        "narrow": "0xfff6",
+        "array": "0xf",
+        "switch.hit": "0x7",
+        "switch.default": "0xffffffff",
+        "stack.arguments": "0x70",
+        "stack.packed": "0x1234568b",
+        "aggregate.x": "0xffffffef",
+        "aggregate.y": "0x17",
+        "indirect": "0x17",
+        "recursion": "0x1c",
+        "large_frame": "0x12345678",
+        "wide_memory.lo": "0x9abcdef0",
+        "wide_memory.hi": "0x12345678",
+        "global.value": "0x1f",
+        "global.address": "0x1"
+      }
+    },
+    {
+      "id": "varargs",
+      "sources": [
+        "tests/codegen/varargs.c"
+      ],
+      "driver": "varargs-driver.c",
+      "expected": {
+        "varargs.ints": "0xf",
+        "varargs.aggregate": "0x68ad",
+        "varargs.packed_then_int": "0x68b6",
+        "stack.narrow": "0xfffd"
+      }
+    },
+    {
+      "id": "float",
+      "sources": [
+        "tests/codegen/float-patterns.c"
+      ],
+      "driver": "float-driver.c",
+      "expected": {
+        "float.operations": "0x41500000",
+        "double.operations.lo": "0x0",
+        "double.operations.hi": "0x402a0000",
+        "double.compare": "0x1",
+        "double.to_int.lo": "0xffffff85",
+        "double.to_int.hi": "0xffffffff",
+        "int.to_double.lo": "0x0",
+        "int.to_double.hi": "0xc05ec000"
+      }
+    },
+    {
+      "id": "cxx",
+      "sources": [
+        "tests/codegen/cxx-patterns.cpp"
+      ],
+      "driver": "cxx-driver.cpp",
+      "expected": {
+        "cxx.virtual": "0x1d",
+        "cxx.default": "0xa",
+        "cxx.static": "0x7",
+        "cxx.new": "0x2a",
+        "cxx.delete_returned": "0x1"
+      }
+    },
+    {
+      "id": "roundtrip",
+      "sources": [
+        "tests/codegen/roundtrip.c"
+      ],
+      "driver": "roundtrip-driver.c",
+      "expected": {
+        "roundtrip.address": "0x1",
+        "roundtrip.local": "0x14",
+        "roundtrip.branch_true": "0xe",
+        "roundtrip.branch_false": "0x12"
+      },
+      "assembly_roundtrip": true
+    }
+  ]
+}
