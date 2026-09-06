@@ -53,7 +53,7 @@ int cogstart(void (*f)(void *), int par, int *stack, unsigned int stacksize) {
 
 unsigned int _locknew() {
     int x;
-    asm volatile("locknew %0" : "=r"(x) : : "memory");
+    asm volatile("locknew %0 wc\nif_c neg %0, #1" : "=r"(x) : : "memory");
     return x;
 }
 

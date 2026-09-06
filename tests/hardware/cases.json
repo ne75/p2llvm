@@ -262,7 +262,16 @@
         "move.zero": "0xb09b44c6",
         "set.zero": "0x7c42",
         "set.return": "0x1"
-      }
+      },
+      "instruction_records": [
+        "RDLONGri",
+        "WRLONGri",
+        "SETQr",
+        "RDFASTir",
+        "RFBYTE",
+        "WRBYTErr",
+        "REPir"
+      ]
     },
     {
       "id": "cog-and-locks",
@@ -281,7 +290,17 @@
         "lock.after_worker": "0x1",
         "cog.value.lo": "0x9",
         "cog.value.hi": "0x493e0"
-      }
+      },
+      "instruction_records": [
+        "COGIDr",
+        "COGINITrr",
+        "COGSTOPr",
+        "LOCKNEW",
+        "LOCKTRYr",
+        "LOCKRELr",
+        "LOCKRETr",
+        "SETQr"
+      ]
     },
     {
       "id": "runtime-counters",
@@ -303,6 +322,25 @@
           "min": "0x61",
           "max": "0x989680"
         }
+      }
+    },
+    {
+      "id": "lock-pool",
+      "sources": [],
+      "driver": "lock-pool-driver.c",
+      "host_portable": false,
+      "instruction_records": [
+        "LOCKNEW",
+        "LOCKTRYi",
+        "LOCKRELi",
+        "LOCKRETi"
+      ],
+      "expected": {
+        "pool.available": "0xe",
+        "pool.unique": "0x1",
+        "pool.exhausted": "0xffffffff",
+        "pool.immediate_taken": "0xe",
+        "pool.reusable": "0x1"
       }
     }
   ]

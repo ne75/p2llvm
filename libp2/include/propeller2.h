@@ -408,7 +408,7 @@ int _uart_checkc(int p);
 unsigned char _uart_getc(int p);
 
 /**
- * request a new hardware lock
+ * request a new hardware lock, returning ~0u when the pool is exhausted
  */
 unsigned int _locknew();
 
