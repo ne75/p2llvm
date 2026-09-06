@@ -108,6 +108,42 @@
         "roundtrip.branch_false": "0x12"
       },
       "assembly_roundtrip": true
+    },
+    {
+      "id": "arithmetic-ir",
+      "sources": [
+        "llvm-project/llvm/test/CodeGen/P2/arithmetic-semantics.ll"
+      ],
+      "driver": "arithmetic-driver.c",
+      "expected": {
+        "i1.zero": "0x0",
+        "i1.one": "0x1",
+        "signed64.borrow": "0x0",
+        "signed64.sign": "0x1",
+        "signed_product.ok": "0x0",
+        "signed_product.overflow": "0x1",
+        "clz.zero": "0x20",
+        "clz.one": "0x1f",
+        "indirect.zero": "0x13",
+        "indirect.other": "0x17"
+      }
+    },
+    {
+      "id": "machine-contracts",
+      "sources": [
+        "llvm-project/llvm/test/CodeGen/P2/machine-contracts.ll"
+      ],
+      "driver": "contracts-driver.c",
+      "expected": {
+        "pair.lo": "0x9abcdef1",
+        "pair.hi": "0x92345678",
+        "select.true": "0x13",
+        "select.false": "0x17",
+        "remainder": "0x2",
+        "call": "0x2f",
+        "memory.lo": "0x89abcdef",
+        "memory.hi": "0x1234567"
+      }
     }
   ]
 }
