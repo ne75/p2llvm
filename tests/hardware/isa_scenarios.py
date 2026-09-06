@@ -5,11 +5,13 @@ contents are restored before returning. No GPIO or clock configuration is used.
 """
 from collections import defaultdict
 import math
+import isa_events
+import isa_fifo
 
 BRANCHES = {'DJZ', 'DJNZ', 'DJF', 'DJNF', 'IJZ', 'IJNZ', 'TJZ', 'TJNZ'}
 MEMORY = {'RDBYTE', 'RDWORD', 'RDLONG', 'WRBYTE', 'WRWORD', 'WRLONG', 'RDLUT', 'WRLUT'}
 CORDIC = {'QMUL', 'QDIV', 'QFRAC', 'QSQRT', 'QLOG', 'QEXP', 'QROTATE', 'QVECTOR'}
-SUPPORTED = BRANCHES | MEMORY | CORDIC | {'REP', 'ALTS', 'ALTD', 'SETQ2', 'CALL', 'CALLA', 'JMP', 'RETB'}
+SUPPORTED = BRANCHES | MEMORY | CORDIC | isa_events.SUPPORTED | isa_fifo.SUPPORTED | {'REP', 'ALTS', 'ALTD', 'SETQ2', 'CALL', 'CALLA', 'JMP', 'RETB'}
 
 
 def immediate(record, field):
@@ -25,7 +27,11 @@ def flags():
 
 
 def scenarios(mnemonic, name, record):
-    if mnemonic in {'ALTS', 'ALTD'}:
+    if mnemonic in isa_fifo.SUPPORTED:
+        yield from isa_fifo.scenarios(mnemonic, name, record)
+    elif mnemonic in isa_events.SUPPORTED:
+        yield from isa_events.scenarios(mnemonic, name, record)
+    elif mnemonic in {'ALTS', 'ALTD'}:
         for packed, delta in [(512, 1), (0x3fe00, -1)]:
             # S[17:9] is a signed increment; S[8:0] is the register offset.
             # Redirect the next instruction to PB (COG address 0x1f7).
@@ -152,6 +158,8 @@ def generate_scenarios(records, output, root):
     for op, members in sorted(groups.items()):
         source, driver = output / ('isa-' + op.lower() + '.s'), output / ('isa-' + op.lower() + '.c')
         assembly, declarations, calls, expected = ['.text'], ['#include "observe.h"'], [], {}
+        if op in isa_fifo.SUPPORTED:
+            assembly = ['.section .lut.fixture,"ax",@progbits']
         for name, record in members:
             for i, (code, lo, hi) in enumerate(scenarios(op, name, record)):
                 function = name + '_' + str(i)
@@ -162,6 +170,8 @@ def generate_scenarios(records, output, root):
                 expected[function+'.lo'] = hex(lo) if isinstance(lo, int) else lo
                 expected[function+'.hi'] = hex(hi) if isinstance(hi, int) else hi
         assembly += ['.data', '.balign 4', '.Lmemory:', '.long 0', '.Lblock:', '.long 0x12345678, 0x9abcdef0']
+        if op in isa_fifo.SUPPORTED:
+            assembly += ['.balign 4', '.Lfifo:', '.zero 64']
         source.write_text('\n'.join(assembly) + '\n')
         driver.write_text('\n'.join(declarations + ['void test_body(void) {'] + calls + ['}']) + '\n')
         suites.append({'id': 'isa-' + op.lower(), 'sources': [str(source.relative_to(root))],

@@ -96,6 +96,7 @@ def generate(bindir, output):
     report = {'inventory': len(records), 'modeled_records': len(records)-len(missing),
               'missing_records': sorted(missing), 'suites': suites,
               'oracle_sha256': hashlib.sha256((Path(__file__).with_name('isa_model.py')).read_bytes()).hexdigest(),
-              'generator_sha256': hashlib.sha256(Path(__file__).read_bytes() + Path(__file__).with_name('isa_scenarios.py').read_bytes()).hexdigest()}
+              'generator_sha256': hashlib.sha256(b''.join(Path(__file__).with_name(name).read_bytes()
+                  for name in ['isa_generate.py', 'isa_scenarios.py', 'isa_events.py', 'isa_fifo.py'])).hexdigest()}
     (output / 'manifest.json').write_text(json.dumps(report, indent=2) + '\n')
     return report
