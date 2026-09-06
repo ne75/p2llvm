@@ -1,0 +1,100 @@
+{
+  "recorded_at_utc": "2026-09-06T04:14:22.373062+00:00",
+  "baseline_branch": "production_baseline",
+  "baseline_tag": "production-baseline-pre-phase0",
+  "repositories": {
+    ".": {
+      "commit": "bdcefcce7860b2232c06f35726fea679a3a7309c",
+      "branch": "master",
+      "remotes": [
+        "iseries1\thttps://github.com/iseries1/p2llvm.git (fetch)",
+        "iseries1\thttps://github.com/iseries1/p2llvm.git (push)",
+        "origin\thttps://github.com/ne75/p2llvm (fetch)",
+        "origin\thttps://github.com/ne75/p2llvm (push)"
+      ]
+    },
+    "llvm-project": {
+      "commit": "72a9bb1ef2656d9953d1f41a8196d425ff2ab0b1",
+      "branch": "master",
+      "remotes": [
+        "m1k3y\thttps://github.com/The-M1k3y/llvm-project.git (fetch)",
+        "m1k3y\thttps://github.com/The-M1k3y/llvm-project.git (push)",
+        "origin\thttps://github.com/ne75/llvm-project.git (fetch)",
+        "origin\thttps://github.com/ne75/llvm-project.git (push)",
+        "upstream\thttps://github.com/llvm/llvm-project.git (fetch)",
+        "upstream\thttps://github.com/llvm/llvm-project.git (push)"
+      ]
+    },
+    "loadp2": {
+      "commit": "21e074cc7ee6fbd4fb12ef5352544b3457a6729c",
+      "branch": "ne_rebase",
+      "remotes": [
+        "origin\thttps://github.com/ne75/loadp2.git (fetch)",
+        "origin\thttps://github.com/ne75/loadp2.git (push)"
+      ]
+    }
+  },
+  "tools": {
+    "clang": {
+      "sha256": "715fec01d71bb8d67cde837a096f4b9c0d178f90a99d143c117fb7a72a0d2e76",
+      "bytes": 85981512
+    },
+    "clang++": {
+      "sha256": "715fec01d71bb8d67cde837a096f4b9c0d178f90a99d143c117fb7a72a0d2e76",
+      "bytes": 85981512
+    },
+    "llc": {
+      "sha256": "68930d6f89ece1cccbcd25af2753187e0258d262d17225ecd9bf615f4ad16f57",
+      "bytes": 25661664
+    },
+    "llvm-mc": {
+      "sha256": "8808216fd0760c3f57c7fb988c800627e285adb7b869e4202804a225c494090a",
+      "bytes": 1801064
+    },
+    "llvm-tblgen": {
+      "sha256": "5a0156110985f4268c8c7c8b6266c975e1cbb5684daf137f15558711eca983ac",
+      "bytes": 3607000
+    },
+    "llvm-objdump": {
+      "sha256": "bf7d3696af109ae3428227ac081b49bce4273790ec821da0d6dc559336f3daa5",
+      "bytes": 5617024
+    },
+    "llvm-readobj": {
+      "sha256": "c6210d59a7ce84215a68e329c286eb54d73fdb581455b7164814e4ea6034ecca",
+      "bytes": 6550976
+    },
+    "llvm-dis": {
+      "sha256": "d59174e0218dffdcbb6700c5b43ee88b3620672ed298bdf13762234ede3c9ba6",
+      "bytes": 2737464
+    },
+    "llvm-as": {
+      "sha256": "b0eb8d2317c46ec1ce2a2e6382c548ec9ad41ebacfea0ee8a71674bdeb675780",
+      "bytes": 3738760
+    },
+    "llvm-objcopy": {
+      "sha256": "8dc9c332186588f48a647f3c5bcf25198589f5d797037f7fe3074a2e96f2a8ac",
+      "bytes": 4405616
+    },
+    "FileCheck": {
+      "sha256": "eee27aad50a0212c871718e6f3421df98de5171b54c4736cea06a5996779288f",
+      "bytes": 739480
+    },
+    "ld.lld": {
+      "sha256": "9931f9c4b15206305ca6c438171f270058268c91675278f96ee20569fc9098f2",
+      "bytes": 38750848
+    }
+  },
+  "compiler_version": "clang version 14.0.0 (https://github.com/ne75/llvm-project.git 72a9bb1ef2656d9953d1f41a8196d425ff2ab0b1)\nTarget: arm64-apple-darwin25.6.0\nThread model: posix\nInstalledDir: /Users/nikita/Code/p2llvm/build/production-baseline/bin",
+  "cmake_configuration": [
+    "CMAKE_BUILD_TYPE:STRING=Release",
+    "CMAKE_CXX_COMPILER:UNINITIALIZED=/opt/homebrew/opt/llvm/bin/clang++",
+    "CMAKE_C_COMPILER:FILEPATH=/Library/Developer/CommandLineTools/usr/bin/cc",
+    "CMAKE_OSX_ARCHITECTURES:STRING=arm64",
+    "LLVM_ENABLE_ASSERTIONS:BOOL=OFF",
+    "LLVM_ENABLE_PROJECTS:STRING=lld;clang",
+    "LLVM_EXPERIMENTAL_TARGETS_TO_BUILD:STRING=P2",
+    "LLVM_TARGETS_TO_BUILD:STRING=",
+    "CMAKE_GENERATOR:INTERNAL=Unix Makefiles"
+  ],
+  "binary_snapshot": "build/production-baseline/bin (local, ignored; source refs are separate)"
+}
