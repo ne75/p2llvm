@@ -10,6 +10,7 @@ import time
 import uuid
 
 from protocol import compare
+import loader
 
 HERE = Path(__file__).resolve().parent
 ROOT = HERE.parents[1]
@@ -45,10 +46,12 @@ def main():
     parser.add_argument('--baud', type=int, default=115200)
     parser.add_argument('--loader-baud', type=int, default=2000000)
     parser.add_argument('--loader', type=Path, default=ROOT / 'loadp2/bin/loadp2')
+    parser.add_argument('--reset', choices=['DTR', 'RTS'], default='DTR')
+    parser.add_argument('--fifo', type=int, help='loadp2 host serial FIFO size')
     parser.add_argument('--timeout', type=float, default=30)
     args = parser.parse_args()
-    if args.mode == 'hardware' and any(v is None for v in (args.port, args.board, args.clock_hz, args.clock_mode)):
-        parser.error('hardware mode requires --port, --board, --clock-hz and --clock-mode')
+    if args.fifo is not None and args.fifo <= 0:
+        parser.error('--fifo must be positive')
     manifest = json.loads((HERE / 'cases.json').read_text())
     if args.isa:
         from isa_generate import generate
@@ -68,7 +71,13 @@ def main():
     out.mkdir(parents=True, exist_ok=True)
     results = {'mode': args.mode, 'hardware_execution_attempted': False,
                'board': args.board, 'port': args.port, 'clock_hz': args.clock_hz,
-               'clock_mode': args.clock_mode, 'baud': args.baud, 'cases': []}
+               'clock_mode': args.clock_mode, 'baud': args.baud,
+               'port_selection': 'explicit' if args.port else 'loadp2 automatic',
+               'clock_selection': 'loadp2 defaults' if args.clock_hz is None and args.clock_mode is None else 'explicit override',
+               'reset': args.reset, 'fifo': args.fifo, 'loader_baud': args.loader_baud,
+               'cases': []}
+    if args.mode == 'hardware':
+        results['loader_sha256'] = digest(args.loader.resolve())
     for suite in suites:
         for opt in args.optimization or ['O0', 'O2', 'Os']:
             run_id = uuid.uuid4().hex
@@ -136,9 +145,10 @@ def main():
                     command([build / 'bin/llvm-objcopy', '-O', 'binary', elf, binary], log)
                     record['firmware_sha256'] = digest(binary)
                     results['hardware_execution_attempted'] = True
-                    output = command([args.loader.resolve(), '-q', '-t', '-ZERO', '-PATCH',
-                                      '-p', args.port, '-f', args.clock_hz, '-m', hex(args.clock_mode),
-                                      '-b', args.baud, '-l', args.loader_baud, binary], log, args.timeout)
+                    argv = loader.arguments(args, binary)
+                    record['loader_command'] = argv
+                    output = command(argv, log, args.timeout)
+                    record.update(loader.identity(output))
                 (case_dir / 'observations.log').write_bytes(output)
                 expected = dict(manifest['transport_expected'], **suite['expected'])
                 record['observed'], record['mismatches'] = compare(output, run_id, expected)
