@@ -4,18 +4,17 @@ extern void __start();
 
 unsigned int _cnt() {
     int x;
-    asm("getct %0" : "=r"(x) : );
+    asm volatile("getct %0" : "=r"(x));
     return x;
 }
 
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wreturn-type"
 unsigned long long _cnt64() {
-    asm volatile("getct $r30\n"
-                "getct $r31 wc\n");
-    // don't return a value on purpose because we've already setup r31. will raise error but that's okay
+    unsigned low, high;
+    // Rev B/C: GETCT WC captures the high half and latches the low half for
+    // the following GETCT. Reading low first races a 32-bit counter rollover.
+    asm volatile("getct %1 wc\ngetct %0" : "=r"(low), "=r"(high));
+    return ((unsigned long long)high << 32) | low;
 }
-#pragma clang diagnostic pop
 
 void _waitcnt(unsigned int cnt) {
     // ADDCT1 D,#0; WAITCT1
@@ -115,7 +114,8 @@ void _uart_putc(unsigned char c, int p) {
         testp(p, done);
     } while(!done);
 
-    __unlock_dbg();
+    if (p == DBG_UART_TX_PIN)
+        __unlock_dbg();
 }
 
 int _uart_checkc(int p) {

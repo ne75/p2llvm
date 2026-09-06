@@ -1,0 +1,5 @@
+# RUN: %clang -O2 -I%root/libp2/include -S %root/libp2/lib/propeller2.c -o %t.s
+# RUN: FileCheck %s < %t.s
+# CHECK-LABEL: _cnt64:
+# CHECK: getct {{r[0-9]+}} wc
+# CHECK-NEXT: getct {{r[0-9]+}}
