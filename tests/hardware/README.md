@@ -130,6 +130,12 @@ that never clears fails as well as one that never asserts. These expected values
 come from the documented event conditions; a successful build is still
 `BUILT_NOT_RUN` until the updated fixtures execute on the chip.
 
+The ALTS/ALTD fixtures retain augmented immediate and register operands. The
+Rev B/C v35 silicon erratum (printed page 4) says ALTx with immediate S uses
+AUGS without cancelling it. After capturing both results, immediate fixtures
+execute `mov pa, #0` to consume any pending augmentation in scratch PA before
+returning to C. The expected register/index results are unchanged.
+
 `isa_fifo.py` executes from LUT RAM because HUB execution owns the
 FIFO; it waits for pending writes before readback and return. QROTATE/QVECTOR
 fixtures use coarse quadrant/scale windows (ideal result ±4096 units), not a

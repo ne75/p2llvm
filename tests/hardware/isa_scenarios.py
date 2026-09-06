@@ -55,7 +55,13 @@ def scenarios(mnemonic, name, record):
             source = '##' + str(packed) if immediate(record, 's') else 'r31'
             code = ['mov pb, #42', 'mov r30, ##0x1f7', 'mov r31, ##' + str(packed),
                     mnemonic.lower() + ' r30, ' + source, 'mov pa, r31',
-                    'mov r31, r30', 'mov r30, ' + ('pa' if mnemonic == 'ALTS' else 'pb'), 'reta']
+                    'mov r31, r30', 'mov r30, ' + ('pa' if mnemonic == 'ALTS' else 'pb')]
+            if immediate(record, 's'):
+                # Rev B/C v35, p. 4: ALTx #S uses AUGS without cancelling it.
+                # Results are captured; consume it in scratch PA so it cannot
+                # augment an immediate in the C caller after RETA.
+                code += ['mov pa, #0']
+            code += ['reta']
             yield code, 42 if mnemonic == 'ALTS' else packed, 0x1f7 + delta
     elif mnemonic == 'SETQ2':
         operand = '#1' if immediate(record, 'd') else 'r31'
