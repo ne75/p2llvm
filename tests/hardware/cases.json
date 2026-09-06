@@ -196,6 +196,17 @@
         "attribute.text": "0x14",
         "attribute.cache": "0x444c"
       }
+    },
+    {
+      "id": "branch-span",
+      "sources": [
+        "tests/codegen/branch-span.c"
+      ],
+      "driver": "branch-driver.c",
+      "expected": {
+        "branch.taken": "0x9",
+        "branch.fallthrough": "0x7"
+      }
     }
   ]
 }
