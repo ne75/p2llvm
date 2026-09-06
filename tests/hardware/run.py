@@ -35,6 +35,7 @@ def main():
     parser.add_argument('--build-dir', type=Path, default=ROOT / 'build/phase0-llvm')
     parser.add_argument('--runtime-dir', type=Path, default=ROOT / 'build/phase0-libp2')
     parser.add_argument('--mode', choices=['build', 'host', 'hardware'], default='build')
+    parser.add_argument('--isa', action='store_true', help='include generated scalar ISA semantic suites')
     parser.add_argument('--case', action='append', help='suite ID; repeat to select several')
     parser.add_argument('--optimization', action='append', choices=['O0', 'O2', 'Os'])
     parser.add_argument('--port')
@@ -49,6 +50,13 @@ def main():
     if args.mode == 'hardware' and any(v is None for v in (args.port, args.board, args.clock_hz, args.clock_mode)):
         parser.error('hardware mode requires --port, --board, --clock-hz and --clock-mode')
     manifest = json.loads((HERE / 'cases.json').read_text())
+    if args.isa:
+        from isa_generate import generate
+        generated = generate(args.build_dir.resolve() / 'bin', args.build_dir.resolve() / 'p2-isa')
+        manifest['isa_oracle_sha256'] = generated['oracle_sha256']
+        manifest['isa_generator_sha256'] = generated['generator_sha256']
+        manifest['suites'] += generated['suites']
+        print('ISA models:', generated['modeled_records'], '/', generated['inventory'])
     suites = manifest['suites']
     if args.case:
         unknown = set(args.case) - {s['id'] for s in suites}
@@ -80,7 +88,7 @@ def main():
                 source_names = suite['sources'] + (suite.get('p2_sources', []) if args.mode != 'host' else [])
                 sources = [ROOT / s for s in source_names] + [HERE / suite['driver'], HERE / 'transport.c']
                 record['source_sha256'] = {str(p.relative_to(ROOT)): digest(p) for p in sources}
-                record['manifest_sha256'] = digest(HERE / 'cases.json')
+                record['manifest_sha256'] = hashlib.sha256(json.dumps(manifest, sort_keys=True).encode()).hexdigest()
                 objects = []
                 for index, source in enumerate(sources):
                     cxx = source.suffix == '.cpp'
