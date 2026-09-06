@@ -207,6 +207,18 @@
         "branch.taken": "0x9",
         "branch.fallthrough": "0x7"
       }
+    },
+    {
+      "id": "constant-address",
+      "sources": [
+        "llvm-project/llvm/test/CodeGen/P2/constant-hub-address.ll"
+      ],
+      "driver": "constant-address-driver.c",
+      "host_portable": false,
+      "expected": {
+        "absolute.load": "0x12345678",
+        "absolute.store": "0x7b"
+      }
     }
   ]
 }
