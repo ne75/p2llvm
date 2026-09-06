@@ -1,0 +1,2 @@
+# RUN: %python %root/tests/hardware/test_protocol.py
+# Host-only negative tests: malformed result streams must never produce a pass.
