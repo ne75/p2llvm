@@ -29,9 +29,19 @@ def compare(output, run_id, expected):
         observed[name] = value
     if not ended:
         raise ValueError('missing completion record')
-    expected = {name: int(value, 0) for name, value in expected.items()}
+    def bounds(spec):
+        if isinstance(spec, dict):
+            if set(spec) != {'min', 'max'}:
+                raise ValueError('range expectations require exactly min and max')
+            low, high = int(spec['min'], 0), int(spec['max'], 0)
+        else:
+            low = high = int(spec, 0)
+        if not 0 <= low <= high <= 0xffffffff:
+            raise ValueError('expectation outside an ordered uint32 range')
+        return low, high
+    ranges = {name: bounds(spec) for name, spec in expected.items()}
     mismatches = []
     for name in sorted(expected.keys() | observed.keys()):
-        if name not in expected or name not in observed or expected[name] != observed[name]:
+        if name not in expected or name not in observed or not ranges[name][0] <= observed[name] <= ranges[name][1]:
             mismatches.append({'name': name, 'expected': expected.get(name), 'actual': observed.get(name)})
     return observed, mismatches

@@ -17,6 +17,13 @@ class ProtocolTests(unittest.TestCase):
         self.assertTrue(compare(self.good, 'fresh', {'x': '7', 'y': '9'})[1])
         self.assertTrue(compare(self.good, 'fresh', {})[1])
 
+    def test_bounded_timing_expectations(self):
+        self.assertFalse(compare(self.good, 'fresh', {'x': {'min': '7', 'max': '9'}})[1])
+        self.assertTrue(compare(self.good, 'fresh', {'x': {'min': '8', 'max': '9'}})[1])
+        for spec in [{'min': '9', 'max': '7'}, {'min': '0'}, {'min': '-1', 'max': '9'}]:
+            with self.subTest(spec=spec), self.assertRaises(ValueError):
+                compare(self.good, 'fresh', {'x': spec})
+
     def test_invalid_transcripts(self):
         variants = [self.good.replace(b'fresh', b'stale'),
                     self.good.replace(b'fffffff8', b'ffffffff'),
