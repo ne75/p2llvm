@@ -8,8 +8,8 @@ import math
 
 BRANCHES = {'DJZ', 'DJNZ', 'DJF', 'DJNF', 'IJZ', 'IJNZ', 'TJZ', 'TJNZ'}
 MEMORY = {'RDBYTE', 'RDWORD', 'RDLONG', 'WRBYTE', 'WRWORD', 'WRLONG', 'RDLUT', 'WRLUT'}
-CORDIC = {'QMUL', 'QDIV', 'QFRAC', 'QSQRT', 'QLOG', 'QEXP'}
-SUPPORTED = BRANCHES | MEMORY | CORDIC | {'REP'}
+CORDIC = {'QMUL', 'QDIV', 'QFRAC', 'QSQRT', 'QLOG', 'QEXP', 'QROTATE', 'QVECTOR'}
+SUPPORTED = BRANCHES | MEMORY | CORDIC | {'REP', 'ALTS', 'ALTD', 'SETQ2', 'CALL', 'CALLA', 'JMP', 'RETB'}
 
 
 def immediate(record, field):
@@ -25,7 +25,41 @@ def flags():
 
 
 def scenarios(mnemonic, name, record):
-    if mnemonic in BRANCHES:
+    if mnemonic in {'ALTS', 'ALTD'}:
+        for packed, delta in [(512, 1), (0x3fe00, -1)]:
+            # S[17:9] is a signed increment; S[8:0] is the register offset.
+            # Redirect the next instruction to PB (COG address 0x1f7).
+            source = '##' + str(packed) if immediate(record, 's') else 'r31'
+            code = ['mov pb, #42', 'mov r30, ##0x1f7', 'mov r31, ##' + str(packed),
+                    mnemonic.lower() + ' r30, ' + source, 'mov pa, r31',
+                    'mov r31, r30', 'mov r30, ' + ('pa' if mnemonic == 'ALTS' else 'pb'), 'reta']
+            yield code, 42 if mnemonic == 'ALTS' else packed, 0x1f7 + delta
+    elif mnemonic == 'SETQ2':
+        operand = '#1' if immediate(record, 'd') else 'r31'
+        code = ['rdlut pb, #32', 'rdlut pa, #33', 'mov r31, #1',
+                'setq2 ' + operand, 'rdlong $32, ##.Lblock',
+                'rdlut r30, #32', 'rdlut r31, #33', 'wrlut pb, #32', 'wrlut pa, #33', 'reta']
+        yield code, 0x12345678, 0x9abcdef0
+    elif mnemonic in {'CALL', 'CALLA', 'JMP'}:
+        target = '.L' + name + '_target'
+        suffix = name[len(mnemonic):]
+        if suffix == 'r': operand = 'r31'
+        elif suffix == 'a' or mnemonic == 'CALLA': operand = '#\\' + target
+        else: operand = '#' + target
+        code = ['mov r30, #9', 'mov r31, ##' + target, mnemonic.lower() + ' ' + operand]
+        if mnemonic == 'JMP':
+            code += ['add r30, #128', target + ':', 'add r30, #19', 'mov r31, #0', 'reta']
+            yield code, 28, 0
+        else:
+            code += ['add r30, #7', 'mov r31, #0', 'reta', target + ':', 'add r30, #19',
+                     'reta' if mnemonic == 'CALLA' else 'ret']
+            yield code, 35, 0
+    elif mnemonic == 'RETB':
+        code = ['mov pb, ptrb', 'wrlong ##.Lretb_after, ##.Lmemory',
+                'mov ptrb, ##.Lmemory+4', 'retb', '.Lretb_after:',
+                'mov ptrb, pb', 'mov r30, #73', 'mov r31, #0', 'reta']
+        yield code, 73, 0
+    elif mnemonic in BRANCHES:
         for i, value in enumerate([0, 1, 0xffffffff]):
             target = '.L' + name + str(i)
             d = (value + (1 if mnemonic.startswith('IJ') else -1 if mnemonic.startswith('DJ') else 0)) & 0xffffffff
@@ -49,6 +83,8 @@ def scenarios(mnemonic, name, record):
         if mnemonic == 'QFRAC': vectors = [(0, 3), (1, 3), (7, 257)]
         if mnemonic == 'QSQRT': vectors = [(0, 0), (49, 0), (0, 1)]
         if mnemonic == 'QLOG': vectors = [(1, 0), (2, 0), (256, 0), (0x80000000, 0)]
+        if mnemonic == 'QROTATE': vectors = [(1 << 24, 0x10000000), (1 << 24, 0x20000000)]
+        if mnemonic == 'QVECTOR': vectors = [(3 << 20, 4 << 20), (4 << 20, 3 << 20)]
         if mnemonic == 'QEXP': vectors = [(0, 0), (1 << 27, 0), (8 << 27, 0), (31 << 27, 0)]
         for d, s in vectors:
             operand = ('##' + str(d) if immediate(record, 'd') else 'r30') if mnemonic in {'QLOG', 'QEXP'} else fields(record, d, s)
@@ -58,6 +94,18 @@ def scenarios(mnemonic, name, record):
                 lo, hi = (d*s) & 0xffffffff, (d*s) >> 32
             elif mnemonic in {'QDIV', 'QFRAC'}:
                 lo, hi = divmod(d if mnemonic == 'QDIV' else d << 32, s)
+            elif mnemonic in {'QROTATE', 'QVECTOR'}:
+                # Deliberately coarse quadrant/scale checks. This acceptance
+                # window is not a claimed silicon accuracy specification.
+                def window(value):
+                    center = round(value)
+                    return {'min': hex(center-4096), 'max': hex(center+4096)}
+                if mnemonic == 'QROTATE':
+                    angle = s * (2*math.pi) / (1 << 32)
+                    lo, hi = window(d*math.cos(angle)), window(d*math.sin(angle))
+                else:
+                    lo = window(math.hypot(d, s))
+                    hi = window(math.atan2(s, d)*(1 << 32)/(2*math.pi))
             elif mnemonic == 'QLOG': lo, hi = (d.bit_length()-1) << 27, 0
             elif mnemonic == 'QEXP': lo, hi = 1 << (d >> 27), 0
             else:
@@ -111,11 +159,12 @@ def generate_scenarios(records, output, root):
                 assembly += ['    ' + line for line in code]
                 declarations.append('extern unsigned long long ' + function + '(void);')
                 calls.append('    OBSERVE64("' + function + '", ' + function + '());')
-                expected[function+'.lo'], expected[function+'.hi'] = hex(lo), hex(hi)
-        assembly += ['.data', '.balign 4', '.Lmemory:', '.long 0']
+                expected[function+'.lo'] = hex(lo) if isinstance(lo, int) else lo
+                expected[function+'.hi'] = hex(hi) if isinstance(hi, int) else hi
+        assembly += ['.data', '.balign 4', '.Lmemory:', '.long 0', '.Lblock:', '.long 0x12345678, 0x9abcdef0']
         source.write_text('\n'.join(assembly) + '\n')
         driver.write_text('\n'.join(declarations + ['void test_body(void) {'] + calls + ['}']) + '\n')
         suites.append({'id': 'isa-' + op.lower(), 'sources': [str(source.relative_to(root))],
                        'driver': str(driver), 'host_portable': False,
-                       'instruction_records': [name for name, _ in members], 'expected': expected})
+                       'instruction_records': [name for name, _ in members] + (['RET'] if op == 'CALL' else ['GETQX', 'GETQY', 'SETQi'] if op == 'QMUL' else []), 'expected': expected})
     return suites
