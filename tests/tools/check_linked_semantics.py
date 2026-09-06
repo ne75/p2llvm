@@ -50,6 +50,9 @@ def check(path):
     assert word('asm_call_lut') & 0xfffff == 0x200 + (sym['lut_probe']-sym['__p2_lut_load_start'])//4
     assert elf.read(sym['probe_delta32']) == 8
     assert elf.read(sym['probe_delta64'], 8) == 0x800000008
+    assert elf.read(sym['probe_byte_reloc'], 1) == 0x77
+    assert elf.read(sym['probe_word_reloc'], 2) == 0x1277
+    assert elf.read(sym['probe_quad_reloc'], 8) == 0x1234cd
 
 
 if __name__ == '__main__':

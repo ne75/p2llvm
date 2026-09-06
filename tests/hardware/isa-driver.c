@@ -4,7 +4,13 @@ extern unsigned asm_return_aug(void), asm_negative_branch(void), asm_setnib(void
 extern unsigned asm_call_sqrt(void), asm_call_lut(void);
 extern unsigned probe_delta32;
 extern unsigned long long probe_delta64;
+extern unsigned char probe_byte_reloc;
+extern unsigned short probe_word_reloc;
+extern unsigned long long probe_quad_reloc;
 void test_body(void) {
+    observe("data.byte_reloc", probe_byte_reloc);
+    observe("data.word_reloc", probe_word_reloc);
+    OBSERVE64("data.quad_reloc", probe_quad_reloc);
     observe("reloc.add", asm_address_add());
     observe("reloc.subtract", asm_address_sub());
     observe("reloc.both_fields", asm_both_fields());

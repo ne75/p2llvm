@@ -7,7 +7,7 @@ import lit.formats
 config.name = 'P2 integration'
 config.test_format = lit.formats.ShTest(execute_external=False)
 config.suffixes = ['.c', '.cpp', '.ll', '.s', '.test']
-config.excludes = ['tools', 'hardware', 'README.md', 'legacy-coverage.md']
+config.excludes = ['absolute-symbol.s', 'tools', 'hardware', 'README.md', 'legacy-coverage.md']
 config.test_source_root = os.path.dirname(__file__)
 root = os.path.dirname(config.test_source_root)
 build = os.path.abspath(lit_config.params.get('p2_build', os.path.join(root, 'build', 'phase0-llvm')))

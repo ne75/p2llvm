@@ -150,7 +150,8 @@
     {
       "id": "isa-regressions",
       "sources": [
-        "tests/semantics/isa-regressions.s"
+        "tests/semantics/isa-regressions.s",
+        "tests/semantics/absolute-symbol.s"
       ],
       "driver": "isa-driver.c",
       "host_portable": false,
@@ -183,7 +184,11 @@
         "call.lut_section": "0x5b",
         "data.delta32": "0x8",
         "data.delta64.lo": "0x8",
-        "data.delta64.hi": "0x8"
+        "data.delta64.hi": "0x8",
+        "data.byte_reloc": "0x77",
+        "data.word_reloc": "0x1277",
+        "data.quad_reloc.lo": "0x1234cd",
+        "data.quad_reloc.hi": "0x0"
       }
     },
     {

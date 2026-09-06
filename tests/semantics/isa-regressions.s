@@ -1,5 +1,6 @@
 # RUN: %mc -filetype=obj %s -o %t.o
-# RUN: %bin/ld.lld -T %root/tests/semantics/layout.ld %t.o -o %t.elf
+# RUN: %mc -filetype=obj %root/tests/semantics/absolute-symbol.s -o %t.abs.o
+# RUN: %bin/ld.lld -T %root/tests/semantics/layout.ld %t.o %t.abs.o -o %t.elf
 # RUN: %python %tools/check_linked_semantics.py %t.elf
 # The identical object is also linked into the hardware semantics firmware.
 .text
@@ -82,3 +83,13 @@ probe_delta32:
     .long .Ldelta_end-.Ldelta_start
 probe_delta64:
     .quad (.Ldelta_end-.Ldelta_start)*0x100000001
+
+.globl probe_byte_reloc, probe_word_reloc, probe_quad_reloc
+probe_byte_reloc:
+    .byte probe_absolute
+    .balign 2
+probe_word_reloc:
+    .short probe_absolute+0x1200
+    .balign 4
+probe_quad_reloc:
+    .quad probe_absolute+0x123456
