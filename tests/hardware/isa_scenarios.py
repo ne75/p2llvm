@@ -11,7 +11,7 @@ import isa_fifo
 BRANCHES = {'DJZ', 'DJNZ', 'DJF', 'DJNF', 'IJZ', 'IJNZ', 'TJZ', 'TJNZ'}
 MEMORY = {'RDBYTE', 'RDWORD', 'RDLONG', 'WRBYTE', 'WRWORD', 'WRLONG', 'RDLUT', 'WRLUT'}
 CORDIC = {'QMUL', 'QDIV', 'QFRAC', 'QSQRT', 'QLOG', 'QEXP', 'QROTATE', 'QVECTOR'}
-SUPPORTED = BRANCHES | MEMORY | CORDIC | isa_events.SUPPORTED | isa_fifo.SUPPORTED | {'REP', 'ALTS', 'ALTD', 'SETQ2', 'CALL', 'CALLA', 'JMP', 'RETB'}
+SUPPORTED = BRANCHES | MEMORY | CORDIC | isa_events.SUPPORTED | isa_fifo.SUPPORTED | {'REP', 'ALTS', 'ALTD', 'SETQ2', 'CALL', 'CALLA', 'JMP', 'RETB', 'XORO32'}
 
 
 def immediate(record, field):
@@ -27,7 +27,24 @@ def flags():
 
 
 def scenarios(mnemonic, name, record):
-    if mnemonic in isa_fifo.SUPPORTED:
+    if mnemonic == 'XORO32':
+        # Rev B/C xoroshiro32++ [13,5,10,9], two 16-bit iterations.
+        # Chip Gracey's implementation and published seed-1 sequence:
+        # https://forums.parallax.com/discussion/comment/1448460/
+        # https://forums.parallax.com/discussion/168188/xoroshiro-random-number-generator
+        def rotate(x, count):
+            return ((x << count) | (x >> (16-count))) & 0xffff
+        for seed in [1, 0x12345678, 0xffffffff, 0x80000000]:
+            state, result = seed, 0
+            for shift in [0, 16]:
+                a, b = state & 0xffff, state >> 16
+                result |= ((rotate((a+b) & 0xffff, 9)+a) & 0xffff) << shift
+                b ^= a
+                state = (rotate(a, 13) ^ ((b << 5) & 0xffff) ^ b) | (rotate(b, 10) << 16)
+            if seed == 1:
+                assert result == 0x62690201
+            yield ['mov r30, ##' + str(seed), 'xoro32 r30', 'mov r31, #0', 'reta'], state, result
+    elif mnemonic in isa_fifo.SUPPORTED:
         yield from isa_fifo.scenarios(mnemonic, name, record)
     elif mnemonic in isa_events.SUPPORTED:
         yield from isa_events.scenarios(mnemonic, name, record)
