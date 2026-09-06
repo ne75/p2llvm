@@ -93,7 +93,12 @@ def main():
                         flags += ['-DP2_TEST_HOST']
                     else:
                         flags += ['--target=p2', '-mllvm', '-verify-machineinstrs']
-                    if suite.get('assembly_roundtrip') and index < len(suite['sources']) and args.mode != 'host':
+                    if suite.get('bitcode_roundtrip') and index < len(suite['sources']) and args.mode != 'host':
+                        bitcode = obj.with_suffix('.bc')
+                        command([compiler, *flags, '-emit-llvm', '-c', source, '-o', bitcode], log)
+                        command([build / 'bin/llc', '-march=p2', '-verify-machineinstrs',
+                                 '-filetype=obj', bitcode, '-o', obj], log)
+                    elif suite.get('assembly_roundtrip') and index < len(suite['sources']) and args.mode != 'host':
                         assembly = obj.with_suffix('.s')
                         command([compiler, *flags, '-S', source, '-o', assembly], log)
                         command([build / 'bin/llvm-mc', '-triple=p2', '-filetype=obj', assembly, '-o', obj], log)

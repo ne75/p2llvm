@@ -183,6 +183,19 @@
         "data.delta64.lo": "0x8",
         "data.delta64.hi": "0x8"
       }
+    },
+    {
+      "id": "cog-attributes",
+      "sources": [
+        "tests/codegen/cog-attributes.c"
+      ],
+      "driver": "attributes-driver.c",
+      "bitcode_roundtrip": true,
+      "expected": {
+        "attribute.entry": "0x25",
+        "attribute.text": "0x14",
+        "attribute.cache": "0x444c"
+      }
     }
   ]
 }
