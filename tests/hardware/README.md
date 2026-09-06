@@ -42,6 +42,26 @@ command logs, firmware, ELF images and raw observations are under
 runtime, ELF and firmware hashes, optimization level, board/port/clock settings
 and individual mismatches. `BUILT_NOT_RUN` is distinct from PASS.
 
+For loadp2's automatic USB serial selection and clock defaults, omit `--port`,
+`--clock-hz`, and `--clock-mode`. This board setup uses RTS reset, 2 Mbaud, and a
+10,000-byte host serial FIFO:
+
+```sh
+python3 -u tests/hardware/run.py --mode hardware --isa --loader /opt/p2llvm/bin/loadp2 --reset RTS --baud 2000000 --fifo 10000
+```
+
+The runner adds `-v` to retain ROM-version/port detection, `-PATCH` so the runtime
+receives clock/baud parameters, and `-q` for unattended terminal exit. It holds
+stdin open until completion because loadp2 otherwise exits on stdin EOF. Loader
+errors and timeouts retain partial output and identify the failed stage.
+Unspecified board/clock metadata remain unspecified; detected values are
+recorded from loader output rather than guessed.
+
+Serial configuration can be denied by the execution environment even when the
+device can be opened. A `tcsetattr`/baud-setting failure is a loader failure,
+not a P2 semantic failure. The full suite should only follow a working initial
+load; do not count unexecuted cases as passing.
+
 The hardware transport currently uses the existing UART runtime on pins 63/62.
 The loader uses RAM download with `-ZERO -PATCH -q -t`; no persistent flash
 programming is requested. A timeout includes startup and transport failures,
