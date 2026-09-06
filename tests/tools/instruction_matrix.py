@@ -52,7 +52,7 @@ def make_case(name, record, references):
             fixed = record.get(n)
             values[n] = bits_value(fixed) if isinstance(fixed, list) and all(isinstance(b, int) for b in fixed) else 0
             text[n] = ['', 'wz', 'wc', 'wcz'][values[n]]
-        elif kind == 'P2Implicit':
+        elif kind in ('P2Implicit', 'P2RegOrImm32', 'P2RegOrImm64'):
             values[n], text[n] = 0, ''
         elif kind == 'P2GPR':
             values[n] = 0x1d1 if n == 's' else 0x1d0
