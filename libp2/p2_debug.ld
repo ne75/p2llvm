@@ -22,9 +22,14 @@ SECTIONS {
         KEEP(__start())
         KEEP(*(cog))
 
-        /* If this address gets changed, we need to update lld's relocation function since it's hard coded there */
+        /* Startup loads this image into LUT; calls use these linker bounds. */
         . = 0x00200;
+        __p2_lut_load_start = .;
         KEEP(*(lut))
+        KEEP(*(.lut .lut.*))
+        __p2_lut_load_end = .;
+        ASSERT(__p2_lut_load_end - __p2_lut_load_start <= 0x800,
+               "P2 LUT image exceeds 512 longs")
 
         . = 0x00a00;
         KEEP(*(.text.main))

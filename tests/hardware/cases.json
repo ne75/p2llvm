@@ -144,6 +144,45 @@
         "memory.lo": "0x89abcdef",
         "memory.hi": "0x1234567"
       }
+    },
+    {
+      "id": "isa-regressions",
+      "sources": [
+        "tests/semantics/isa-regressions.s"
+      ],
+      "driver": "isa-driver.c",
+      "host_portable": false,
+      "instruction_records": [
+        "MOVri",
+        "RDBYTErr",
+        "RETA",
+        "WRLONGii",
+        "RDLONGri",
+        "CALL",
+        "AUGS",
+        "AUGD",
+        "ADDri",
+        "TJZri",
+        "SETNIBri",
+        "CMPri",
+        "TESTBzri",
+        "WRZ",
+        "CALLAa"
+      ],
+      "expected": {
+        "reloc.add": "0x33",
+        "reloc.subtract": "0x5a",
+        "reloc.both_fields": "0x33",
+        "return.aug": "0x3e8",
+        "branch.negative": "0x1",
+        "setnib.aug": "0x82345678",
+        "testb.wz": "0x1",
+        "call.hub_name": "0x4d",
+        "call.lut_section": "0x5b",
+        "data.delta32": "0x8",
+        "data.delta64.lo": "0x8",
+        "data.delta64.hi": "0x8"
+      }
     }
   ]
 }

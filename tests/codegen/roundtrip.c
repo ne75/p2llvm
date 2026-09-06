@@ -10,6 +10,7 @@ extern void use(int *);
 int *address(void) { return &g; }
 int local(int n) { int x = n; use(&x); return x; }
 int branch(int a, int b) { if (a) return b + 7; use(&b); return b - 2; }
-// CHECK: R_P2_AUG20 g
+// CHECK: R_P2_AUG_HI23 g
+// CHECK: R_P2_AUGS_LO9 g
 // CHECK-NOT: $g
 // CHECK-NOT: $.L

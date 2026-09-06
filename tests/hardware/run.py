@@ -73,6 +73,10 @@ def main():
             results['cases'].append(record)
             started = time.monotonic()
             try:
+                if args.mode == 'host' and not suite.get('host_portable', True):
+                    record['status'] = 'NOT_APPLICABLE'
+                    record['reason'] = 'P2 assembly requires the chip; expected values are independently specified'
+                    continue
                 sources = [ROOT / s for s in suite['sources']] + [HERE / suite['driver'], HERE / 'transport.c']
                 record['source_sha256'] = {str(p.relative_to(ROOT)): digest(p) for p in sources}
                 record['manifest_sha256'] = digest(HERE / 'cases.json')
