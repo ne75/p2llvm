@@ -15,7 +15,7 @@ SCALAR = set(('ADD ADDX ADDS ADDSX SUB SUBX SUBS SUBSX SUBR CMP CMPX CMPS CMPSX 
               'FGE FLE FGES FLES SUMC SUMNC SUMZ SUMNZ AND ANDN OR XOR TEST '
               'MOV NOT ABS NEG ZEROX SIGNX ENCOD ONES ROR ROL SHR SHL RCR RCL SAR SAL '
               'SETNIB SETBYTE SETWORD GETNIB GETBYTE GETWORD ROLNIB ROLBYTE ROLWORD '
-              'DECOD BMASK MOVBYTS REV SPLITB SPLITW MERGEB MERGEW RGBSQZ '
+              'DECOD BMASK MOVBYTS REV SPLITB SPLITW MERGEB MERGEW RGBSQZ RGBEXP '
               'WRC WRNC WRZ WRNZ TESTB TESTBN MUL MULS NOP').split())
 
 
@@ -97,6 +97,9 @@ def scalar(op, d, s, c, z, n=1):
         group = 4 if op.endswith('B') else 2
         source = (lambda i: (i % (32//group))*group + i//(32//group)) if op.startswith('SPLIT') else (lambda i: (i % group)*(32//group) + i//group)
         return sum(((d >> source(i)) & 1) << i for i in range(32)), c, z
+    elif op == 'RGBEXP':
+        r, g, b = (d >> 11) & 31, (d >> 5) & 63, d & 31
+        return (((r << 3) | (r >> 2)) << 24) | (((g << 2) | (g >> 4)) << 16) | (((b << 3) | (b >> 2)) << 8), c, z
     elif op == 'RGBSQZ': return (((d >> 27) & 31) << 11) | (((d >> 18) & 63) << 5) | ((d >> 11) & 31), c, z
     elif op in {'WRC', 'WRNC', 'WRZ', 'WRNZ'}: return {'WRC': c, 'WRNC': 1-c, 'WRZ': z, 'WRNZ': 1-z}[op], c, z
     elif op == 'NOP': return d, c, z

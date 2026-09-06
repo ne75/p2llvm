@@ -11,6 +11,7 @@ import re
 import subprocess
 
 from isa_model import SCALAR, scalar
+from isa_scenarios import SUPPORTED, generate_scenarios
 
 ROOT = Path(__file__).resolve().parents[2]
 
@@ -51,7 +52,8 @@ def generate(bindir, output):
     for name, record in records.items():
         mnemonic = record['AsmString'].replace('$cc', '').strip().split()[0].upper()
         if mnemonic not in SCALAR:
-            missing.append(name)
+            if mnemonic not in SUPPORTED:
+                missing.append(name)
             continue
         groups[mnemonic].append((name, record))
     suites = []
@@ -90,9 +92,10 @@ def generate(bindir, output):
         suites.append({'id': stem, 'sources': [str(source.relative_to(ROOT))],
                        'driver': str(adapter), 'host_portable': False,
                        'instruction_records': covered, 'expected': expected})
-    report = {'inventory': len(records), 'modeled_records': sum(len(g) for g in groups.values()),
+    suites += generate_scenarios(records, output, ROOT)
+    report = {'inventory': len(records), 'modeled_records': len(records)-len(missing),
               'missing_records': sorted(missing), 'suites': suites,
               'oracle_sha256': hashlib.sha256((Path(__file__).with_name('isa_model.py')).read_bytes()).hexdigest(),
-              'generator_sha256': hashlib.sha256(Path(__file__).read_bytes()).hexdigest()}
+              'generator_sha256': hashlib.sha256(Path(__file__).read_bytes() + Path(__file__).with_name('isa_scenarios.py').read_bytes()).hexdigest()}
     (output / 'manifest.json').write_text(json.dumps(report, indent=2) + '\n')
     return report
