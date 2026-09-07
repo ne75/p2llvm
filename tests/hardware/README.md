@@ -173,6 +173,11 @@ For `performance-memset`, size indices 0/1/2 mean 8/64/1024 bytes at offset 3.
 Implementation indices 0/1/2/3 mean empty / previous volatile byte loop / original
 WRFAST-DJNZ loop with an added drain / updated memset. Nonzero lengths avoid the
 original loop's zero-count bug. All fill timings include completed writes.
+Each memset call is followed by an empty compiler memory barrier, including
+comparison paths. This prevents repeated identical builtin fills from collapsing
+into one call without adding P2 instructions. The integration regression checks
+that the optimized benchmark retains its 64-call loop; `batch.calls` describes
+the configured batch size, not an independent hardware execution counter.
 `performance-counter` indices 0/1/2 mean empty / previous C combine / updated
 _cnt64. Memset and comparison sources use the selected optimization; _cnt64 is
 linked from the -Oz runtime, with its identical three-instruction body verified

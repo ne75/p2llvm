@@ -16,11 +16,17 @@ extern void *memset_previous(void *, int, size_t);
 extern void *memset_production_completed(void *, int, size_t);
 extern void *memset_empty(void *, int, size_t);
 static unsigned char arena[1040] __attribute__((aligned(16)));
+// Make each fill observable to the optimizer, including builtin memset.
+// Without this barrier O2 can collapse 64 identical fills to one. The empty
+// asm emits no instructions; apply it equally to every comparison path.
 #define MEASURE(name, target) \
     __attribute__((noinline, no_builtin("memset"))) \
     static unsigned name(unsigned n) { \
         unsigned start = ticks(); \
-        for (unsigned i = 0; i < 64; ++i) target(arena + 3, 0xa5, n); \
+        for (unsigned i = 0; i < 64; ++i) { \
+            target(arena + 3, 0xa5, n); \
+            asm volatile("" : : : "memory"); \
+        } \
         return ticks() - start; \
     }
 MEASURE(empty, memset_empty)

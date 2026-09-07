@@ -1,0 +1,17 @@
+# The hardware benchmark must time 64 calls, not one optimized combined fill.
+# RUN: %clang -O0 -DP2_BENCH_MEMSET -mllvm -verify-machineinstrs -S %root/tests/hardware/performance-driver.c -o %t.O0.s
+# RUN: %clang -O2 -DP2_BENCH_MEMSET -mllvm -verify-machineinstrs -S %root/tests/hardware/performance-driver.c -o %t.O2.s
+# RUN: FileCheck %s < %t.O2.s
+# RUN: %clang -Os -DP2_BENCH_MEMSET -mllvm -verify-machineinstrs -S %root/tests/hardware/performance-driver.c -o %t.Os.s
+# RUN: FileCheck %s < %t.Os.s
+# CHECK-LABEL: updated:
+# CHECK: mov [[COUNT:r[0-9]+]], #0
+# CHECK: [[LOOP:.LBB[0-9_]+]]:
+# CHECK: calla #\memset
+# CHECK-NOT: calla
+# CHECK: add [[NEXT:r[0-9]+]], #1
+# CHECK: cmp [[COUNT]], #63
+# CHECK: mov [[COUNT]], [[NEXT]]
+# CHECK: if_c{{[ \t]+}}jmp #[[LOOP]]
+# CHECK: getct
+# CHECK: reta
