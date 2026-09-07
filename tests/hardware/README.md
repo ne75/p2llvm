@@ -18,6 +18,10 @@ corrupt or unexpected observations fail, and execution has a hard timeout.
 Transport self-checks precede each suite. `test_protocol.py` exercises rejection
 of corrupt, incomplete and stale streams.
 
+See the [hardware test observation protocol](PROTOCOL.md) for the exact record
+format, a complete transcript, value encoding, validation rules, and loader
+completion and failure handling.
+
 ```sh
 # Validate the portable fixtures and handwritten expected values on the host.
 python3 tests/hardware/run.py --mode host
