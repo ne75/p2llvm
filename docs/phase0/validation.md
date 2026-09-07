@@ -131,7 +131,8 @@ old-test removal are separate review units.
 
 Step 1 is complete under the documented USB/loader assumption. The next step in
 [findings.md](findings.md#agreed-review-sequence) is WRFAST memset and direct-register
-counter returns. That work has not started as part of this results review.
+counter returns. See [step2.md](step2.md) for the implemented changes and pending
+hardware validation of the new runtime; this checkpoint retains the old results.
 Performance measurements, remaining runtime audits and 74 instruction fixtures
 are still outstanding. Peripheral tests need a defined board and wiring profile.
 No production performance or flight acceptance is established by this checkpoint.
