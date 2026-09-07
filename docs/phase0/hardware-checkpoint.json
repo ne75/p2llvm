@@ -51,7 +51,19 @@
     "independently_retained_invocations": 1,
     "note": "Earlier reruns were overwritten; only the latest has preserved logs."
   },
-  "assessment": "Timeouts recovered on rerun; root cause unresolved. Original FAIL verdicts retained.",
+  "assessment": "Existing semantic suite passes across the full run and retained rerun. By user direction, treat the two original timeouts as USB/loader interruptions for this checkpoint; the cause is assumed, not verified. Original FAIL verdicts retained.",
+  "semantic_review": {
+    "status": "PASS",
+    "suite_optimization_pairs": 468,
+    "passed_in_full_run": 466,
+    "passed_in_retained_rerun": 2,
+    "semantic_failures": 0,
+    "assumed_usb_loader_interruptions": 2,
+    "timeout_cause_verified": false,
+    "new_hardware_execution": false,
+    "results_file": "reviewed-results.json",
+    "results_sha256": "4e9d7a9cce9bbd5cd32406a60ae8da737e7e0ff3bfc1fb58157fbb4ee09da790"
+  },
   "archives": [
     {
       "file": "p2-hardware-evidence.zip",

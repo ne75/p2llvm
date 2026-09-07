@@ -1,7 +1,8 @@
 # Phase 0 validation checkpoint
 
 Recorded September 7, 2026, from the September 6 hardware run and retained rerun.
-**Hardware evidence is preserved; full acceptance remains open.** Production
+**Existing hardware semantic suite: PASS under the USB/loader assumption below.**
+Broader coverage and performance acceptance remain open. Production
 `master`, `production_baseline`, and the baseline tag remain unchanged. All work
 is local on `phase0_cleanup`; nothing has been pushed or installed over the
 production compiler. The LLVM version decision retains the pinned LLVM 14 fork
@@ -24,6 +25,7 @@ for this documentation commit:
 | Executable instruction-record fixtures | 294/368 ready; 74 missing |
 | Full hardware run, 156 suites × O0/O2/Os | 466 PASS; 2 FAIL (30-second timeouts) |
 | Retained targeted hardware rerun | 2 PASS; original timeout verdicts retained |
+| Combined semantic checkpoint | 468/468 PASS; two original timeouts treated as assumed USB/loader interruptions |
 
 `coverage.py --require-complete` correctly exits 1 because 74 records lack an
 executable fixture. That is an unmet acceptance condition, not a passing test.
@@ -46,11 +48,11 @@ The preserved checkpoint below is outside those overwrite paths.
 
 ## Hardware checkpoint
 
-| Optimization | PASS | Timeout (FAIL) |
-|---|---:|---:|
-| O0 | 156 | 0 |
-| O2 | 156 | 0 |
-| Os | 154 | 2 |
+| Optimization | Passed in full run | Passed in retained rerun | Accepted total |
+|---|---:|---:|---:|
+| O0 | 156 | 0 | 156 |
+| O2 | 156 | 0 | 156 |
+| Os | 154 | 2 | 156 |
 
 The full run recorded no semantic mismatches. `c-patterns`, `machine-contracts`,
 `runtime-signed-remainder`, `select-compare`, `isa-alts`, and `isa-altd` all passed
@@ -64,9 +66,10 @@ but rebuilt firmware with new run IDs, so it was not an identical-binary replay.
 All 468 suite/optimization combinations now have an observed pass across the
 full run and retained rerun. This is not a single clean 468-run execution.
 
-Keep both original FAIL records. An empty log and a successful retry cannot
-distinguish loader/USB/serial trouble from intermittent target startup or execution
-failure. The cause remains unresolved; the runner still has no automatic retry.
+By user direction, treat these two initial timeouts as USB/loader interruptions
+and accept the existing 468-case semantic checkpoint. This is a working assumption
+for these two events, not a verified cause or a policy for future failures.
+Both original FAIL records remain intact. The runner still has no automatic retry.
 
 Successful logs identify P2 ROM G on `/dev/cu.usbserial-DK0H6QJS`, with detected
 clock mode `0x012427f8`. Loading used automatic port selection, RTS, 2 Mbaud,
@@ -79,6 +82,11 @@ were not supplied; ROM identity alone does not establish those details.
 commit `e2172ec` and LLVM commit `3ceae9f4f4c7`, compiler/runtime/loader/manifest
 hashes, rerun identities, and archive sizes and SHA-256 checksums. Compiler and
 runtime hashes match across the full run and retained rerun.
+Its `semantic_review` field records the accepted disposition and the checksum of
+`reviewed-results.json`, a separate derived report in the evidence directory.
+That report selects one verified passing attempt for each suite/optimization pair
+and retains references to both original timeout records. `reviewed-report.md`
+provides the corresponding human-readable summary and complete suite table.
 
 Archives are local, ignored files under
 `build/phase0-checkpoints/hardware-2026-09-06/`; they are not included in a clone
@@ -121,9 +129,9 @@ old-test removal are separate review units.
 
 ## Next acceptance work
 
-Step 1 records the hardware checkpoint and stops for human review. Follow the
-six-step sequence in [findings.md](findings.md#agreed-review-sequence), beginning
-with WRFAST memset and direct-register counter returns after that review.
+Step 1 is complete under the documented USB/loader assumption. The next step in
+[findings.md](findings.md#agreed-review-sequence) is WRFAST memset and direct-register
+counter returns. That work has not started as part of this results review.
 Performance measurements, remaining runtime audits and 74 instruction fixtures
 are still outstanding. Peripheral tests need a defined board and wiring profile.
 No production performance or flight acceptance is established by this checkpoint.

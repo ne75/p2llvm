@@ -38,8 +38,8 @@ records the submodule commits independently of branch names.
    and rerun outcomes, and checksums for the locally preserved evidence archives.
 
 The six-step implementation sequence is in [findings.md](findings.md#agreed-review-sequence).
-Step 1 records the completed hardware run and retained rerun, then pauses for
-human review before runtime performance changes begin.
+Step 1 accepts the existing semantic suite using the full run and passing rerun,
+under the documented USB/loader assumption. Runtime performance changes are next.
 
 Each compiler fix is committed in the LLVM submodule; corresponding root commits
 advance its gitlink. Test/build output is kept under `build/`, not checked in as

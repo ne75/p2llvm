@@ -2,8 +2,9 @@
 
 These IDs correspond to the earlier P2 backend review. Changes are on
 `phase0_cleanup`; production refs and the original build are retained.
-**Hardware checkpoint: 466/468 runs passed; two Os timeouts passed on a retained
-rerun.** The original failures remain recorded, with cause unresolved. See
+**Hardware semantic checkpoint: 468/468 PASS across the full run and retained
+rerun.** By user direction, the two original Os timeouts are treated as assumed
+USB/loader interruptions. Their raw failure records remain intact. See
 [validation.md](validation.md) and [hardware-checkpoint.json](hardware-checkpoint.json)
 for evidence, tested revisions, and acceptance limits.
 
@@ -89,9 +90,10 @@ exhaustive behavior or unchanged performance.
 
 Use small reviewable commits and stop for human review between these steps.
 
-1. **Record the hardware checkpoint (ready for review).** Preserve results and
-   update findings/validation. Retain original timeouts separately from rerun
-   passes; do not infer a loader cause or completed hardware acceptance.
+1. **Record the hardware checkpoint (complete under USB/loader assumption).**
+   Results and findings/validation are preserved. All 468 existing combinations
+   have verified passes; the two original timeouts remain separately recorded
+   and are provisionally attributed to USB/loader issues by user direction.
 2. **Finish performance review comments.** Restore WRFAST memset with zero-length
    handling and completed writes; return _cnt64 directly in R30/R31 without shift
    helpers. Validate semantics and measure cycles on hardware.
