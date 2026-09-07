@@ -110,8 +110,9 @@ instruction lacks an executable fixture. This checks fixture readiness; only a
 matching hardware-mode result establishes execution. Coverage remains incomplete.
 
 Counter expectations use bounded raw elapsed counts; the host checks the range.
-The short counter fixture does not validate a low-word rollover. A dedicated
-rollover run and accurate peripheral/interrupt timing need the actual board.
+The short counter fixture does not validate a low-word rollover; the optional
+`counter-rollover` fixture below does. Peripheral/interrupt timing still needs
+additional board fixtures.
 The COG/lock fixture starts a separate cog, observes contention and release,
 and stops the worker; its handshake is covered by the host's hard timeout.
 
@@ -152,3 +153,39 @@ The coverage gate currently tracks instruction-record readiness, not exhaustive
 operand, flag, predicate, address-mode, or timing coverage. A ready record can
 still need boundary cases. Hardware runs must review actual mismatches before
 changing an expectation; a compiler-produced value is not an independent oracle.
+
+## Runtime performance review (step 2)
+
+`runtime-memset` compiles the actual implementation at O0/O2/Os. It checks 460
+combinations of length (0 through 1024, including FIFO/block boundaries), all
+four byte alignments, and five fill values including truncation and negative
+values. Every byte and both guards are checked, along with the return pointer.
+A separate readback stays in LUT until after reading the last filled byte.
+
+`--performance` adds optional fixtures from `performance.json`. Timing fixtures
+measure 64 calls per batch with independent GETCT reads, alternate implementations
+for five samples, and report raw minimum/maximum sysclks. UART output is outside
+the timed region. Empty-call timings include loop/call overhead and are reported
+separately; no overhead is silently subtracted. Timing ranges only reject empty
+or implausibly long observations: PASS does not establish a speed improvement.
+
+For `performance-memset`, size indices 0/1/2 mean 8/64/1024 bytes at offset 3.
+Implementation indices 0/1/2/3 mean empty / previous volatile byte loop / original
+WRFAST-DJNZ loop with an added drain / updated memset. Nonzero lengths avoid the
+original loop's zero-count bug. All fill timings include completed writes.
+`performance-counter` indices 0/1/2 mean empty / previous C combine / updated
+_cnt64. Memset and comparison sources use the selected optimization; _cnt64 is
+linked from the -Oz runtime, with its identical three-instruction body verified
+at O0/O2/Os. The sysclk rate is not inferred from the cycle counts.
+
+`counter-rollover` waits independently for the first 32-bit CT wrap after reset,
+then checks _cnt64 before and after it, including a nonzero high half. The wait
+is approximately 2^32/sysclk seconds; allow startup time as well. It is excluded
+from the ordinary suite because it can exceed the default 30-second timeout.
+
+```sh
+python3 -u tests/hardware/run.py --mode hardware --performance --loader /opt/p2llvm/bin/loadp2 --reset RTS --baud 2000000 --fifo 10000 --timeout 300 --case runtime-memset --case runtime-memory --case runtime-counters --case performance-memset --case performance-counter --case counter-rollover
+```
+
+The command runs 18 images (six suites at O0/O2/Os) and replaces hardware-mode
+results as usual. Preserve that JSON and the logs before starting another run.

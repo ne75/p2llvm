@@ -1,0 +1,174 @@
+{
+  "note": "Timing ranges are transport/sanity checks, not performance acceptance thresholds. Compare raw cycles and empty-call overhead. counter-rollover needs a timeout above 2^32/sysclk plus startup.",
+  "suites": [
+    {
+      "id": "performance-memset",
+      "host_portable": false,
+      "sources": [
+        "tests/hardware/performance-baselines.c"
+      ],
+      "p2_sources": [
+        "libp2/lib/builtins/memset.c"
+      ],
+      "driver": "performance-driver.c",
+      "cflags": [
+        "-DP2_BENCH_MEMSET"
+      ],
+      "expected": {
+        "cycles.0.0.min": {
+          "min": "0x1",
+          "max": "0x3fffffff"
+        },
+        "cycles.0.0.max": {
+          "min": "0x1",
+          "max": "0x3fffffff"
+        },
+        "cycles.0.1.min": {
+          "min": "0x1",
+          "max": "0x3fffffff"
+        },
+        "cycles.0.1.max": {
+          "min": "0x1",
+          "max": "0x3fffffff"
+        },
+        "cycles.0.2.min": {
+          "min": "0x1",
+          "max": "0x3fffffff"
+        },
+        "cycles.0.2.max": {
+          "min": "0x1",
+          "max": "0x3fffffff"
+        },
+        "cycles.0.3.min": {
+          "min": "0x1",
+          "max": "0x3fffffff"
+        },
+        "cycles.0.3.max": {
+          "min": "0x1",
+          "max": "0x3fffffff"
+        },
+        "cycles.1.0.min": {
+          "min": "0x1",
+          "max": "0x3fffffff"
+        },
+        "cycles.1.0.max": {
+          "min": "0x1",
+          "max": "0x3fffffff"
+        },
+        "cycles.1.1.min": {
+          "min": "0x1",
+          "max": "0x3fffffff"
+        },
+        "cycles.1.1.max": {
+          "min": "0x1",
+          "max": "0x3fffffff"
+        },
+        "cycles.1.2.min": {
+          "min": "0x1",
+          "max": "0x3fffffff"
+        },
+        "cycles.1.2.max": {
+          "min": "0x1",
+          "max": "0x3fffffff"
+        },
+        "cycles.1.3.min": {
+          "min": "0x1",
+          "max": "0x3fffffff"
+        },
+        "cycles.1.3.max": {
+          "min": "0x1",
+          "max": "0x3fffffff"
+        },
+        "cycles.2.0.min": {
+          "min": "0x1",
+          "max": "0x3fffffff"
+        },
+        "cycles.2.0.max": {
+          "min": "0x1",
+          "max": "0x3fffffff"
+        },
+        "cycles.2.1.min": {
+          "min": "0x1",
+          "max": "0x3fffffff"
+        },
+        "cycles.2.1.max": {
+          "min": "0x1",
+          "max": "0x3fffffff"
+        },
+        "cycles.2.2.min": {
+          "min": "0x1",
+          "max": "0x3fffffff"
+        },
+        "cycles.2.2.max": {
+          "min": "0x1",
+          "max": "0x3fffffff"
+        },
+        "cycles.2.3.min": {
+          "min": "0x1",
+          "max": "0x3fffffff"
+        },
+        "cycles.2.3.max": {
+          "min": "0x1",
+          "max": "0x3fffffff"
+        },
+        "batch.calls": "0x40",
+        "batch.samples": "0x5"
+      }
+    },
+    {
+      "id": "performance-counter",
+      "host_portable": false,
+      "sources": [
+        "tests/hardware/performance-baselines.c"
+      ],
+      "p2_sources": [],
+      "driver": "performance-driver.c",
+      "cflags": [
+        "-DP2_BENCH_COUNTER"
+      ],
+      "expected": {
+        "cycles.0.0.min": {
+          "min": "0x1",
+          "max": "0x3fffffff"
+        },
+        "cycles.0.0.max": {
+          "min": "0x1",
+          "max": "0x3fffffff"
+        },
+        "cycles.0.1.min": {
+          "min": "0x1",
+          "max": "0x3fffffff"
+        },
+        "cycles.0.1.max": {
+          "min": "0x1",
+          "max": "0x3fffffff"
+        },
+        "cycles.0.2.min": {
+          "min": "0x1",
+          "max": "0x3fffffff"
+        },
+        "cycles.0.2.max": {
+          "min": "0x1",
+          "max": "0x3fffffff"
+        },
+        "batch.calls": "0x40",
+        "batch.samples": "0x5"
+      }
+    },
+    {
+      "id": "counter-rollover",
+      "host_portable": false,
+      "sources": [],
+      "driver": "counter-rollover-driver.c",
+      "expected": {
+        "rollover.before.high": "0x0",
+        "rollover.after.high": "0x1",
+        "rollover.elapsed.lo": {
+          "min": "0x1",
+          "max": "0x20000"
+        },
+        "rollover.elapsed.hi": "0x0"
+      }
+    }
+  ]
+}

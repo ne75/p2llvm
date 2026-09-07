@@ -60,6 +60,8 @@ def main():
     parser.add_argument('--runtime-dir', type=Path, default=ROOT / 'build/phase0-libp2')
     parser.add_argument('--mode', choices=['build', 'host', 'hardware'], default='build')
     parser.add_argument('--isa', action='store_true', help='include generated scalar ISA semantic suites')
+    parser.add_argument('--performance', action='store_true',
+                        help='include optional runtime benchmarks and the long counter-rollover fixture')
     parser.add_argument('--case', action='append', help='suite ID; repeat to select several')
     parser.add_argument('--optimization', action='append', choices=['O0', 'O2', 'Os'])
     parser.add_argument('--port')
@@ -76,6 +78,8 @@ def main():
     if args.fifo is not None and args.fifo <= 0:
         parser.error('--fifo must be positive')
     manifest = json.loads((HERE / 'cases.json').read_text())
+    if args.performance:
+        manifest['suites'] += json.loads((HERE / 'performance.json').read_text())['suites']
     if args.isa:
         from isa_generate import generate
         generated = generate(args.build_dir.resolve() / 'bin', args.build_dir.resolve() / 'p2-isa')
