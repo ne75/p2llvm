@@ -1,8 +1,9 @@
 # Step 2: runtime performance review
 
-Implementation and software validation are ready. **Hardware correctness and
-cycle measurements are pending.** The accepted step-1 checkpoint applies to its
-recorded runtime hash; it does not validate this changed runtime.
+**Implementation, software checks and targeted hardware validation are complete;
+ready for human review.** The [hardware report](step2-hardware.md) records all
+results, the corrected benchmark and measured overheads. Step 3 has not started.
+The accepted step-1 checkpoint still applies to its recorded runtime hash.
 
 ## Review commits
 
@@ -12,6 +13,8 @@ recorded runtime hash; it does not validate this changed runtime.
   (15 additions, 10 deletions).
 - `749a358`: optional benchmarks, frozen comparison implementations and a counter
   rollover fixture (358 additions, 2 deletions).
+- `7db2039`: prevent the O2 benchmark from collapsing 64 memset calls into one;
+  regression checks the retained loop (29 additions, 1 deletion).
 
 ## Runtime changes
 
@@ -37,12 +40,14 @@ No shift helper or C reconstruction is needed.
 | _cnt64 | O2 / Os / Oz | 18 | 3 |
 
 Counts include the complete function but not callees or dynamic loop iterations.
-They are not cycle measurements. In particular, O0 memset has more bookkeeping;
-small-fill performance and FIFO setup/drain costs need the hardware measurements.
+They are not cycle measurements. Hardware now confirms O0 memset has overhead
+versus the original assembly, and Os 8-byte fills cost 8.08 more cycles per call.
+O2 fills differ by only five cycles per 64-call batch. See the complete tables
+and measurement limits in the hardware report.
 
-## Validation and hardware handoff
+## Validation
 
-Recorded software results: 368 instruction checks, 139 LLVM tests, 16 integration
+Recorded software results: 368 instruction checks, 139 LLVM tests, 17 integration
 tests, 12 runner/oracle tests; 39 portable executions passed and 27 were not
 applicable on the host. All 480 firmware builds passed (157 ordinary/generated
 suites plus three optional fixtures, each at O0/O2/Os).
@@ -60,10 +65,13 @@ for loop/call overhead. Performance PASS only confirms valid timing observations
 review the cycle values before accepting performance. The long rollover test
 checks a nonzero high word instead of relying solely on readings shortly after reset.
 
-Run hardware from the normal terminal: serial configuration was previously denied
-in the agent execution environment. Preserve its results and raw logs before
-another invocation. Review correctness, min/max batch cycles and per-call costs
-at each optimization before closing this step; step 3 has not started.
+Hardware ran from the user's normal terminal. The initial 18 images passed their
+protocol checks, but code inspection invalidated one O2 timing measurement: its
+loop had been optimized away. After the benchmark repair, all three memset timing
+images passed again with 64 calls verified in linked code. All 21 raw records are
+preserved; the accepted set uses the corrected timings. Counter rollover passes
+at every optimization and the new counter batches are 2.34–2.83 times faster.
+Review the measured short-fill/O0 overhead before advancing to step 3.
 
 ## Additional backend findings
 

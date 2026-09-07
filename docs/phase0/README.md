@@ -40,7 +40,9 @@ records the submodule commits independently of branch names.
 The six-step implementation sequence is in [findings.md](findings.md#agreed-review-sequence).
 Step 1 accepts the existing semantic suite using the full run and passing rerun,
 under the documented USB/loader assumption. [Step 2](step2.md) contains the runtime
-performance changes and is waiting for hardware measurements and review.
+performance changes. Its [hardware report](step2-hardware.md) records passing
+correctness tests and cycle measurements, including a repaired benchmark and
+short-fill/O0 overhead. Step 2 is ready for human review; step 3 has not started.
 
 Each compiler fix is committed in the LLVM submodule; corresponding root commits
 advance its gitlink. Test/build output is kept under `build/`, not checked in as

@@ -129,12 +129,14 @@ old-test removal are separate review units.
 
 ## Next acceptance work
 
-Step 1 is complete under the documented USB/loader assumption. The next step in
-[findings.md](findings.md#agreed-review-sequence) is WRFAST memset and direct-register
-counter returns. See [step2.md](step2.md) for the implemented changes and pending
-hardware validation of the new runtime; this checkpoint retains the old results.
-Performance measurements, remaining runtime audits and 74 instruction fixtures
-are still outstanding. Peripheral tests need a defined board and wiring profile.
+Step 1 is complete under the documented USB/loader assumption. Step 2 restores
+WRFAST memset and direct-register counter returns; its targeted hardware tests
+and cycle measurements are complete and ready for human review. See
+[step2.md](step2.md) and the [hardware report](step2-hardware.md), which records
+the corrected benchmark and measured short-fill/O0 overhead. The checkpoint above
+retains the old runtime results. Stop for review before the step-3 runtime audit.
+Broader production measurements and 74 instruction fixtures are still outstanding.
+Peripheral tests need a defined board and wiring profile.
 No production performance or flight acceptance is established by this checkpoint.
 The multi-function COG residency feature remains a later series, as designed in
 the original backend review; it is not implemented by these repairs.

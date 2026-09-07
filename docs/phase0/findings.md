@@ -63,12 +63,14 @@ an explicit state/ABI review; instruction encodings alone are insufficient.
 - Corrected FIFO writes that were described as register definitions.
 - Guarded empty/same-address memmove; replaced memset's FIFO/decrement loop with
   completed byte stores, including zero length. Added memory/clobber contracts.
-  WRFAST is restored in `3966dec`; new hardware validation is pending (step 2).
+  WRFAST is restored in `3966dec`; step-2 hardware correctness and timing are
+  recorded in [step2-hardware.md](step2-hardware.md), including measured overheads.
 - Made cog startup and lock primitives volatile with compiler memory barriers;
   kept LOCKTRY and WRC in the same inline-assembly block.
 - Corrected the counter read sequence to GETCT WC followed by GETCT and returned
   both halves explicitly. Counter reads are volatile. `8c335c4` replaces the C
-  combine with a direct R30/R31 assembly leaf; hardware validation is pending.
+  combine with a direct R30/R31 assembly leaf; counter and rollover hardware tests
+  pass at O0/O2/Os and the measured 64-call batches are 2.34–2.83 times faster.
 - Paired the UART debug unlock with the conditional debug lock acquisition.
 - Defined lock-allocation failure as ~0u using LOCKNEW's carry result; added
   exhaustion, unique allocation, immediate release/return, and reuse observations.
@@ -94,11 +96,12 @@ Use small reviewable commits and stop for human review between these steps.
    Results and findings/validation are preserved. All 468 existing combinations
    have verified passes; the two original timeouts remain separately recorded
    and are provisionally attributed to USB/loader issues by user direction.
-2. **Finish performance review comments (hardware validation pending).** Restore WRFAST memset with zero-length
+2. **Finish performance review comments (validated; ready for human review).** Restore WRFAST memset with zero-length
    handling and completed writes; return _cnt64 directly in R30/R31 without shift
    helpers. Validate semantics and measure cycles on hardware.
    Implementation, software results and two newly found backend issues are in
-   [step2.md](step2.md).
+   [step2.md](step2.md). The [hardware report](step2-hardware.md) preserves the
+   initial run and corrected timing rerun. Stop here for review before step 3.
 3. **Audit handwritten runtime helpers.** Repair undeclared return behavior in
    __divsi3, __muldi3 and __udivmoddi4; test exact 64-bit quotient/remainder
    boundaries, including the precision-reduction path. Preserve ASM and compare
