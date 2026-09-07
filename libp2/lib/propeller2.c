@@ -8,12 +8,11 @@ unsigned int _cnt() {
     return x;
 }
 
-unsigned long long _cnt64() {
-    unsigned low, high;
-    // Rev B/C: GETCT WC captures the high half and latches the low half for
-    // the following GETCT. Reading low first races a 32-bit counter rollover.
-    asm volatile("getct %1 wc\ngetct %0" : "=r"(low), "=r"(high));
-    return ((unsigned long long)high << 32) | low;
+__attribute__((naked)) unsigned long long _cnt64() {
+    // Complete assembly leaf: the ABI returns low/high in R30/R31. No C value
+    // reconstruction, stack frame, or callee-saved register is needed.
+    // Rev B/C requires the high read (WC) before the latched low read.
+    asm volatile("getct r31 wc\ngetct r30\nreta");
 }
 
 void _waitcnt(unsigned int cnt) {

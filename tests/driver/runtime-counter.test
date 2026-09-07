@@ -1,5 +1,11 @@
-# RUN: %clang -O2 -I%root/libp2/include -S %root/libp2/lib/propeller2.c -o %t.s
-# RUN: FileCheck %s < %t.s
+# RUN: %clang -O0 -Werror=return-type -mllvm -verify-machineinstrs -I%root/libp2/include -S %root/libp2/lib/propeller2.c -o %t.O0.s
+# RUN: FileCheck %s < %t.O0.s
+# RUN: %clang -O2 -Werror=return-type -mllvm -verify-machineinstrs -I%root/libp2/include -S %root/libp2/lib/propeller2.c -o %t.O2.s
+# RUN: FileCheck %s < %t.O2.s
+# RUN: %clang -Os -Werror=return-type -mllvm -verify-machineinstrs -I%root/libp2/include -S %root/libp2/lib/propeller2.c -o %t.Os.s
+# RUN: FileCheck %s < %t.Os.s
 # CHECK-LABEL: _cnt64:
-# CHECK: getct {{r[0-9]+}} wc
-# CHECK-NEXT: getct {{r[0-9]+}}
+# CHECK-NOT: {{calla|mov|setq|wrlong|rdlong|add|sub}}
+# CHECK: getct r31 wc
+# CHECK-NEXT: getct r30
+# CHECK-NEXT: reta
