@@ -8,6 +8,21 @@
   },
   "suites": [
     {
+      "id": "runtime-memset",
+      "sources": [],
+      "p2_sources": [
+        "libp2/lib/builtins/memset.c"
+      ],
+      "driver": "memset-driver.c",
+      "expected": {
+        "memset.cases": "0x1cc",
+        "memset.bad_bytes": "0x0",
+        "memset.bad_returns": "0x0",
+        "memset.first_bad": "0xffffffff",
+        "memset.lut_readback": "0x34"
+      }
+    },
+    {
       "id": "select-compare",
       "sources": [
         "llvm-project/llvm/test/CodeGen/P2/select-compare.ll"

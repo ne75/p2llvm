@@ -1,0 +1,15 @@
+# RUN: %clang -O0 -Werror=return-type -mllvm -verify-machineinstrs -I%root/libp2/include -S %root/libp2/lib/builtins/memset.c -o %t.O0.s
+# RUN: FileCheck %s < %t.O0.s
+# RUN: %clang -O2 -Werror=return-type -mllvm -verify-machineinstrs -I%root/libp2/include -S %root/libp2/lib/builtins/memset.c -o %t.O2.s
+# RUN: FileCheck %s < %t.O2.s
+# RUN: %clang -Os -Werror=return-type -mllvm -verify-machineinstrs -I%root/libp2/include -S %root/libp2/lib/builtins/memset.c -o %t.Os.s
+# RUN: FileCheck %s < %t.Os.s
+# CHECK: .section lut,
+# CHECK-LABEL: memset:
+# CHECK-NOT: calla
+# CHECK: wrfast #0,
+# CHECK: wfbyte
+# CHECK-NEXT: djnz
+# CHECK-NEXT: rdfast #0,
+# CHECK-NOT: calla
+# CHECK: reta

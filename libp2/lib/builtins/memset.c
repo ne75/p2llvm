@@ -6,16 +6,21 @@
  * Written by Eric R. Smith, Total Spectrum Software Inc.
  * MIT licensed (see terms at end of file)
  */
-#include <stdint.h>
-#include <propeller.h>
+#include <stddef.h>
 
 __attribute__ ((section ("lut"), cogtext, no_builtin("memset")))
 void *memset(void *dst, int c, size_t n) {
-    // Direct byte stores complete before return and naturally handle n == 0.
-    // Volatile prevents loop-idiom recognition from recursively calling memset.
-    volatile unsigned char *p = dst;
-    while (n--)
-        *p++ = (unsigned char)c;
+    if (!n)
+        return dst;
+    // Run in LUT: HUB execution owns the FIFO. Keep the original byte loop;
+    // REP would defer interrupts for the whole fill. RDFAST with D[31]=0
+    // completes pending writes before the caller can read or execute in HUB.
+    asm volatile("wrfast #0, %[dst]\n"
+                 ".Lmemset_byte%=: wfbyte %[value]\n"
+                 "djnz %[count], #.Lmemset_byte%=\n"
+                 "rdfast #0, %[dst]"
+                 : [count] "+&r"(n) : [dst] "r"(dst), [value] "r"(c)
+                 : "memory");
     return dst;
 }
 
