@@ -2,7 +2,10 @@
 
 These IDs correspond to the earlier P2 backend review. Changes are on
 `phase0_cleanup`; production refs and the original build are retained.
-**Host checks and firmware builds are not hardware passes. No board has been run.**
+**Hardware checkpoint: 466/468 runs passed; two Os timeouts passed on a retained
+rerun.** The original failures remain recorded, with cause unresolved. See
+[validation.md](validation.md) and [hardware-checkpoint.json](hardware-checkpoint.json)
+for evidence, tested revisions, and acceptance limits.
 
 ## Likely incorrect assembly / code generation
 
@@ -59,39 +62,58 @@ an explicit state/ABI review; instruction encodings alone are insufficient.
 - Corrected FIFO writes that were described as register definitions.
 - Guarded empty/same-address memmove; replaced memset's FIFO/decrement loop with
   completed byte stores, including zero length. Added memory/clobber contracts.
+  Restoring the WRFAST performance path with safe completion is still required.
 - Made cog startup and lock primitives volatile with compiler memory barriers;
   kept LOCKTRY and WRC in the same inline-assembly block.
 - Corrected the counter read sequence to GETCT WC followed by GETCT and returned
-  both halves explicitly. Counter reads are volatile.
+  both halves explicitly. Counter reads are volatile. Removing the C combine's
+  shift-helper call in favor of a direct R30/R31 return is still required.
 - Paired the UART debug unlock with the conditional debug lock acquisition.
 - Defined lock-allocation failure as ~0u using LOCKNEW's carry result; added
   exhaustion, unique allocation, immediate release/return, and reuse observations.
+- Fixed signed remainder to return GETQY while retaining handwritten ASM and
+  declaring the modified inputs and ABI output register (`1a78f05`).
+- Fixed signed 32-bit SELECTCC expansion to use CMPS; signed 64-bit compares
+  retain unsigned CMP on the low word and CMPSX on the high word (LLVM `3ceae9f4f4c7`).
+- Corrected counter expectations for event reassertion and future-target rearming
+  (`c839269`); added ALTS/ALTD immediate-fixture cleanup for the documented pending
+  AUGS silicon erratum (`e2172ec`). These are fixture corrections, not new opcodes.
 
 Runtime cases exercise overlapping moves, empty operations, memcpy block
 boundaries, another cog's mailbox work, lock contention, and counter delays.
-They are prepared for the chip; their target behavior has not been validated yet.
+The existing cases passed at O0/O2/Os; cog-init-ii/Os and isa-pollct2/Os required
+the retained rerun after full-run timeouts. Passing these cases does not establish
+exhaustive behavior or unchanged performance.
 
-## Improvements and remaining acceptance work
+## Agreed review sequence
 
-1. Finish executable instruction coverage. Run `tests/hardware/coverage.py` for
-   the exact inventory and gaps; `--require-complete` is an acceptance gate that
-   fails while records lack fixtures. Do not describe the structural 368-record
-   matrix as 368 hardware tests.
-2. Complete independent semantic expectations for remaining stateful/peripheral
-   operations. GPIO/loopback, streamer, interrupt, and debug tests need explicit
-   setup, observation, cleanup, and a board fixture profile.
-3. Execute the complete O0/O2/Os suite on the specified Rev B/C bench board,
-   preserving firmware/compiler/runtime hashes and raw observations. Validate
-   timeout/failure behavior and review every mismatch before changing an oracle.
-4. Measure code size, stack growth, throughput, and UART/clock/interrupt behavior
-   against the retained production compiler. No flight validation is implied.
-5. Port to the current stable LLVM in a separate series after the semantic
-   acceptance gate. See llvm-version-decision.md for the phase 0 decision.
-6. Implement multi-function COG residency as a separate feature: HUB bootstrap,
-   linker-defined resident groups and capacity checks, explicit load/execution
-   addresses, ABI-safe HUB/COG calls, and per-cog residency tracking. The current
-   cog-attributes test checks serialization and existing behavior, not this new
-   loader/placement feature.
+Use small reviewable commits and stop for human review between these steps.
+
+1. **Record the hardware checkpoint (ready for review).** Preserve results and
+   update findings/validation. Retain original timeouts separately from rerun
+   passes; do not infer a loader cause or completed hardware acceptance.
+2. **Finish performance review comments.** Restore WRFAST memset with zero-length
+   handling and completed writes; return _cnt64 directly in R30/R31 without shift
+   helpers. Validate semantics and measure cycles on hardware.
+3. **Audit handwritten runtime helpers.** Repair undeclared return behavior in
+   __divsi3, __muldi3 and __udivmoddi4; test exact 64-bit quotient/remainder
+   boundaries, including the precision-reduction path. Preserve ASM and compare
+   generated code for each repair.
+4. **Close instruction coverage gaps.** Add independent executable fixtures for
+   the 74 missing records, including SEUSSF/SEUSSR, attention/pattern events,
+   GPIO/smart pins, streamer, interrupts and debugging. Define board/wiring needs.
+   `coverage.py --require-complete` remains a failing acceptance gate until then.
+5. **Compare against production.** Measure code size, stack use, memory throughput,
+   arithmetic latency and representative application timing, including frame
+   alignment and register-save costs.
+6. **Finish backend contracts and cleanup.** Document ABI and supported features,
+   check driver/library selection, consolidate duplicate operand metadata and
+   remove ineffective COG/pass scaffolding.
+
+LLVM migration and multi-function COG residency remain separate later work.
+The latter needs HUB bootstrap, linker-defined resident groups and capacity
+checks, load/execution addresses, ABI-safe HUB/COG calls and per-cog residency.
+The existing cog-attributes fixture does not implement that feature.
 
 Counter events and LUT-read selectable events now have generated scenarios.
 FIFO fixtures run from LUT RAM and drain WRFAST before returning to HUB code.

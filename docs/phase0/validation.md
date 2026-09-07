@@ -1,6 +1,7 @@
 # Phase 0 validation checkpoint
 
-This is a review checkpoint, **not completed hardware acceptance**. Production
+Recorded September 7, 2026, from the September 6 hardware run and retained rerun.
+**Hardware evidence is preserved; full acceptance remains open.** Production
 `master`, `production_baseline`, and the baseline tag remain unchanged. All work
 is local on `phase0_cleanup`; nothing has been pushed or installed over the
 production compiler. The LLVM version decision retains the pinned LLVM 14 fork
@@ -9,18 +10,20 @@ for this repair series and separates the subsequent stable-release migration.
 ## Recorded checks
 
 The compiler was built with assertions, then the runtime was rebuilt from clean
-objects using that compiler. These commands all completed successfully:
+objects using that compiler. The following are recorded results, not tests rerun
+for this documentation commit:
 
 | Check | Result |
 |---|---|
 | TableGen instruction encoding/metadata matrix | 368 passed |
-| LLVM P2 MC/CodeGen lit tests | 138 passed |
-| Named C/C++/IR/link integration tests | 14 passed |
-| Portable semantic fixtures, O0/O2/Os | 33 passed; 24 P2-only runs not applicable on host |
-| Observation protocol and scalar oracle unit tests | 8 passed |
-| Firmware build, 154 suites × O0/O2/Os | 462 BUILT_NOT_RUN |
+| LLVM P2 MC/CodeGen lit tests | 139 passed |
+| Named C/C++/IR/link integration tests | 15 passed |
+| Portable semantic fixtures, O0/O2/Os | 36 passed; 27 P2-only runs not applicable on host |
+| Runner, loader, observation protocol and scalar oracle unit tests | 12 passed |
+| Firmware build, 156 suites × O0/O2/Os | 468 BUILT_NOT_RUN |
 | Executable instruction-record fixtures | 294/368 ready; 74 missing |
-| Hardware execution | None |
+| Full hardware run, 156 suites × O0/O2/Os | 466 PASS; 2 FAIL (30-second timeouts) |
+| Retained targeted hardware rerun | 2 PASS; original timeout verdicts retained |
 
 `coverage.py --require-complete` correctly exits 1 because 74 records lack an
 executable fixture. That is an unmet acceptance condition, not a passing test.
@@ -33,18 +36,69 @@ python3 -m unittest discover -s tests/hardware -p 'test_*.py'
 python3 tests/hardware/run.py --mode host
 python3 tests/hardware/run.py --mode build --isa
 python3 tests/hardware/coverage.py --require-complete
+python3 -u tests/hardware/run.py --mode hardware --isa --loader /opt/p2llvm/bin/loadp2 --reset RTS --baud 2000000 --fifo 10000
 ```
 
 Detailed JSON and logs are in `build/phase0-llvm/p2-test-results` and
-`build/phase0-llvm/p2-hardware/{host,build}`. Each runner invocation replaces its
-mode's aggregate result file; use the full-suite command to capture full-suite
-status. Per-case logs and images remain in their case directories.
+`build/phase0-llvm/p2-hardware/{host,build,hardware}`. Each runner invocation
+replaces its mode's aggregate results and the selected cases' logs and images.
+The preserved checkpoint below is outside those overwrite paths.
 
-All 462 builds used compiler SHA-256
-`666141b1ccbf2a763619ec7aa39729c68d70a1876bbcf31eed9b80a8b86cdbe5`
-and runtime archive SHA-256
-`fb35cbed58c0eb2fe396342cab100c54312da692a7b9603677128192ef322508`.
-These identify the tested local artifacts; compiler version strings alone do not.
+## Hardware checkpoint
+
+| Optimization | PASS | Timeout (FAIL) |
+|---|---:|---:|
+| O0 | 156 | 0 |
+| O2 | 156 | 0 |
+| Os | 154 | 2 |
+
+The full run recorded no semantic mismatches. `c-patterns`, `machine-contracts`,
+`runtime-signed-remainder`, `select-compare`, `isa-alts`, and `isa-altd` all passed
+at O0/O2/Os after the runtime, select, counter and ALTx fixture corrections.
+
+`cog-init-ii/Os` and `isa-pollct2/Os` timed out with empty captured output.
+Both passed in the retained targeted rerun (1.797 and 1.747 seconds respectively).
+The user reports three successful rerun invocations; only the latest invocation's
+logs remain available. It used the same compiler, runtime, sources and manifest,
+but rebuilt firmware with new run IDs, so it was not an identical-binary replay.
+All 468 suite/optimization combinations now have an observed pass across the
+full run and retained rerun. This is not a single clean 468-run execution.
+
+Keep both original FAIL records. An empty log and a successful retry cannot
+distinguish loader/USB/serial trouble from intermittent target startup or execution
+failure. The cause remains unresolved; the runner still has no automatic retry.
+
+Successful logs identify P2 ROM G on `/dev/cu.usbserial-DK0H6QJS`, with detected
+clock mode `0x012427f8`. Loading used automatic port selection, RTS, 2 Mbaud,
+FIFO 10000 and loader clock defaults. Board model and measured clock frequency
+were not supplied; ROM identity alone does not establish those details.
+
+## Preserved evidence
+
+[hardware-checkpoint.json](hardware-checkpoint.json) records the tested root
+commit `e2172ec` and LLVM commit `3ceae9f4f4c7`, compiler/runtime/loader/manifest
+hashes, rerun identities, and archive sizes and SHA-256 checksums. Compiler and
+runtime hashes match across the full run and retained rerun.
+
+Archives are local, ignored files under
+`build/phase0-checkpoints/hardware-2026-09-06/`; they are not included in a clone
+or protected by the Git commit. Keep this directory when cleaning build output
+and copy it with the review handoff. A separate copy is retained with the local
+Codex review artifacts. No remote backup is claimed.
+
+- `p2-hardware-followup-evidence.zip`: complete 468-run results, raw logs,
+  firmware, ELF files, fixture sources and merged expectations.
+- `p2-hardware-timeout-rerun-evidence.zip`: both retained passing retries,
+  including their logs, firmware, sources and expectations.
+- `p2-hardware-evidence.zip` and `p2-counter-hardware-evidence.zip`: the initial
+  pre-fix full run and the targeted counter-fixture validation.
+- `p2-followup-review-evidence.zip`: software results, logs, patches and static
+  remainder-assembly comparisons. Its earlier hardware-pending note is historical.
+
+Before recording this checkpoint, archive integrity was checked, all 23,238
+observations from the 466 passing full-run logs and all 18 rerun observations
+were re-decoded against the expectations, and recorded source/ELF/firmware hashes
+were checked against the archived bytes. Failed logs and verdicts are preserved.
 
 ## Human review order
 
@@ -67,10 +121,11 @@ old-test removal are separate review units.
 
 ## Next acceptance work
 
-Complete exact SEUSSF/SEUSSR expectations and the remaining peripheral,
-streamer, interrupt and debug fixtures. Hardware work needs a bench board ID,
-serial port, clock mode/frequency, and permitted GPIO/loopback wiring. Then run
-the full suite on Rev B/C silicon and investigate every mismatch. Measure code
-size, stack growth and timing against production before promoting any compiler.
+Step 1 records the hardware checkpoint and stops for human review. Follow the
+six-step sequence in [findings.md](findings.md#agreed-review-sequence), beginning
+with WRFAST memset and direct-register counter returns after that review.
+Performance measurements, remaining runtime audits and 74 instruction fixtures
+are still outstanding. Peripheral tests need a defined board and wiring profile.
+No production performance or flight acceptance is established by this checkpoint.
 The multi-function COG residency feature remains a later series, as designed in
 the original backend review; it is not implemented by these repairs.

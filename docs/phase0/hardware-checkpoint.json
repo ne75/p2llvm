@@ -1,0 +1,82 @@
+{
+  "recorded_date": "2026-09-07",
+  "evidence_directory": "build/phase0-checkpoints/hardware-2026-09-06",
+  "root_commit_tested": "e2172ecba01c39e1633ac774377890ba413ebe90",
+  "llvm_commit_tested": "3ceae9f4f4c7006dc6190f779bfac71354c146e8",
+  "compiler_sha256": "898c4430bad227c208bc933f726925adb7ec198e370aa80d445bdd1a1f5522bc",
+  "runtime_sha256": "124575546651b06f92390747a6053fa5d28b8a029d2ecb77b739b9b4c60897b6",
+  "manifest_sha256": "312b9b239b49c83c25021944598a49c89df4ce83556fd31842031412716e9043",
+  "loader_sha256": "4b894312f75a6a52506f6f2424f3139e341ee1d0060263bd9b32a1f99f2d6eb1",
+  "hardware": {
+    "detected_rom_version": "G",
+    "detected_port": "/dev/cu.usbserial-DK0H6QJS",
+    "detected_clock_mode": "0x012427f8",
+    "board_model": null,
+    "measured_clock_hz": null,
+    "reset": "RTS",
+    "baud": 2000000,
+    "loader_baud": 2000000,
+    "fifo": 10000,
+    "port_selection": "loadp2 automatic",
+    "clock_selection": "loadp2 defaults"
+  },
+  "full_run": {
+    "date": "2026-09-06",
+    "suites": 156,
+    "runs": 468,
+    "passed": 466,
+    "failed_timeout": 2,
+    "semantic_mismatches": 0,
+    "timeouts": [
+      "cog-init-ii/Os",
+      "isa-pollct2/Os"
+    ],
+    "verified_observations": 23238,
+    "results_sha256": "1042f7d0d9b823bddf9b610c10999b4a2734d8869dd4f319767adfc43698c8db"
+  },
+  "retained_rerun": {
+    "results_modified_utc": "2026-09-06T20:20:56.807064+00:00",
+    "passed": 2,
+    "run_ids": {
+      "cog-init-ii/Os": "cbc2a9d2ee0442a7a128a1b5a435eb56",
+      "isa-pollct2/Os": "721931dc12c2414fab32d9ca28ab3264"
+    },
+    "verified_observations": 18,
+    "results_sha256": "780f489116265148f9fad4725f874b850cd2391fd3272bd9740b392380392e69",
+    "same_compiler_runtime_sources": true,
+    "rebuilt_firmware_with_new_run_ids": true
+  },
+  "user_reported_reruns": {
+    "successful_invocations": 3,
+    "independently_retained_invocations": 1,
+    "note": "Earlier reruns were overwritten; only the latest has preserved logs."
+  },
+  "assessment": "Timeouts recovered on rerun; root cause unresolved. Original FAIL verdicts retained.",
+  "archives": [
+    {
+      "file": "p2-hardware-evidence.zip",
+      "bytes": 898237,
+      "sha256": "a81eb3af19a2ec3955331b71961fb6cd2c2e3d5fbb128712c41cf73946e067d0"
+    },
+    {
+      "file": "p2-counter-hardware-evidence.zip",
+      "bytes": 177398,
+      "sha256": "f078b7ea6e1ca5280d2e9b1eb57aa54f07b5d3e9dde2dc939062af50151faedf"
+    },
+    {
+      "file": "p2-hardware-followup-evidence.zip",
+      "bytes": 3651167,
+      "sha256": "314b16674bd75742881b9588fb978d9b7df235655333cc44fc6bc5f5fe0eb206"
+    },
+    {
+      "file": "p2-followup-review-evidence.zip",
+      "bytes": 185606,
+      "sha256": "8b161e15bb63d300b102ea89326f53b8be9e3c36fde3a526a230807d0876881a"
+    },
+    {
+      "file": "p2-hardware-timeout-rerun-evidence.zip",
+      "bytes": 50169,
+      "sha256": "bcbbf97e87d44e9db5079d02b7a88fb84261b889af56c16bafecf9403d8164f8"
+    }
+  ]
+}

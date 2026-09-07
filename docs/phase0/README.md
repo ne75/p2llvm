@@ -34,6 +34,12 @@ records the submodule commits independently of branch names.
 4. `docs/phase0/findings.md`: review findings, regression tests, and fix status.
 5. [Validation checkpoint](validation.md): recorded results, review order, and
    outstanding hardware acceptance work.
+6. [Hardware evidence index](hardware-checkpoint.json): tested revisions, full-run
+   and rerun outcomes, and checksums for the locally preserved evidence archives.
+
+The six-step implementation sequence is in [findings.md](findings.md#agreed-review-sequence).
+Step 1 records the completed hardware run and retained rerun, then pauses for
+human review before runtime performance changes begin.
 
 Each compiler fix is committed in the LLVM submodule; corresponding root commits
 advance its gitlink. Test/build output is kept under `build/`, not checked in as
