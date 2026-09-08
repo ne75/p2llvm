@@ -1,0 +1,28 @@
+{
+  "date": "2026-09-07",
+  "status": "software checkpoint; current hardware execution pending",
+  "root_implementation_commit": "0ab3cff63df546bd2a4df6aaf809f96b4765f8bd",
+  "llvm_commit": "faebaf0abaaaf1aea95cdcc3249bf212f2e4ca60",
+  "compiler_sha256": "3a0e159bff90f5cdf3fcc3d59e160fa6813ad3b574783505a90d1ef09d5496d8",
+  "runtime_sha256": "db21c07348082873ae00fe48c4f648ba15901456ec1abd850949625e6c019e63",
+  "firmware_builds_verified": 495,
+  "raw_build_records": [
+    "analysis/build-results.json",
+    "analysis/performance-build-results.json"
+  ],
+  "replacement_rule": "Use the final performance-build record for its three suite/optimization keys; retain both raw records.",
+  "hardware": "The historical 3-image naked signed-div run is preserved separately and does not validate current sources.",
+  "counts": {
+    "instruction_pass": 368,
+    "llvm_pass": 141,
+    "integration_pass": 22,
+    "unit_pass": 12,
+    "host_pass": 42,
+    "host_not_applicable": 36
+  },
+  "archive": {
+    "path": "build/phase0-checkpoints/step3-software-2026-09-07/evidence.zip",
+    "sha256": "739c1c0412842c7e137b3d0c4073e213bd0856af2f008f7988f52bbba71f0f4f",
+    "bytes": 4589916
+  }
+}

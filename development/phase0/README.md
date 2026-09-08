@@ -42,7 +42,9 @@ Step 1 accepts the existing semantic suite using the full run and passing rerun,
 under the documented USB/loader assumption. [Step 2](step2.md) contains the runtime
 performance changes. Its [hardware report](step2-hardware.md) records passing
 correctness tests and cycle measurements, including a repaired benchmark and
-short-fill/O0 overhead. Step 2 is ready for human review; step 3 has not started.
+short-fill/O0 overhead. [Step 3](step3.md) now has compiler-managed arithmetic
+helpers, exact wide-division tests and software validation. Current hardware
+correctness/timing and the additional shift-helper finding remain open.
 
 Each compiler fix is committed in the LLVM submodule; corresponding root commits
 advance its gitlink. Test/build output is kept under `build/`, not checked in as

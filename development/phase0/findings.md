@@ -49,6 +49,7 @@ also requires changing the existing startup loader, which still loads from 0x200
 | A5 | cogmain/cogtext/cogcache are target string attributes rather than incomplete global enum extensions | Clang bitcode -> llvm-dis -> llc; cog-attributes firmware uses the bitcode path |
 | A6 | Preserve expanded MMOs and transferred registers; describe actual C/Z, QX/QY, FIFO, and CALLA/RETA PTRA effects; bundle SETQ/AUG prefixes with consumers | MIR assertions, verifier, roundtrip, arithmetic and memory fixtures |
 | A7 | Correct call chains, return extension and live-in handling; reject invalid named registers; avoid unsafe expression casts | machine-contracts, varargs, invalid-register.ll, linked expressions |
+| A8 | Expose i64 inline-ASM register pairs and low/high word modifiers; reject scalar/pair mismatches | inline-asm-pairs.ll, inline-asm-pair-errors.ll; inline-register-pairs hardware run pending |
 
 The state changes protect the current pipeline. Adding new target intrinsics,
 post-emission transformations, interrupt scheduling, or COG overlays still needs
@@ -76,6 +77,12 @@ an explicit state/ABI review; instruction encodings alone are insufficient.
   exhaustion, unique allocation, immediate release/return, and reuse observations.
 - Fixed signed remainder to return GETQY while retaining handwritten ASM and
   declaring the modified inputs and ABI output register (`1a78f05`).
+- Declared paired arithmetic operands and explicit results for signed division,
+  wide multiplication and wide unsigned division. LLVM now generates their
+  saves/returns. Optimized signed division and multiplication retain identical
+  machine code; exact wide division corrects normalization estimates, product
+  overflow and the divide-by-one remainder. [Step 3](step3.md) records software
+  validation, pending hardware checks and the additional shift-helper finding.
 - Fixed signed 32-bit SELECTCC expansion to use CMPS; signed 64-bit compares
   retain unsigned CMP on the low word and CMPSX on the high word (LLVM `3ceae9f4f4c7`).
 - Corrected counter expectations for event reassertion and future-target rearming
@@ -101,11 +108,13 @@ Use small reviewable commits and stop for human review between these steps.
    helpers. Validate semantics and measure cycles on hardware.
    Implementation, software results and two newly found backend issues are in
    [step2.md](step2.md). The [hardware report](step2-hardware.md) preserves the
-   initial run and corrected timing rerun. Stop here for review before step 3.
-3. **Audit handwritten runtime helpers.** Repair undeclared return behavior in
+   initial run and corrected timing rerun. The user authorized step 3 afterward.
+3. **Audit handwritten runtime helpers (in progress).** Repair undeclared return behavior in
    __divsi3, __muldi3 and __udivmoddi4; test exact 64-bit quotient/remainder
    boundaries, including the precision-reduction path. Preserve ASM and compare
-   generated code for each repair.
+   generated code for each repair. [Step 3](step3.md) records the compiler-managed
+   implementations and open hardware/shift-helper acceptance work. Stop before
+   step 4 for review.
 4. **Close instruction coverage gaps.** Add independent executable fixtures for
    the 74 missing records, including SEUSSF/SEUSSR, attention/pattern events,
    GPIO/smart pins, streamer, interrupts and debugging. Define board/wiring needs.

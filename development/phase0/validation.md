@@ -135,7 +135,12 @@ WRFAST memset and direct-register counter returns; its targeted hardware tests
 and cycle measurements are complete and ready for human review. See
 [step2.md](step2.md) and the [hardware report](step2-hardware.md), which records
 the corrected benchmark and measured short-fill/O0 overhead. The checkpoint above
-retains the old runtime results. Stop for review before the step-3 runtime audit.
+retains the old runtime results. The [step-3 audit](step3.md) is in progress:
+the three named helpers now use compiler-managed function boundaries, and the
+new register-pair support and arithmetic fixtures pass software checks. Current
+hardware correctness/timing and additional shift/negation helper work are pending.
+The initial three signed-division hardware passes used a superseded implementation
+and are retained separately; they do not validate the latest source.
 Broader production measurements and 74 instruction fixtures are still outstanding.
 Peripheral tests need a defined board and wiring profile.
 No production performance or flight acceptance is established by this checkpoint.
