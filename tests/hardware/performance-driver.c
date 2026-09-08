@@ -33,6 +33,25 @@ MEASURE(empty, memset_empty)
 MEASURE(previous, memset_previous)
 MEASURE(production, memset_production_completed)
 MEASURE(updated, memset)
+#elif defined(P2_BENCH_UDIV)
+typedef unsigned long long u64;
+extern u64 __udivmoddi4(u64, u64, u64 *);
+extern u64 udivmod_previous(u64, u64, u64 *), udivmod_empty(u64, u64, u64 *);
+static u64 remainder;
+static const u64 dividends[] = {123456789, ~0ULL, 3ULL << 48, 1ULL << 63, ~0ULL};
+static const u64 divisors[] = {7, 3, 1ULL << 48, 1ULL << 63, 0x100000003ULL};
+#define MEASURE(name, target) \
+    __attribute__((noinline)) static unsigned name(unsigned n) { \
+        unsigned start = ticks(); \
+        for (unsigned i = 0; i < 64; ++i) { \
+            target(dividends[n], divisors[n], &remainder); \
+            asm volatile("" : : : "memory"); \
+        } \
+        return ticks() - start; \
+    }
+MEASURE(empty, udivmod_empty)
+MEASURE(previous, udivmod_previous)
+MEASURE(updated, __udivmoddi4)
 #else
 extern unsigned long long _cnt64(void), cnt64_previous(void);
 extern void counter_empty(void);
@@ -58,6 +77,8 @@ void test_body(void) {
     static const unsigned sizes[] = {
 #ifdef P2_BENCH_MEMSET
         8, 64, 1024
+#elif defined(P2_BENCH_UDIV)
+        0, 1, 2, 3, 4
 #else
         0
 #endif

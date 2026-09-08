@@ -1,0 +1,17 @@
+# The timing batch must retain 64 calls to the repaired helper.
+# RUN: %clang -O0 -DP2_BENCH_UDIV -mllvm -verify-machineinstrs -S %root/tests/hardware/performance-driver.c -o %t.O0.s
+# RUN: %clang -O2 -DP2_BENCH_UDIV -mllvm -verify-machineinstrs -S %root/tests/hardware/performance-driver.c -o %t.O2.s
+# RUN: FileCheck %s < %t.O2.s
+# RUN: %clang -Os -DP2_BENCH_UDIV -mllvm -verify-machineinstrs -S %root/tests/hardware/performance-driver.c -o %t.Os.s
+# RUN: FileCheck %s < %t.Os.s
+# CHECK-LABEL: updated:
+# CHECK: mov [[COUNT:r[0-9]+]], #0
+# CHECK: [[LOOP:.LBB[0-9_]+]]:
+# CHECK: calla #\__udivmoddi4
+# CHECK-NOT: calla
+# CHECK: add [[NEXT:r[0-9]+]], #1
+# CHECK: cmp [[COUNT]], #63
+# CHECK: mov [[COUNT]], [[NEXT]]
+# CHECK: if_c{{[ \t]+}}jmp #[[LOOP]]
+# CHECK: getct
+# CHECK: reta

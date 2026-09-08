@@ -194,3 +194,27 @@ python3 -u tests/hardware/run.py --mode hardware --performance --loader /opt/p2l
 
 The command runs 18 images (six suites at O0/O2/Os) and replaces hardware-mode
 results as usual. Preserve that JSON and the logs before starting another run.
+
+`performance-wide-division` compares empty / frozen previous / updated helpers
+(implementation indices 0/1/2). Both implementations are built with the selected
+optimization, including the actual repaired `__udivmoddi4` source. The frozen
+implementation still calls the runtime's `__lshrdi3`; preserve that runtime with
+the results. The 64-call loop uses the same compiler barrier as the fill tests.
+
+| Input index | Dividend | Divisor | Purpose |
+|---|---|---|---|
+| 0 | 123456789 | 7 | Narrow divisor, one QDIV |
+| 1 | UINT64_MAX | 3 | Narrow divisor, two QDIVs |
+| 2 | 3 * 2^48 | 2^48 | Wide normalization, exact estimate |
+| 3 | 2^63 | 2^63 | Shift-by-32 normalization boundary |
+| 4 | UINT64_MAX | 2^32 + 3 | Estimate correction and product carry past bit 63 |
+
+The previous implementation returns incorrect values for input 4. Its timing is
+only a record of the old cost, not an equivalent correct-operation comparison.
+Validate results separately with `runtime-wide-division`, which checks exact
+quotients, full remainders, null pointers, guards, ABI preservation and C `/`/`%`
+patterns. Timing alone cannot establish arithmetic correctness.
+
+```sh
+python3 -u tests/hardware/run.py --mode hardware --performance --loader /opt/p2llvm/bin/loadp2 --reset RTS --baud 2000000 --fifo 10000 --timeout 300 --case performance-wide-division
+```
