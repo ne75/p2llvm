@@ -4,8 +4,12 @@
 # RUN: FileCheck %s < %t.O2.s
 # RUN: %clang -Os -Werror=return-type -mllvm -verify-machineinstrs -S %root/libp2/lib/builtins/ashrdi3.c -o %t.Os.s
 # RUN: FileCheck %s < %t.Os.s
-# RUN: %clang -O2 -DP2_ASHRDI -mllvm -verify-machineinstrs -S %root/tests/hardware/shift-driver.c -o %t.driver.s
-# RUN: FileCheck %s --check-prefix=PATTERN < %t.driver.s
+# RUN: %clang -O0 -DP2_ASHRDI -mllvm -verify-machineinstrs -S %root/tests/hardware/shift-driver.c -o %t.driver.O0.s
+# RUN: FileCheck %s --check-prefix=PATTERN < %t.driver.O0.s
+# RUN: %clang -O2 -DP2_ASHRDI -mllvm -verify-machineinstrs -S %root/tests/hardware/shift-driver.c -o %t.driver.O2.s
+# RUN: FileCheck %s --check-prefix=PATTERN < %t.driver.O2.s
+# RUN: %clang -Os -DP2_ASHRDI -mllvm -verify-machineinstrs -S %root/tests/hardware/shift-driver.c -o %t.driver.Os.s
+# RUN: FileCheck %s --check-prefix=PATTERN < %t.driver.Os.s
 # CHECK-LABEL: __ashrdi3:
 # CHECK: setq #[[SAVES:[0-9]+]]
 # CHECK-NEXT: wrlong r0, ptra++
@@ -16,6 +20,10 @@
 # CHECK: setq #[[SAVES]]
 # CHECK-NEXT: rdlong r0, --ptra
 # CHECK-NEXT: reta
+# PATTERN-NOT: calla #\__{{(ashldi3|lshrdi3|ashrdi3)}}
 # PATTERN-LABEL: shift_pattern:
+# PATTERN-NOT: calla #\__{{(ashldi3|lshrdi3|ashrdi3)}}
 # PATTERN: calla #\__ashrdi3
+# PATTERN-NOT: calla #\__{{(ashldi3|lshrdi3|ashrdi3)}}
 # PATTERN: reta
+# PATTERN-NOT: calla #\__{{(ashldi3|lshrdi3|ashrdi3)}}
