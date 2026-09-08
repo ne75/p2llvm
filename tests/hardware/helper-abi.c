@@ -22,6 +22,16 @@ __attribute__((naked)) unsigned long long helper_probe(unsigned long long a, uns
 #define CALLEE "__udivmoddi4"
 #define ARGUMENTS "setq #3\n"
 __attribute__((naked)) unsigned long long helper_probe(unsigned long long a, unsigned long long b, unsigned long long *r)
+#elif defined(P2_ASHLDI) || defined(P2_LSHRDI) || defined(P2_ASHRDI)
+#if defined(P2_ASHLDI)
+#define CALLEE "__ashldi3"
+#elif defined(P2_LSHRDI)
+#define CALLEE "__lshrdi3"
+#else
+#define CALLEE "__ashrdi3"
+#endif
+#define ARGUMENTS "setq #2\n"
+__attribute__((naked)) unsigned long long helper_probe(unsigned long long a, unsigned count)
 #else
 #error Select a runtime helper
 #endif
