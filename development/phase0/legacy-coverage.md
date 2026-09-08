@@ -5,6 +5,8 @@ baseline tag. They are replaced, rather than kept as a second test framework.
 Some former files were interactive demos, benchmarks, or undefined C programs;
 those are not silently counted as passing regression tests.
 
+Replacement paths in the table are relative to `tests/` in the repository root.
+
 | Former cases | Replacement / disposition |
 |---|---|
 | t0–t1: boot and UART | Hardware smoke protocol; separate from host codegen |

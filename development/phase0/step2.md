@@ -57,7 +57,7 @@ Compiler SHA-256:
 Runtime archive SHA-256:
 `3ccd7ae3fb6c0b326590d5d3b3c4b97b3766d7e872f9908d654fc3380ace2699`.
 
-The [hardware README](../../tests/hardware/README.md#runtime-performance-review-step-2)
+The [hardware README](../../tests/hardware/README.md#runtime-performance-tests)
 documents fixture boundaries, metric names, comparison implementations and the
 18-image command. It includes the original WRFAST/DJNZ loop with a completion
 drain so the comparison measures completed writes, and an empty-call measurement

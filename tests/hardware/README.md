@@ -89,8 +89,8 @@ and a result record containing compiler hash, firmware hash, optimization level,
 board identity, and individual case results. A missing device is a skipped
 hardware run, never a pass.
 
-Minimum acceptance cases: the arithmetic and ABI counterexamples tracked in
-`docs/phase0/findings.md`, nested HUB calls and callee-save preservation, runtime
+Minimum acceptance cases include arithmetic and ABI regressions, nested HUB
+calls and callee-save preservation, runtime
 memory/string and float helpers, cog startup/return, locks, interrupts/debugging,
 and CORDIC/FIFO-sensitive sequences. The production baseline retains the old
 board-specific experiments for reference; they are not automated assertions.
@@ -154,7 +154,7 @@ operand, flag, predicate, address-mode, or timing coverage. A ready record can
 still need boundary cases. Hardware runs must review actual mismatches before
 changing an expectation; a compiler-produced value is not an independent oracle.
 
-## Runtime performance review (step 2)
+## Runtime performance tests
 
 `runtime-memset` compiles the actual implementation at O0/O2/Os. It checks 460
 combinations of length (0 through 1024, including FIFO/block boundaries), all

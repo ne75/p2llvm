@@ -112,7 +112,8 @@ were checked against the archived bytes. Failed logs and verdicts are preserved.
 
 1. `production-baseline.json` and `llvm-version-decision.md`: rollback refs and
    migration sequencing.
-2. `tests/README.md`, `tests/legacy-coverage.md`, and the hardware README: what
+2. [Testing guide](../../tests/README.md), [test migration record](legacy-coverage.md),
+   and the [hardware guide](../../tests/hardware/README.md): what
    replaced the old tests, independent expectations, and acceptance gaps.
 3. `findings.md`: B1–B15 and A1–A7, paired regressions, and newly found runtime bugs.
 4. Review LLVM commits in order with

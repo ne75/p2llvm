@@ -29,9 +29,9 @@ records the submodule commits independently of branch names.
 
 1. [LLVM version decision](llvm-version-decision.md): the stable release checked,
    migration benefits/costs, and the version used for phase 0.
-2. `tests/README.md`: test architecture and reproducible commands.
-3. `tests/legacy-coverage.md`: disposition of the former numbered test programs.
-4. `docs/phase0/findings.md`: review findings, regression tests, and fix status.
+2. [Testing guide](../../tests/README.md): test architecture and reproducible commands.
+3. [Test migration record](legacy-coverage.md): disposition of the former numbered test programs.
+4. [Findings](findings.md): review findings, regression tests, and fix status.
 5. [Validation checkpoint](validation.md): recorded results, review order, and
    outstanding hardware acceptance work.
 6. [Hardware evidence index](hardware-checkpoint.json): tested revisions, full-run
