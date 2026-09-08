@@ -1,0 +1,19 @@
+# RUN: %clang -O0 -Werror=return-type -mllvm -verify-machineinstrs -S %root/libp2/lib/builtins/muldi3.c -o %t.O0.s
+# RUN: FileCheck %s < %t.O0.s
+# RUN: %clang -O2 -Werror=return-type -mllvm -verify-machineinstrs -S %root/libp2/lib/builtins/muldi3.c -o %t.O2.s
+# RUN: FileCheck %s < %t.O2.s
+# RUN: %clang -Os -Werror=return-type -mllvm -verify-machineinstrs -S %root/libp2/lib/builtins/muldi3.c -o %t.Os.s
+# RUN: FileCheck %s < %t.Os.s
+# CHECK-LABEL: __muldi3:
+# CHECK: setq #6
+# CHECK-NEXT: wrlong r0, ptra++
+# CHECK-NOT: calla
+# CHECK: qmul
+# CHECK-NEXT: getqx r30
+# CHECK-NEXT: getqy r31
+# CHECK: qmul
+# CHECK: qmul
+# CHECK-NOT: calla
+# CHECK: setq #6
+# CHECK-NEXT: rdlong r0, --ptra
+# CHECK-NEXT: reta
