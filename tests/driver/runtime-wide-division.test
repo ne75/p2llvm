@@ -1,0 +1,22 @@
+# RUN: %clang -O0 -Werror=return-type -mllvm -verify-machineinstrs -S %root/libp2/lib/builtins/udivmoddi4.c -o %t.O0.s
+# RUN: FileCheck %s < %t.O0.s
+# RUN: %clang -O2 -Werror=return-type -mllvm -verify-machineinstrs -S %root/libp2/lib/builtins/udivmoddi4.c -o %t.O2.s
+# RUN: FileCheck %s < %t.O2.s
+# RUN: %clang -Os -Werror=return-type -mllvm -verify-machineinstrs -S %root/libp2/lib/builtins/udivmoddi4.c -o %t.Os.s
+# RUN: FileCheck %s < %t.Os.s
+# CHECK-LABEL: __udivmoddi4:
+# CHECK-NOT: calla
+# CHECK: qdiv
+# CHECK: .Lestimate
+# CHECK: qdiv
+# CHECK-NEXT: getqx r30
+# CHECK: qmul
+# CHECK: qmul
+# CHECK: addx r4, #0
+# CHECK: subx
+# CHECK-NEXT: cmp r4, #0{{.*}}wz
+# CHECK: .Lstore_remainder
+# CHECK: setq #1
+# CHECK-NEXT: wrlong
+# CHECK-NOT: calla
+# CHECK: reta

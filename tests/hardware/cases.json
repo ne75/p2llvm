@@ -27,6 +27,32 @@
       }
     },
     {
+      "id": "runtime-wide-division",
+      "host_portable": false,
+      "sources": [
+        "libp2/lib/builtins/udivmoddi4.c",
+        "tests/hardware/helper-abi.c"
+      ],
+      "driver": "unsigned-division-driver.c",
+      "cflags": [
+        "-DP2_UDIVMODDI"
+      ],
+      "expected": {
+        "udiv.cases": "0x5a",
+        "udiv.bad_quotient": "0x0",
+        "udiv.bad_remainder": "0x0",
+        "udiv.bad_null": "0x0",
+        "udiv.bad_patterns": "0x0",
+        "udiv.bad_guards": "0x0",
+        "udiv.first_quotient.lo": "0x0",
+        "udiv.first_quotient.hi": "0x0",
+        "udiv.first_remainder.lo": "0x0",
+        "udiv.first_remainder.hi": "0x0",
+        "abi.bad_registers": "0x0",
+        "udiv.first_bad": "0xffffffff"
+      }
+    },
+    {
       "id": "inline-register-pairs",
       "sources": [
         "tests/codegen/inline-pair.c"
