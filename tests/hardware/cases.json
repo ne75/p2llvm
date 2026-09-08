@@ -8,6 +8,24 @@
   },
   "suites": [
     {
+      "id": "runtime-signed-division",
+      "host_portable": false,
+      "sources": [
+        "libp2/lib/builtins/divsi3.c",
+        "tests/hardware/helper-abi.c"
+      ],
+      "driver": "division-driver.c",
+      "cflags": [
+        "-DP2_DIVSI"
+      ],
+      "expected": {
+        "division.cases": "0x18",
+        "division.bad": "0x0",
+        "division.first_bad": "0xffffffff",
+        "abi.bad_registers": "0x0"
+      }
+    },
+    {
       "id": "runtime-memset",
       "sources": [],
       "p2_sources": [

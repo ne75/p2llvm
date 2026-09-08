@@ -1,0 +1,17 @@
+# RUN: %clang -O0 -Werror=return-type -mllvm -verify-machineinstrs -S %root/libp2/lib/builtins/divsi3.c -o %t.O0.s
+# RUN: FileCheck %s < %t.O0.s
+# RUN: %clang -O2 -Werror=return-type -mllvm -verify-machineinstrs -S %root/libp2/lib/builtins/divsi3.c -o %t.O2.s
+# RUN: FileCheck %s < %t.O2.s
+# RUN: %clang -Os -Werror=return-type -mllvm -verify-machineinstrs -S %root/libp2/lib/builtins/divsi3.c -o %t.Os.s
+# RUN: FileCheck %s < %t.Os.s
+# CHECK-LABEL: __divsi3:
+# CHECK: setq #2
+# CHECK-NEXT: wrlong r0, ptra++
+# CHECK-NOT: calla
+# CHECK: qdiv
+# CHECK-NEXT: getqx r31
+# CHECK-NEXT: if_nz {{.*}}neg r31, r31
+# CHECK-NOT: calla
+# CHECK: setq #2
+# CHECK-NEXT: rdlong r0, --ptra
+# CHECK-NEXT: reta

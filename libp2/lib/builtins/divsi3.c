@@ -25,11 +25,12 @@
 #define COMPUTE_UDIV(a, b) ((su_int)(a) / (su_int)(b))
 #include "int_div_impl.inc"
 
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wreturn-type"
-COMPILER_RT_ABI si_int __divsi3(si_int a, si_int b) { 
-    // r0 = a, r1 = b
-    asm(
+// Complete assembly leaf: arguments R0/R1, result R31. Keep the optimized
+// original register saves and instruction sequence at every optimization level.
+COMPILER_RT_ABI __attribute__((naked)) si_int __divsi3(si_int a, si_int b) {
+    __asm__ volatile(
+            "setq #2\n"
+            "wrlong r0, ptra++\n"
             "mov r2, r0\n"
             "xor r2, r1\n"
             "shr r2, #31 wz\n"    // r2 = 1: result is negative, z = result is positive
@@ -38,6 +39,7 @@ COMPILER_RT_ABI si_int __divsi3(si_int a, si_int b) {
             "qdiv r0, r1\n"
             "getqx r31\n"
     "if_nz  neg r31, r31\n"
-    : : : "r0", "r1", "r2");      
+            "setq #2\n"
+            "rdlong r0, --ptra\n"
+            "reta\n");
 }
-#pragma clang diagnostic pop
