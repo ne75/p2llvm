@@ -5,7 +5,8 @@
       "id": "performance-wide-division",
       "host_portable": false,
       "sources": [
-        "tests/hardware/udivmod-baseline.c"
+        "tests/hardware/udivmod-baseline.c",
+        "tests/hardware/udivmod-shift-baseline.s"
       ],
       "p2_sources": [
         "libp2/lib/builtins/udivmoddi4.c"

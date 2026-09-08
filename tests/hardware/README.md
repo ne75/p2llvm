@@ -198,8 +198,10 @@ results as usual. Preserve that JSON and the logs before starting another run.
 `performance-wide-division` compares empty / frozen previous / updated helpers
 (implementation indices 0/1/2). Both implementations are built with the selected
 optimization, including the actual repaired `__udivmoddi4` source. The frozen
-implementation still calls the runtime's `__lshrdi3`; preserve that runtime with
-the results. The 64-call loop uses the same compiler barrier as the fill tests.
+implementation calls a byte-identical copy of the old Oz `__lshrdi3`, kept in
+`udivmod-shift-baseline.s`. Its original dependency cost remains stable when the
+runtime shifts change. The 64-call loop uses the same compiler barrier as the
+fill tests.
 
 | Input index | Dividend | Divisor | Purpose |
 |---|---|---|---|

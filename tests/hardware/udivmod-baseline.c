@@ -61,14 +61,14 @@ __attribute__ ((section ("lut"), cogtext)) unsigned long long udivmod_previous(u
             // shift a >> r4
             "mov r5, r2\n"
             "mov r2, r4\n"
-            "calla #\\__lshrdi3\n"
+            "calla #\\udivmod_previous_shift\n"
             "mov r6, r30\n"
             "mov r7, r31\n"
 
             // shift b >> r4
             "mov r0, r5\n"
             "mov r1, r3\n"
-            "calla #\\__lshrdi3\n"
+            "calla #\\udivmod_previous_shift\n"
             "mov r2, r30\n"
             "mov r3, r31\n"
             "mov r0, r6\n"
