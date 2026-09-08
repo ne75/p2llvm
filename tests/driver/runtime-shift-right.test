@@ -1,0 +1,21 @@
+# RUN: %clang -O0 -Werror=return-type -mllvm -verify-machineinstrs -S %root/libp2/lib/builtins/lshrdi3.c -o %t.O0.s
+# RUN: FileCheck %s < %t.O0.s
+# RUN: %clang -O2 -Werror=return-type -mllvm -verify-machineinstrs -S %root/libp2/lib/builtins/lshrdi3.c -o %t.O2.s
+# RUN: FileCheck %s < %t.O2.s
+# RUN: %clang -Os -Werror=return-type -mllvm -verify-machineinstrs -S %root/libp2/lib/builtins/lshrdi3.c -o %t.Os.s
+# RUN: FileCheck %s < %t.Os.s
+# RUN: %clang -O2 -DP2_LSHRDI -mllvm -verify-machineinstrs -S %root/tests/hardware/shift-driver.c -o %t.driver.s
+# RUN: FileCheck %s --check-prefix=PATTERN < %t.driver.s
+# CHECK-LABEL: __lshrdi3:
+# CHECK: setq #[[SAVES:[0-9]+]]
+# CHECK-NEXT: wrlong r0, ptra++
+# CHECK-NOT: calla
+# CHECK: neg [[COUNT:r[0-9]+]], [[COUNT]]{{.*}}wz
+# CHECK: if_nz{{[ \t]+}}shl
+# CHECK-NEXT: if_nz{{[ \t]+}}or r30,
+# CHECK: setq #[[SAVES]]
+# CHECK-NEXT: rdlong r0, --ptra
+# CHECK-NEXT: reta
+# PATTERN-LABEL: shift_pattern:
+# PATTERN: calla #\__lshrdi3
+# PATTERN: reta

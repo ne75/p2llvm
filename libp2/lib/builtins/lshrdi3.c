@@ -18,41 +18,39 @@
 
 // Precondition:  0 <= b < bits_in_dword
 
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wreturn-type"
 COMPILER_RT_ABI di_int __lshrdi3(di_int a, int b) {
-    asm(
-            "cmp r2, #32   wc\n"
-    "if_nc  jmp #.Lge32\n"
-            // if n < 32
-            "mov r3, #32\n"
-            "sub r3, r2\n"
-            
+    register di_int result __asm__("r30_r31");
+    __asm__ volatile(
+            "cmp %[count], #32 wc\n"
+    "if_nc  jmp #.Lge32%=\n"
             // hi = hi_in >> n
             // lo = lo_in >> n | (hi_in << (32-n))
 
-            "mov r31, r1\n"
-            "shr r31, r2\n"
+            "mov %H[result], %H[a]\n"
+            "shr %H[result], %[count]\n"
 
-            "mov r30, r0\n"
-            "shr r30, r2\n"
-            "shl r1, r3\n"
-            "or r30, r1\n"
+            "mov %L[result], %L[a]\n"
+            "shr %L[result], %[count]\n"
+            // For 1..31, -n has the same low five bits as 32-n.
+            // Z detects n=0; reuse count after the same-word shifts finish.
+            "neg %[count], %[count] wz\n"
+    "if_nz  shl %H[a], %[count]\n"
+    "if_nz  or %L[result], %H[a]\n"
 
-            "jmp #.Lret\n"
+            "jmp #.Lret%=\n"
 
-    ".Lge32:\n"
+    ".Lge32%=:\n"
             // n >= 32
-            "mov r3, r2\n"
-            "sub r3, #32\n"
+            "sub %[count], #32\n"
 
             // hi = 0
             // lo = hi_in >> (n-32)
-            "mov r31, #0\n"
-            "mov r30, r1\n"
-            "shr r30, r3\n"
+            "mov %H[result], #0\n"
+            "mov %L[result], %H[a]\n"
+            "shr %L[result], %[count]\n"
 
-    ".Lret:\n"
-    : : : "r0", "r1", "r2", "r3");
+    ".Lret%=:\n"
+    : [result] "=&r"(result), [a] "+&r"(a), [count] "+&r"(b)
+    : : "cc");
+    return result;
 }
-#pragma clang diagnostic pop

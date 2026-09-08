@@ -31,6 +31,29 @@
       }
     },
     {
+      "id": "runtime-shift-right",
+      "host_portable": false,
+      "sources": [
+        "libp2/lib/builtins/lshrdi3.c",
+        "tests/hardware/helper-abi.c"
+      ],
+      "driver": "shift-driver.c",
+      "cflags": [
+        "-DP2_LSHRDI"
+      ],
+      "expected": {
+        "shift.cases": "0x2200",
+        "shift.bad": "0x0",
+        "shift.pattern_bad": "0x0",
+        "shift.first_bad": "0xffffffff",
+        "shift.actual.lo": "0x0",
+        "shift.actual.hi": "0x0",
+        "shift.expected.lo": "0x0",
+        "shift.expected.hi": "0x0",
+        "abi.bad_registers": "0x0"
+      }
+    },
+    {
       "id": "runtime-wide-multiply",
       "host_portable": false,
       "sources": [
