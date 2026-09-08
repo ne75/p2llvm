@@ -25,21 +25,20 @@
 #define COMPUTE_UDIV(a, b) ((su_int)(a) / (su_int)(b))
 #include "int_div_impl.inc"
 
-// Complete assembly leaf: arguments R0/R1, result R31. Keep the optimized
-// original register saves and instruction sequence at every optimization level.
-COMPILER_RT_ABI __attribute__((naked)) si_int __divsi3(si_int a, si_int b) {
+// Declare the return register and all modified operands; let the compiler
+// generate register saves, stack adjustments and the return instruction.
+COMPILER_RT_ABI si_int __divsi3(si_int a, si_int b) {
+    register si_int result __asm__("r31");
     __asm__ volatile(
-            "setq #2\n"
-            "wrlong r0, ptra++\n"
-            "mov r2, r0\n"
-            "xor r2, r1\n"
-            "shr r2, #31 wz\n"    // r2 = 1: result is negative, z = result is positive
-            "abs r0, r0\n"
-            "abs r1, r1\n"
-            "qdiv r0, r1\n"
-            "getqx r31\n"
-    "if_nz  neg r31, r31\n"
-            "setq #2\n"
-            "rdlong r0, --ptra\n"
-            "reta\n");
+            "mov r2, %1\n"
+            "xor r2, %2\n"
+            "shr r2, #31 wz\n"
+            "abs %1, %1\n"
+            "abs %2, %2\n"
+            "qdiv %1, %2\n"
+            "getqx %0\n"
+    "if_nz  neg %0, %0\n"
+    : "=r"(result), "+&r"(a), "+&r"(b)
+    : : "r2", "cc");
+    return result;
 }
