@@ -8,6 +8,25 @@
   },
   "suites": [
     {
+      "id": "inline-register-pairs",
+      "sources": [
+        "tests/codegen/inline-pair.c"
+      ],
+      "driver": "inline-pair-driver.c",
+      "expected": {
+        "pair.constant.lo": "0x01234567",
+        "pair.constant.hi": "0x89abcdef",
+        "pair.carry.lo": "0x0",
+        "pair.carry.hi": "0x1",
+        "pair.wrap.lo": "0x0",
+        "pair.wrap.hi": "0x0",
+        "pair.high.lo": "0x6",
+        "pair.high.hi": "0x4",
+        "pair.same.lo": "0x579bde02",
+        "pair.same.hi": "0xeca8643"
+      }
+    },
+    {
       "id": "runtime-signed-division",
       "host_portable": false,
       "sources": [

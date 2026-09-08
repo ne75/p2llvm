@@ -4,6 +4,7 @@ Contains Propeller 2 Library, C Standard Library, examples, and documentation fo
 ## Documentation
 
 - [Reference documentation](docs/), including the [P2 ABI](<docs/Propeller 2 ABI.md>).
+- [P2 inline assembly operands](<docs/P2 Inline Assembly.md>), including 64-bit register pairs.
 - [Testing guide](tests/README.md) and [hardware test protocol](tests/hardware/PROTOCOL.md).
 - [Development records](development/README.md): plans, reviews, and validation results.
 
