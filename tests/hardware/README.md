@@ -95,6 +95,15 @@ memory/string and float helpers, cog startup/return, locks, interrupts/debugging
 and CORDIC/FIFO-sensitive sequences. The production baseline retains the old
 board-specific experiments for reference; they are not automated assertions.
 
+The `runtime-shift-left`, `runtime-shift-right` and `runtime-shift-arithmetic`
+suites each sweep 136 inputs at every count from 0 through 63. They compare
+direct helper calls and separate C expressions against a bit-at-a-time 32-bit
+reference, and snapshot all callee-saved registers and PTRA around the direct
+calls. The reference uses no 64-bit shifts. Its host unit test compares the same
+C reference against Python integers and needs a native `cc` (override with
+`HOST_CC`); the helper/ABI suites themselves require P2 hardware. Their integration
+checks reject accidental helper calls in the reference and input/output handling.
+
 ## Instruction semantics and coverage gate
 
 `python3 tests/hardware/run.py --mode build --isa` includes generated instruction

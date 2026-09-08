@@ -82,7 +82,9 @@ an explicit state/ABI review; instruction encodings alone are insufficient.
   saves/returns. Optimized signed division and multiplication retain identical
   machine code; exact wide division corrects normalization estimates, product
   overflow and the divide-by-one remainder. [Step 3](step3.md) records software
-  validation, pending hardware checks and the additional shift-helper finding.
+  validation and pending hardware checks. The [shift-helper follow-up](step3-shifts.md)
+  fixes zero-count cross-word corruption in all three 64-bit shifts, with
+  compiler-managed boundaries and independent all-count executable fixtures.
 - Fixed signed 32-bit SELECTCC expansion to use CMPS; signed 64-bit compares
   retain unsigned CMP on the low word and CMPSX on the high word (LLVM `3ceae9f4f4c7`).
 - Corrected counter expectations for event reassertion and future-target rearming
@@ -113,7 +115,8 @@ Use small reviewable commits and stop for human review between these steps.
    __divsi3, __muldi3 and __udivmoddi4; test exact 64-bit quotient/remainder
    boundaries, including the precision-reduction path. Preserve ASM and compare
    generated code for each repair. [Step 3](step3.md) records the compiler-managed
-   implementations and open hardware/shift-helper acceptance work. Stop before
+   implementations; the [shift follow-up](step3-shifts.md) adds the zero-count
+   repairs. Hardware and the negation-helper contract remain open. Stop before
    step 4 for review.
 4. **Close instruction coverage gaps.** Add independent executable fixtures for
    the 74 missing records, including SEUSSF/SEUSSR, attention/pattern events,

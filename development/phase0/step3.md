@@ -1,8 +1,10 @@
 # Step 3: handwritten arithmetic with compiler-managed function boundaries
 
-Software checkpoint, 2026-09-07 (America/Los_Angeles). Step 3 remains open for
-hardware correctness, wide-division timing and the additional shift-helper
-finding below. Step 4 has not started.
+Initial software checkpoint, 2026-09-07 (America/Los_Angeles). The subsequent
+[shift-helper follow-up](step3-shifts.md) records the zero-count fixes, newer
+software results and the current hardware command. Step 3 remains open for
+hardware correctness, wide-division timing and the negation-helper contract.
+Step 4 has not started.
 
 The three named helpers now use ordinary C function definitions with extended
 ASM operands and explicit returns. LLVM generates their register saves, stack
@@ -146,13 +148,10 @@ the superseded naked implementation. It is preserved separately under
 `build/phase0-checkpoints/step3-signed-division-2026-09-07/` and is not counted as
 hardware validation of the current compiler-managed implementation.
 
-Run the current compiler/runtime checkpoint in the normal terminal:
-
-```sh
-cd ~/Code/p2llvm && python3 -u tests/hardware/run.py --mode hardware --loader /opt/p2llvm/bin/loadp2 --reset RTS --baud 2000000 --fifo 10000 --timeout 300 --case runtime-signed-division --case runtime-wide-multiply --case runtime-wide-division --case inline-register-pairs
-```
-
-This is 12 images. The three arithmetic suites use 24, 41 and 90 exact vectors
+These four suites form 12 images; use the combined current command in the
+[shift-helper follow-up](step3-shifts.md#current-hardware-checkpoint) to include
+them, the three shift suites and wide-division timing in one preserved run.
+The three arithmetic suites use 24, 41 and 90 exact vectors
 respectively. Each helper call snapshots R0..R29 and PTRA before and after the
 call; division also checks full/null remainders and memory guards. Multiplication
 and wide division are also exercised through separate noinline C expressions.
@@ -160,22 +159,18 @@ The ABI test probe deliberately uses naked ASM to take snapshots before C code
 can reload or repair a register. That test instrumentation is distinct from the
 normal C runtime functions under test.
 
-Preserve its results, sources, hashes, logs and firmware before the separate
-three-image `performance-wide-division` command in the hardware guide, since
-each hardware invocation replaces the aggregate results. No timing result is
-recorded yet for wide division. Do not advance to step 4 on build results alone.
+Preserve results, sources, hashes, logs and firmware before any subsequent run,
+since each hardware invocation replaces the aggregate results. No timing result
+is recorded yet for wide division. Do not advance to step 4 on build results alone.
 
 ## Additional audit finding to resolve before closing step 3
 
-The three shift helpers `__ashldi3`, `__lshrdi3` and `__ashrdi3` still have the
-old undeclared return behavior. Their cross-word operation also uses a shift by
+The audit found that `__ashldi3`, `__lshrdi3` and `__ashrdi3` retained the
+old undeclared return behavior. Their cross-word operation also used a shift by
 `32-count`; at count zero, the P2 masks that word shift to zero and incorrectly
 ORs the opposite input word into the result. This is inside the stated valid
-shift domain (0 through 63), and needs a separate ASM repair and executable
-count-zero/word-boundary fixture. `__negdi2` also retains the old return contract.
-
-These additional helpers are unchanged at this checkpoint. Repair them as small
-follow-up commits using the new pair operands, with generated-code comparisons
-and hardware checks. Preserve the current twelve-image run before changing its
-runtime archive; the timing baseline's shift dependency must also be kept clear.
-The step-2 `_cnt64` assembly leaf is unchanged by this series.
+shift domain (0 through 63). The [follow-up](step3-shifts.md) repairs all three
+helpers and adds all-count/word-boundary fixtures. That work also freezes the
+old shift dependency of the wide-division timing baseline. `__negdi2` retains
+the old return contract and still needs audit. The step-2 `_cnt64` assembly leaf
+is unchanged by this series.

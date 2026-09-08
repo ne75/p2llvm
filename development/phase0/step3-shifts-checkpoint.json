@@ -1,0 +1,111 @@
+{
+  "date": "2026-09-07",
+  "status": "shift fixes built; hardware execution pending",
+  "root_implementation_commit": "eaa1bba250927a6661dfc6a836b09fd8a9291be9",
+  "llvm_commit": "faebaf0abaaaf1aea95cdcc3249bf212f2e4ca60",
+  "compiler_sha256": "3a0e159bff90f5cdf3fcc3d59e160fa6813ad3b574783505a90d1ef09d5496d8",
+  "runtime_sha256": "9b25c65b694d952f6502d2200813c2897d5fbc5bf1074b75477f33f9260b0a11",
+  "integration_pass": 25,
+  "runner_oracle_unit_pass": 13,
+  "firmware_builds_verified": 504,
+  "hardware_vectors_per_shift_image": 8704,
+  "host_reference_comparisons": 63744,
+  "raw_build_records": [
+    "analysis/full-build-results.json",
+    "analysis/shift-build-results.json"
+  ],
+  "replacement_rule": "Use the nine final shift records for their suite/optimization keys; both raw records are retained.",
+  "assembly_comparison": [
+    {
+      "helper": "__ashldi3",
+      "optimization": "O0",
+      "before_instructions": 39,
+      "after_instructions": 62,
+      "after_calls": []
+    },
+    {
+      "helper": "__ashldi3",
+      "optimization": "O2",
+      "before_instructions": 21,
+      "after_instructions": 19,
+      "after_calls": []
+    },
+    {
+      "helper": "__ashldi3",
+      "optimization": "Os",
+      "before_instructions": 21,
+      "after_instructions": 19,
+      "after_calls": []
+    },
+    {
+      "helper": "__ashldi3",
+      "optimization": "Oz",
+      "before_instructions": 21,
+      "after_instructions": 19,
+      "after_calls": []
+    },
+    {
+      "helper": "__lshrdi3",
+      "optimization": "O0",
+      "before_instructions": 39,
+      "after_instructions": 62,
+      "after_calls": []
+    },
+    {
+      "helper": "__lshrdi3",
+      "optimization": "O2",
+      "before_instructions": 21,
+      "after_instructions": 19,
+      "after_calls": []
+    },
+    {
+      "helper": "__lshrdi3",
+      "optimization": "Os",
+      "before_instructions": 21,
+      "after_instructions": 19,
+      "after_calls": []
+    },
+    {
+      "helper": "__lshrdi3",
+      "optimization": "Oz",
+      "before_instructions": 21,
+      "after_instructions": 19,
+      "after_calls": []
+    },
+    {
+      "helper": "__ashrdi3",
+      "optimization": "O0",
+      "before_instructions": 40,
+      "after_instructions": 63,
+      "after_calls": []
+    },
+    {
+      "helper": "__ashrdi3",
+      "optimization": "O2",
+      "before_instructions": 22,
+      "after_instructions": 20,
+      "after_calls": []
+    },
+    {
+      "helper": "__ashrdi3",
+      "optimization": "Os",
+      "before_instructions": 22,
+      "after_instructions": 20,
+      "after_calls": []
+    },
+    {
+      "helper": "__ashrdi3",
+      "optimization": "Oz",
+      "before_instructions": 22,
+      "after_instructions": 20,
+      "after_calls": []
+    }
+  ],
+  "frozen_timing_dependency": "84-byte old Oz logical-right helper; machine bytes verified identical",
+  "hardware_command_images": 24,
+  "archive": {
+    "path": "build/phase0-checkpoints/step3-shifts-2026-09-07/evidence.zip",
+    "bytes": 8137043,
+    "sha256": "15636bc01132c0133b925e08f047f44ed7c4d1e0d25f625931130ff92721ebf1"
+  }
+}
