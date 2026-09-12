@@ -16,16 +16,15 @@
 
 // Returns: -a
 
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wreturn-type"
 COMPILER_RT_ABI di_int __negdi2(di_int a) {
     // Note: this routine is here for API compatibility; any sane compiler
     // should expand it inline.
-    asm(
-        "not r30, r0\n"
-        "not r31, r1\n"
-        "add r30, #1   wc\n"
-        "addx r31, #0\n"
-    );
+    register di_int result __asm__("r30_r31");
+    __asm__ volatile(
+        "not %L0, %L1\n"
+        "not %H0, %H1\n"
+        "add %L0, #1 wc\n"
+        "addx %H0, #0\n"
+        : "=&r"(result) : "r"(a) : "cc");
+    return result;
 }
-#pragma clang diagnostic pop

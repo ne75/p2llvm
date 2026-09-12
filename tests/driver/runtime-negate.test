@@ -1,0 +1,30 @@
+# RUN: %clang -O2 -Werror=return-type -emit-llvm -S %root/libp2/lib/builtins/negdi2.c -o %t.ll
+# RUN: FileCheck %s --check-prefix=IR < %t.ll
+# RUN: %clang -O0 -Werror=return-type -mllvm -verify-machineinstrs -c %root/libp2/lib/builtins/negdi2.c -o %t.O0.o
+# RUN: %clang -O2 -Werror=return-type -mllvm -verify-machineinstrs -S %root/libp2/lib/builtins/negdi2.c -o %t.O2.s
+# RUN: FileCheck %s --check-prefix=ASM < %t.O2.s
+# RUN: %clang -Os -Werror=return-type -mllvm -verify-machineinstrs -S %root/libp2/lib/builtins/negdi2.c -o %t.Os.s
+# RUN: FileCheck %s --check-prefix=ASM < %t.Os.s
+# RUN: %clang -O0 -mllvm -verify-machineinstrs -S %root/tests/hardware/negate-driver.c -o %t.driver.O0.s
+# RUN: FileCheck %s --check-prefix=DRIVER < %t.driver.O0.s
+# RUN: %clang -O2 -mllvm -verify-machineinstrs -S %root/tests/hardware/negate-driver.c -o %t.driver.O2.s
+# RUN: FileCheck %s --check-prefix=DRIVER < %t.driver.O2.s
+# RUN: %clang -Os -mllvm -verify-machineinstrs -S %root/tests/hardware/negate-driver.c -o %t.driver.Os.s
+# RUN: FileCheck %s --check-prefix=DRIVER < %t.driver.Os.s
+# IR-LABEL: define{{.*}} i64 @__negdi2(
+# IR: %[[RESULT:[^ ]+]] = {{.*}}call i64 asm sideeffect
+# IR-SAME: "=&{r30_r31},r,~{cc}"
+# IR: ret i64 %[[RESULT]]
+# ASM-LABEL: __negdi2:
+# ASM-NOT: calla
+# ASM-NOT: wrlong
+# ASM: not r30, r0
+# ASM-NEXT: not r31, r1
+# ASM-NEXT: add r30, #1{{.*}}wc
+# ASM-NEXT: addx r31, #0
+# ASM-NOT: calla
+# ASM-NOT: rdlong
+# ASM: reta
+# Literal expectations and loop bookkeeping must not call arithmetic helpers.
+# DRIVER-LABEL: test_body:
+# DRIVER-NOT: calla #\__

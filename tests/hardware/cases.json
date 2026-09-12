@@ -8,6 +8,27 @@
   },
   "suites": [
     {
+      "id": "runtime-wide-negation",
+      "host_portable": false,
+      "sources": [
+        "libp2/lib/builtins/negdi2.c",
+        "tests/hardware/helper-abi.c"
+      ],
+      "driver": "negate-driver.c",
+      "cflags": [
+        "-DP2_NEGDI"
+      ],
+      "expected": {
+        "negate.cases": "0x20",
+        "negate.signed_cases": "0x1f",
+        "negate.bad": "0x0",
+        "negate.unsigned_bad": "0x0",
+        "negate.signed_bad": "0x0",
+        "negate.first_bad": "0xffffffff",
+        "abi.bad_registers": "0x0"
+      }
+    },
+    {
       "id": "runtime-shift-left",
       "host_portable": false,
       "sources": [

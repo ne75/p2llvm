@@ -14,6 +14,10 @@ const unsigned helper_canaries[30] = {
 #define CALLEE "__divsi3"
 #define ARGUMENTS "setq #1\n"
 __attribute__((naked)) int helper_probe(int a, int b)
+#elif defined(P2_NEGDI)
+#define CALLEE "__negdi2"
+#define ARGUMENTS "setq #1\n"
+__attribute__((naked)) unsigned long long helper_probe(unsigned long long a)
 #elif defined(P2_MULDI)
 #define CALLEE "__muldi3"
 #define ARGUMENTS "setq #3\n"
