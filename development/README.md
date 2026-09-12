@@ -5,6 +5,8 @@ and recorded results here. Use a separate subdirectory for each work series.
 
 - [Phase 0 cleanup](phase0/README.md): production baseline, LLVM version decision,
   test migration, backend findings, and hardware checkpoints.
+- [Future improvements](future-improvements.md): planned features, including
+  multi-function COG residency.
 - [Earlier feature and upstreaming plans](<history/Future Work.md>): historical
   proposals and implementation checklists.
 - [Original backend working notes](<history/Notes and Thoughts.md>): the old

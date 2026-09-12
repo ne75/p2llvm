@@ -129,10 +129,10 @@ Use small reviewable commits and stop for human review between these steps.
    check driver/library selection, consolidate duplicate operand metadata and
    remove ineffective COG/pass scaffolding.
 
-LLVM migration and multi-function COG residency remain separate later work.
-The latter needs HUB bootstrap, linker-defined resident groups and capacity
-checks, load/execution addresses, ABI-safe HUB/COG calls and per-cog residency.
-The existing cog-attributes fixture does not implement that feature.
+LLVM migration remains separate later work. Multi-function COG residency is
+tracked in the [future improvements list](../future-improvements.md), including
+HUB-to-COG calls and calls between COG-resident functions. The existing
+cog-attributes fixture does not implement that feature.
 
 Counter events and LUT-read selectable events now have generated scenarios.
 FIFO fixtures run from LUT RAM and drain WRFAST before returning to HUB code.
