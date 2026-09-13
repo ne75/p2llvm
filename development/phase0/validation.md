@@ -138,7 +138,10 @@ the corrected benchmark and measured short-fill/O0 overhead. The checkpoint abov
 retains the old runtime results. The [step-3 audit](step3.md) is in progress:
 the three named helpers now use compiler-managed function boundaries, and the
 new register-pair support and arithmetic fixtures pass software checks. Current
-hardware correctness/timing and the negation-helper contract remain pending.
+hardware correctness/timing remain pending. The
+[negation checkpoint](step3-negation.md) finishes the remaining return-contract
+repair, with identical optimized machine bytes, 26 integration passes and 14 unit
+passes. It provides the current combined 27-image hardware command.
 The [shift-helper follow-up](step3-shifts.md) repairs all three zero-count paths
 and records 25 integration passes, 13 unit passes and the rebuilt firmware suite.
 The initial three signed-division hardware passes used a superseded implementation

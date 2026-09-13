@@ -85,6 +85,8 @@ an explicit state/ABI review; instruction encodings alone are insufficient.
   validation and pending hardware checks. The [shift-helper follow-up](step3-shifts.md)
   fixes zero-count cross-word corruption in all three 64-bit shifts, with
   compiler-managed boundaries and independent all-count executable fixtures.
+  The [negation follow-up](step3-negation.md) declares the last suppressed builtin
+  return contract while retaining identical optimized machine bytes.
 - Fixed signed 32-bit SELECTCC expansion to use CMPS; signed 64-bit compares
   retain unsigned CMP on the low word and CMPSX on the high word (LLVM `3ceae9f4f4c7`).
 - Corrected counter expectations for event reassertion and future-target rearming
@@ -116,8 +118,9 @@ Use small reviewable commits and stop for human review between these steps.
    boundaries, including the precision-reduction path. Preserve ASM and compare
    generated code for each repair. [Step 3](step3.md) records the compiler-managed
    implementations; the [shift follow-up](step3-shifts.md) adds the zero-count
-   repairs. Hardware and the negation-helper contract remain open. Stop before
-   step 4 for review.
+   repairs, and the [negation checkpoint](step3-negation.md) finishes the remaining
+   return-contract repair. Current hardware semantics and wide-division timing
+   remain open; use its combined 27-image command. Stop before step 4 for review.
 4. **Close instruction coverage gaps.** Add independent executable fixtures for
    the 74 missing records, including SEUSSF/SEUSSR, attention/pattern events,
    GPIO/smart pins, streamer, interrupts and debugging. Define board/wiring needs.

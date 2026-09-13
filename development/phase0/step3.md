@@ -1,9 +1,10 @@
 # Step 3: handwritten arithmetic with compiler-managed function boundaries
 
 Initial software checkpoint, 2026-09-07 (America/Los_Angeles). The subsequent
-[shift-helper follow-up](step3-shifts.md) records the zero-count fixes, newer
-software results and the current hardware command. Step 3 remains open for
-hardware correctness, wide-division timing and the negation-helper contract.
+[shift-helper follow-up](step3-shifts.md) records the zero-count fixes. The
+[negation checkpoint](step3-negation.md) finishes the remaining return-contract
+repair and records the latest software results and combined hardware command.
+Step 3 remains open for hardware correctness and wide-division timing.
 Step 4 has not started.
 
 The three named helpers now use ordinary C function definitions with extended
@@ -149,8 +150,8 @@ the superseded naked implementation. It is preserved separately under
 hardware validation of the current compiler-managed implementation.
 
 These four suites form 12 images; use the combined current command in the
-[shift-helper follow-up](step3-shifts.md#current-hardware-checkpoint) to include
-them, the three shift suites and wide-division timing in one preserved run.
+[negation checkpoint](step3-negation.md#current-hardware-checkpoint) to include
+them, negation, the three shift suites and wide-division timing in one preserved run.
 The three arithmetic suites use 24, 41 and 90 exact vectors
 respectively. Each helper call snapshots R0..R29 and PTRA before and after the
 call; division also checks full/null remainders and memory guards. Multiplication
@@ -171,6 +172,7 @@ old undeclared return behavior. Their cross-word operation also used a shift by
 ORs the opposite input word into the result. This is inside the stated valid
 shift domain (0 through 63). The [follow-up](step3-shifts.md) repairs all three
 helpers and adds all-count/word-boundary fixtures. That work also freezes the
-old shift dependency of the wide-division timing baseline. `__negdi2` retains
-the old return contract and still needs audit. The step-2 `_cnt64` assembly leaf
-is unchanged by this series.
+old shift dependency of the wide-division timing baseline. The
+[negation follow-up](step3-negation.md) repairs `__negdi2` with identical optimized
+machine bytes. Hardware acceptance remains open. The step-2 `_cnt64` assembly
+leaf is unchanged by this series.

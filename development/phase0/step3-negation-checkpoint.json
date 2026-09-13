@@ -1,0 +1,59 @@
+{
+  "date": "2026-09-12",
+  "status": "software checkpoint; combined hardware execution pending",
+  "root_implementation_commit": "f5708428e87cda29fb15b29a3d995c9caf66ab32",
+  "llvm_commit": "faebaf0abaaaf1aea95cdcc3249bf212f2e4ca60",
+  "compiler_sha256": "3a0e159bff90f5cdf3fcc3d59e160fa6813ad3b574783505a90d1ef09d5496d8",
+  "runtime_sha256": "3656d295f237bc44dacb7a1b38655a7950119de630a1b812be5a936329d781b1",
+  "manifest_sha256": "09a0ed23655f507fdb07732c8ac5f6fd6c79ed555fffac731b21ef0c0dd82c77",
+  "integration_pass": 26,
+  "runner_oracle_unit_pass": 14,
+  "firmware_builds_verified": 507,
+  "firmware_suites": 169,
+  "hardware_execution_in_this_checkpoint": false,
+  "raw_build_records": "analysis/full-build-results.json",
+  "negation_inputs_per_image": 32,
+  "signed_c_negation_inputs_per_image": 31,
+  "assembly_comparison": [
+    {
+      "optimization": "O0",
+      "before_instructions": 23,
+      "after_instructions": 35,
+      "identical_machine_bytes": false,
+      "calls": []
+    },
+    {
+      "optimization": "O2",
+      "before_instructions": 5,
+      "after_instructions": 5,
+      "identical_machine_bytes": true,
+      "calls": []
+    },
+    {
+      "optimization": "Os",
+      "before_instructions": 5,
+      "after_instructions": 5,
+      "identical_machine_bytes": true,
+      "calls": []
+    },
+    {
+      "optimization": "Oz",
+      "before_instructions": 5,
+      "after_instructions": 5,
+      "identical_machine_bytes": true,
+      "calls": []
+    }
+  ],
+  "hardware_command_images": 27,
+  "previous_hardware": "analysis/prior-hardware: three historical signed-division passes, superseded implementation; not current acceptance",
+  "previous_checkpoint": {
+    "path": "build/phase0-checkpoints/step3-shifts-2026-09-07/evidence.zip",
+    "bytes": 8137043,
+    "sha256": "15636bc01132c0133b925e08f047f44ed7c4d1e0d25f625931130ff92721ebf1"
+  },
+  "archive": {
+    "path": "build/phase0-checkpoints/step3-negation-2026-09-12/evidence.zip",
+    "bytes": 11870964,
+    "sha256": "e407d2435733220fef084ae8587e3f5b49cae1ce9f84b22ac87f4ef732d9e930"
+  }
+}

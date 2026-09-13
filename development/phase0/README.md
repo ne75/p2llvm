@@ -45,8 +45,9 @@ correctness tests and cycle measurements, including a repaired benchmark and
 short-fill/O0 overhead. [Step 3](step3.md) now has compiler-managed arithmetic
 helpers, exact wide-division tests and software validation. Current hardware
 correctness/timing remain open. The [shift-helper follow-up](step3-shifts.md)
-repairs count zero and adds a complete 0..63 count sweep; its current hardware
-command supersedes the earlier twelve-image checkpoint.
+repairs count zero and adds a complete 0..63 count sweep. The
+[negation checkpoint](step3-negation.md) finishes the remaining return-contract
+repair and provides the current combined 27-image hardware command.
 
 Each compiler fix is committed in the LLVM submodule; corresponding root commits
 advance its gitlink. Test/build output is kept under `build/`, not checked in as
