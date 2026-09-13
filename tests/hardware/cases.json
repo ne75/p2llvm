@@ -234,7 +234,12 @@
         "slt64.imm_low_sign": "0x17",
         "slt64.imm_below": "0x13",
         "slt64.imm_equal": "0x17",
-        "slt64.imm_negative": "0x13"
+        "slt64.imm_negative": "0x13",
+        "umin.rhs": "0x3",
+        "umin.lhs": "0x3",
+        "umin.equal": "0x7",
+        "umin.high": "0x80000000",
+        "umin.zero": "0x0"
       }
     },
     {

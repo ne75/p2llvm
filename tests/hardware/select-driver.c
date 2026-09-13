@@ -9,7 +9,14 @@ extern int select_slt64(long long, long long, int, int);
 extern int select_ult64(unsigned long long, unsigned long long, int, int);
 extern int select_slt64_imm(long long, int, int);
 
+extern unsigned select_umin32(unsigned, unsigned);
+
 void test_body(void) {
+    observe("umin.rhs", select_umin32(9, 3));
+    observe("umin.lhs", select_umin32(3, 9));
+    observe("umin.equal", select_umin32(7, 7));
+    observe("umin.high", select_umin32(0xffffffffu, 0x80000000u));
+    observe("umin.zero", select_umin32(0, 0xffffffffu));
     observe("slt.true", select_slt32(-4, 2, 19, 23));
     observe("slt.false", select_slt32(4, 2, 19, 23));
     observe("slt.negative_true", select_slt32(-5, -4, 19, 23));
