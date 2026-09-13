@@ -2,8 +2,9 @@
 
 Software checkpoint, 2026-09-12. `__negdi2` now declares its ASM inputs and result,
 completing the remaining return-contract repair identified during step 3. The
-combined hardware run and wide-division timing review remain pending. Step 4 has
-not started. This checkpoint supersedes the hardware commands in the earlier
+later [hardware report](step3-hardware.md) verifies all 27 images and records
+division timing tradeoffs. Step 3 is ready for human review; the pending status
+below describes this software checkpoint. Step 4 has not started. This checkpoint supersedes the hardware commands in the earlier
 [arithmetic](step3.md) and [shift](step3-shifts.md) checkpoints.
 
 ## Change to review

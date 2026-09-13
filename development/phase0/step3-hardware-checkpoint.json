@@ -1,0 +1,35 @@
+{
+  "date": "2026-09-13",
+  "status": "27 hardware images verified; ready for human review before step 4",
+  "tested_root_commit": "153516d692f7e41c332f48b159520571806afd84",
+  "root_implementation_commit": "f5708428e87cda29fb15b29a3d995c9caf66ab32",
+  "llvm_commit": "faebaf0abaaaf1aea95cdcc3249bf212f2e4ca60",
+  "verified_hardware_images": 27,
+  "observations_redecoded": 372,
+  "manifest_sha256": "5da14b4307112693d9650e540faee40fdc7da7cbafb8bb4e0d68fb1673aee632",
+  "compiler_sha256": "3a0e159bff90f5cdf3fcc3d59e160fa6813ad3b574783505a90d1ef09d5496d8",
+  "runtime_sha256": "3656d295f237bc44dacb7a1b38655a7950119de630a1b812be5a936329d781b1",
+  "loader_sha256": "4b894312f75a6a52506f6f2424f3139e341ee1d0060263bd9b32a1f99f2d6eb1",
+  "unique_run_ids": 27,
+  "mismatches": 0,
+  "timeouts": 0,
+  "semantic_images": 24,
+  "timing_images": 3,
+  "raw_results_sha256": "5d0105bc59cce12633defaaed8f725c36429ddf79ebfff2732e004a05f6d16ce",
+  "rom_version": "G",
+  "detected_port": "/dev/cu.usbserial-DK0H6QJS",
+  "detected_clock_mode": "0x012427f8",
+  "board": null,
+  "measured_clock_hz": null,
+  "previous_software_archive": {
+    "path": "build/phase0-checkpoints/step3-negation-2026-09-12/evidence.zip",
+    "bytes": 11870964,
+    "sha256": "e407d2435733220fef084ae8587e3f5b49cae1ce9f84b22ac87f4ef732d9e930"
+  },
+  "raw_timing_file": "analysis/timings.json",
+  "archive": {
+    "path": "build/phase0-checkpoints/step3-hardware-2026-09-13/evidence.zip",
+    "bytes": 11571653,
+    "sha256": "da70d86fc11558d8a7e2d81f3cf6f833a20a3240f3767771d0a3f6e268410c5b"
+  }
+}

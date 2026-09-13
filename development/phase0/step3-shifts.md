@@ -1,8 +1,9 @@
 # Step 3 follow-up: zero-count 64-bit shifts
 
 Software checkpoint, 2026-09-07. The three shift helpers are repaired and their
-hardware fixtures are built. Hardware execution remains pending; this does not
-close step 3 or start step 4. The later [negation checkpoint](step3-negation.md)
+hardware fixtures are built. The later [hardware checkpoint](step3-hardware.md)
+verifies all 27 combined images and records division timing. Hardware-pending
+statements below describe this software checkpoint. Step 4 has not started. The later [negation checkpoint](step3-negation.md)
 repairs `__negdi2` and supersedes the command below with a 27-image run.
 
 ## Changes to review

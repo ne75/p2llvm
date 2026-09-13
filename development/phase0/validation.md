@@ -135,15 +135,13 @@ WRFAST memset and direct-register counter returns; its targeted hardware tests
 and cycle measurements are complete and ready for human review. See
 [step2.md](step2.md) and the [hardware report](step2-hardware.md), which records
 the corrected benchmark and measured short-fill/O0 overhead. The checkpoint above
-retains the old runtime results. The [step-3 audit](step3.md) is in progress:
-the three named helpers now use compiler-managed function boundaries, and the
-new register-pair support and arithmetic fixtures pass software checks. Current
-hardware correctness/timing remain pending. The
-[negation checkpoint](step3-negation.md) finishes the remaining return-contract
-repair, with identical optimized machine bytes, 26 integration passes and 14 unit
-passes. It provides the current combined 27-image hardware command.
-The [shift-helper follow-up](step3-shifts.md) repairs all three zero-count paths
-and records 25 integration passes, 13 unit passes and the rebuilt firmware suite.
+retains the old runtime results. The [step-3 audit](step3.md),
+[shift repairs](step3-shifts.md) and [negation repair](step3-negation.md) now have
+26 integration passes, 14 unit passes and 507 successful firmware builds.
+The [step-3 hardware report](step3-hardware.md) verifies all 27 targeted images
+with no timeouts, 372 matching observations and no detected ABI corruption.
+Wide-division cycle measurements show both improvements and slower paths;
+review those tradeoffs before accepting step 3. Step 4 has not started.
 The initial three signed-division hardware passes used a superseded implementation
 and are retained separately; they do not validate the latest source.
 Broader production measurements and 74 instruction fixtures are still outstanding.

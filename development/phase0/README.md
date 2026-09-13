@@ -43,11 +43,12 @@ under the documented USB/loader assumption. [Step 2](step2.md) contains the runt
 performance changes. Its [hardware report](step2-hardware.md) records passing
 correctness tests and cycle measurements, including a repaired benchmark and
 short-fill/O0 overhead. [Step 3](step3.md) now has compiler-managed arithmetic
-helpers, exact wide-division tests and software validation. Current hardware
-correctness/timing remain open. The [shift-helper follow-up](step3-shifts.md)
+helpers, exact wide-division tests and software validation. Its
+[hardware report](step3-hardware.md) records 27 passing images with no timeouts,
+ABI checks and measured division overheads; step 3 is ready for human review. The [shift-helper follow-up](step3-shifts.md)
 repairs count zero and adds a complete 0..63 count sweep. The
 [negation checkpoint](step3-negation.md) finishes the remaining return-contract
-repair and provides the current combined 27-image hardware command.
+repair; its combined 27-image hardware command has now passed.
 
 Each compiler fix is committed in the LLVM submodule; corresponding root commits
 advance its gitlink. Test/build output is kept under `build/`, not checked in as

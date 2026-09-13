@@ -4,7 +4,9 @@ Initial software checkpoint, 2026-09-07 (America/Los_Angeles). The subsequent
 [shift-helper follow-up](step3-shifts.md) records the zero-count fixes. The
 [negation checkpoint](step3-negation.md) finishes the remaining return-contract
 repair and records the latest software results and combined hardware command.
-Step 3 remains open for hardware correctness and wide-division timing.
+The later [hardware checkpoint](step3-hardware.md) verifies 27 passing images
+and records division timings. Step 3 is ready for human review; the hardware-
+pending statements below describe this initial software checkpoint.
 Step 4 has not started.
 
 The three named helpers now use ordinary C function definitions with extended

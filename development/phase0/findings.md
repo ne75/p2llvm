@@ -82,7 +82,7 @@ an explicit state/ABI review; instruction encodings alone are insufficient.
   saves/returns. Optimized signed division and multiplication retain identical
   machine code; exact wide division corrects normalization estimates, product
   overflow and the divide-by-one remainder. [Step 3](step3.md) records software
-  validation and pending hardware checks. The [shift-helper follow-up](step3-shifts.md)
+  validation; the [hardware report](step3-hardware.md) records 27 passing images. The [shift-helper follow-up](step3-shifts.md)
   fixes zero-count cross-word corruption in all three 64-bit shifts, with
   compiler-managed boundaries and independent all-count executable fixtures.
   The [negation follow-up](step3-negation.md) declares the last suppressed builtin
@@ -113,14 +113,15 @@ Use small reviewable commits and stop for human review between these steps.
    Implementation, software results and two newly found backend issues are in
    [step2.md](step2.md). The [hardware report](step2-hardware.md) preserves the
    initial run and corrected timing rerun. The user authorized step 3 afterward.
-3. **Audit handwritten runtime helpers (in progress).** Repair undeclared return behavior in
+3. **Audit handwritten runtime helpers (validated; ready for human review).** Repair undeclared return behavior in
    __divsi3, __muldi3 and __udivmoddi4; test exact 64-bit quotient/remainder
    boundaries, including the precision-reduction path. Preserve ASM and compare
    generated code for each repair. [Step 3](step3.md) records the compiler-managed
    implementations; the [shift follow-up](step3-shifts.md) adds the zero-count
    repairs, and the [negation checkpoint](step3-negation.md) finishes the remaining
-   return-contract repair. Current hardware semantics and wide-division timing
-   remain open; use its combined 27-image command. Stop before step 4 for review.
+   return-contract repair. The [hardware report](step3-hardware.md) verifies all
+   27 images and records division timing, including slower exact-result paths.
+   Stop before step 4 for human review of these tradeoffs.
 4. **Close instruction coverage gaps.** Add independent executable fixtures for
    the 74 missing records, including SEUSSF/SEUSSR, attention/pattern events,
    GPIO/smart pins, streamer, interrupts and debugging. Define board/wiring needs.
