@@ -20,7 +20,8 @@
 // seee eeee eeee mmmm mmmm mmmm mmmm mmmm | mmmm mmmm mmmm mmmm mmmm mmmm mmmm
 // mmmm
 
-COMPILER_RT_ABI double __floatdidf(di_int a) {
+// Keep the large conversion body in HUB RAM, as with __floatdisf.
+static __attribute__((noinline)) double floatdidf_hub(di_int a) {
   if (a == 0)
     return 0.0;
   const unsigned N = sizeof(di_int) * CHAR_BIT;
@@ -66,4 +67,8 @@ COMPILER_RT_ABI double __floatdidf(di_int a) {
                 ((su_int)(a >> 32) & 0x000FFFFF); // mantissa-high
   fb.u.s.low = (su_int)a;                         // mantissa-low
   return fb.f;
+}
+
+COMPILER_RT_ABI double __floatdidf(di_int a) {
+  return floatdidf_hub(a);
 }

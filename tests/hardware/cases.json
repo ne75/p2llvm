@@ -341,8 +341,23 @@
         "double.to_int.lo": "0xffffff85",
         "double.to_int.hi": "0xffffffff",
         "int.to_double.lo": "0x0",
-        "int.to_double.hi": "0xc05ec000"
-      }
+        "int.to_double.hi": "0xc05ec000",
+        "int.zero.lo": "0x0",
+        "int.zero.hi": "0x0",
+        "int.negative.lo": "0x0",
+        "int.negative.hi": "0xbff00000",
+        "int.tie_down.lo": "0x0",
+        "int.tie_down.hi": "0x43400000",
+        "int.tie_up.lo": "0x2",
+        "int.tie_up.hi": "0x43400000",
+        "int.max.lo": "0x0",
+        "int.max.hi": "0x43e00000",
+        "int.negative_max.lo": "0x0",
+        "int.negative_max.hi": "0xc3e00000"
+      },
+      "p2_sources": [
+        "libp2/lib/builtins/floatdidf.c"
+      ]
     },
     {
       "id": "cxx",

@@ -1,0 +1,4 @@
+# RUN: %python %tools/check_runtime_lut.py %root %bin %t
+# Ordinary driver links retain all runtime LUT sections. Check the complete
+# archive, not only the helper subset pulled in by a small semantic fixture.
+# The float hardware suite exercises the HUB conversion behind its LUT entry.

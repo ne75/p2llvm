@@ -12,4 +12,17 @@ void test_body(void) {
     OBSERVE64("double.to_int", convert(-123.75));
     d.f = convert_back(-123);
     OBSERVE64("int.to_double", d.u);
+    d.f = convert_back(0);
+    OBSERVE64("int.zero", d.u);
+    d.f = convert_back(-1);
+    OBSERVE64("int.negative", d.u);
+    // Adjacent ties around 2^53 must round to the even significand.
+    d.f = convert_back(9007199254740993LL);
+    OBSERVE64("int.tie_down", d.u);
+    d.f = convert_back(9007199254740995LL);
+    OBSERVE64("int.tie_up", d.u);
+    d.f = convert_back(9223372036854775807LL);
+    OBSERVE64("int.max", d.u);
+    d.f = convert_back(-9223372036854775807LL);
+    OBSERVE64("int.negative_max", d.u);
 }
