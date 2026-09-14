@@ -144,8 +144,12 @@ Wide-division cycle measurements show both improvements and slower paths;
 review those tradeoffs before accepting step 3. Step 4 has not started.
 The initial three signed-division hardware passes used a superseded implementation
 and are retained separately; they do not validate the latest source.
-Broader production measurements and 74 instruction fixtures are still outstanding.
+The [step-5 checkpoint](step5.md), advanced before step 4 by user request,
+records passing public basic production comparisons, frame growth and slower
+cases. Peak stack measurements, performance optimization and 74 instruction
+fixtures remain outstanding.
 Peripheral tests need a defined board and wiring profile.
-No production performance or flight acceptance is established by this checkpoint.
+The step-5 report establishes bounded production performance measurements;
+no flight acceptance is established by these checkpoints.
 The multi-function COG residency feature remains a later series, as designed in
 the original backend review; it is not implemented by these repairs.

@@ -121,14 +121,15 @@ Use small reviewable commits and stop for human review between these steps.
    repairs, and the [negation checkpoint](step3-negation.md) finishes the remaining
    return-contract repair. The [hardware report](step3-hardware.md) verifies all
    27 images and records division timing, including slower exact-result paths.
-   Stop before step 4 for human review of these tradeoffs.
+   The user advanced step 5 before step 4 for public production-baseline comparisons.
 4. **Close instruction coverage gaps.** Add independent executable fixtures for
    the 74 missing records, including SEUSSF/SEUSSR, attention/pattern events,
    GPIO/smart pins, streamer, interrupts and debugging. Define board/wiring needs.
    `coverage.py --require-complete` remains a failing acceptance gate until then.
-5. **Compare against production.** Measure code size, stack use, memory throughput,
-   arithmetic latency and representative application timing, including frame
-   alignment and register-save costs.
+5. **Compare against production (basic benchmark checkpoint ready for review).**
+   [Step 5](step5.md) records passing public C/C++ hardware comparisons, runtime link
+   repairs, frame growth and kernel timings. Peak stack high-water measurements
+   and performance optimization remain open. See the [full tables](step5-basics.md).
 6. **Finish backend contracts and cleanup.** Document ABI and supported features,
    check driver/library selection, consolidate duplicate operand metadata and
    remove ineffective COG/pass scaffolding.

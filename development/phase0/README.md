@@ -50,6 +50,12 @@ repairs count zero and adds a complete 0..63 count sweep. The
 [negation checkpoint](step3-negation.md) finishes the remaining return-contract
 repair; its combined 27-image hardware command has now passed.
 
+[Step 5](step5.md) was advanced ahead of step 4 at the user’s request. Basic
+public C/C++ comparisons now pass, with measured frame growth and timing
+tradeoffs. Review its [tables](step5-basics.md) and
+[evidence index](step5-checkpoint.json); peak-stack and loaded network/peripheral
+validation remain follow-up work.
+
 Each compiler fix is committed in the LLVM submodule; corresponding root commits
 advance its gitlink. Test/build output is kept under `build/`, not checked in as
 source. Passing compiler tests does not constitute hardware or flight validation.

@@ -1,0 +1,27 @@
+{
+  "scope": "Public synthetic benchmark and runtime regression evidence only",
+  "archive": {
+    "path": "build/phase0-checkpoints/step5-public-2026-09-14/evidence.zip",
+    "sha256": "35d69c685cfd17f3df3e0b1dd89d61849538b1d0c795b1c7d29a95ce5afa373e",
+    "bytes": 449749,
+    "entries": 157
+  },
+  "production_root": "bdcefcce7860b2232c06f35726fea679a3a7309c",
+  "production_llvm": "72a9bb1ef2656d9953d1f41a8196d425ff2ab0b1",
+  "cleanup_runtime_root": "e1e93d650a4462b537d240d6f3eba343add8cf2a",
+  "cleanup_llvm": "5ea75453d906563988f1ff5fa834811bd9da313d",
+  "benchmark_commit": "fc0005efcf335d6fe1792015bebc5eb8faa6e9ea",
+  "hardware_images": 12,
+  "verified_observations": 987,
+  "software": {
+    "instruction_matrix_pass": 368,
+    "llvm_tests_pass": 142,
+    "integration_pass": 27
+  },
+  "limits": [
+    "No measured stack high-water mark",
+    "Performance costs remain to be optimized",
+    "No flight acceptance"
+  ],
+  "local_archive_only": true
+}
