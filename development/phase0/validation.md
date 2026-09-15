@@ -141,7 +141,8 @@ retains the old runtime results. The [step-3 audit](step3.md),
 The [step-3 hardware report](step3-hardware.md) verifies all 27 targeted images
 with no timeouts, 372 matching observations and no detected ABI corruption.
 Wide-division cycle measurements show both improvements and slower paths;
-review those tradeoffs before accepting step 3. Step 4 has not started.
+review those tradeoffs before accepting step 3. Step 4 is deferred until after
+the cleanup merge; see [future improvements](../future-improvements.md).
 The initial three signed-division hardware passes used a superseded implementation
 and are retained separately; they do not validate the latest source.
 The [step-5 checkpoint](step5.md), advanced before step 4 by user request,

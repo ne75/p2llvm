@@ -1,5 +1,31 @@
 # Future improvements
 
+## Remaining instruction execution coverage
+
+Deferred until after the cleanup merge. The current inventory has 74 instruction
+records without executable fixtures. These are coverage gaps, not a request to
+implement or claim validation of every peripheral instruction in this series.
+
+Complete SEUSSF/SEUSSR, attention/pattern events, GPIO and smart pins, streamer,
+interrupt and debugging fixtures with independent expected results. Define board
+and wiring profiles for peripheral cases. Run new fixtures on hardware and keep
+strict coverage inventory checks available; full coverage is not a cleanup merge
+gate.
+
+## Performance and stack follow-up
+
+Optimize conservative local-frame alignment and branch expansion after measuring
+against the saved production baseline. Add stack high-water observations and
+independent repeated-boot timing measurements. Preserve the existing benchmark
+results as the comparison point.
+
+## Explicit double-use policy
+
+Keep accidental double use visible. Existing Clang conversion warnings cover
+some implicit promotions, but a comprehensive target-specific implicit-double
+warning and opt-in runtime policy need a separate design. Do not treat adding
+conversion helpers as approval to enable implicit doubles in production builds.
+
 ## Multi-function COG residency
 
 Planned after the phase-0 cleanup and validation work. Implementation has not
