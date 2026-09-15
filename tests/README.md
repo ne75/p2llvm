@@ -10,6 +10,10 @@ python3 tests/run.py --suite instructions --build-dir build/phase0-llvm
 python3 tests/run.py --suite integration --filter signed
 ```
 
+The driver regression also links against isolated synthetic SDKs to check header,
+library and script selection, overrides and partial links. It never uses an
+installed production runtime. See [toolchain use](../docs/P2%20Toolchain.md).
+
 ## Layers
 
 - **Instruction inventory:** `llvm-tblgen -dump-json` enumerates every concrete

@@ -4,6 +4,7 @@ Contains Propeller 2 Library, C Standard Library, examples, and documentation fo
 ## Documentation
 
 - [Reference documentation](docs/), including the [P2 ABI](<docs/Propeller 2 ABI.md>).
+- [SDK selection and supported features](<docs/P2 Toolchain.md>).
 - [P2 inline assembly operands](<docs/P2 Inline Assembly.md>), including 64-bit register pairs.
 - [Testing guide](tests/README.md) and [hardware test protocol](tests/hardware/PROTOCOL.md).
 - [Development records](development/README.md): plans, reviews, and validation results.
@@ -56,7 +57,7 @@ make install -j8
 ```
 
 ## Building Projects
-Building C/C++ code with this compile suite works like any other. Compile each source file into a .o, link them all together with ld. Below are the specific details on this. Eventually, libp2, libc, and the linker script will all be automagically included by clang, that's on the todo list. Chances are you already have clang installed on your computer (expecially if on macOS), so be sure to set up you builds to use the above install directory and not your system clang.
+Building C/C++ code with this compile suite works like any other. Compile each source file into a .o, link them all together with ld. Below are the specific details on this. Clang automatically selects the runtime libraries and linker script from its SDK; use `--sysroot=/path/to/sdk` when using a separate compiler build. Chances are you already have clang installed on your computer (expecially if on macOS), so be sure to set up you builds to use the above install directory and not your system clang.
 
 
 1. Compile a source object. I use the following CFLAGS. The ciritcal ones are `--target=p2`, which tells our clang build what backend to use; `-fno-jump-tables` (required, see wiki in docs for why); and `-Os`, which will make code a lot more size and speed efficient.
