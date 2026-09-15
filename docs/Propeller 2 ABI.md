@@ -24,17 +24,17 @@ Propeller 2 is an multicore 32-bit microcontroller with 64 smartpins, 8 cores (c
 | Address | Name | Purpose |
 |-|-|-|
 | `0x000` - `0x1cf` | - | General Purpose Data/Instructions |
-| `0x1d0` - `0x1f0` | `r0`-`r31` | General Purpose Data (for use by the compiler)
+| `0x1d0` - `0x1ef` | `r0`-`r31` | General Purpose Data (for use by the compiler)
 | `0x1f0` | `ijmp3` | Interrupt 3 ISR address|
 | `0x1f1` | `iret3` | Interrupt 3 return address|
 | `0x1f2` | `ijmp2` | Interrupt 2 ISR address|
 | `0x1f3` | `iret2` | Interrupt 2 return address|
 | `0x1f4` | `ijmp1` | Interrupt 1 ISR address|
-| `0x1f5` | `ijmp1` | Interrupt 1 return address|
+| `0x1f5` | `iret1` | Interrupt 1 return address|
 | `0x1f6` | `pa` | Special call register (used as scratch register) | 
-| `0x1f7` | `pb` | Special call register (unused) |
+| `0x1f7` | `pb` | Special call register; not callee-saved |
 | `0x1f8` | `ptra` | Stack pointer | 
-| `0x1f9` | `ptrb` | Ununsed |
+| `0x1f9` | `ptrb` | Scratch pointer; not callee-saved |
 | `0x1fa` | `dira` | Pin port A direction control |
 | `0x1fb` | `dirb` | Pin port B direction control |
 | `0x1fc` | `outa` | Pin port A output control |
@@ -49,7 +49,7 @@ Each cog contains a 2KB, long-addressed RAM. Each long in RAM is referred to as 
 
 The first 464 registers (`0x000` - `0x1cf`) are general purpose registers and are only used if the application specifically references them. 
 
-The next 32 registers (`0x1d0` - `0x1f0`) are general purpose registers named r0-r31 and are used by the compiler as registers to perform operations on (analogous to a typical processor's register file)
+The next 32 registers (`0x1d0` - `0x1ef`) are general purpose registers named r0-r31 and are used by the compiler as registers to perform operations on (analogous to a typical processor's register file)
 
 The next 16 registers (`0x1f0` - `0x1ff`) are special-purpose registers that control hardware, interrupt jump/return locations, and the stack pointer.
 
@@ -65,18 +65,30 @@ The hub is a 512KB, byte-addressed RAM that can be accessed by all cogs. It is u
 
 ## Data Types and Representation
 
-Data in the hub is always byte-aligned and stored with least significant byte  first (little endian format). 
+HUB data is little endian. Hardware byte addressing does not imply that C/C++
+objects all have one-byte alignment. The frontend's normal type layout is:
 
 ### Basic Data Types
 
-| Type | Propeller-style Name |  Size (bits) | Hub Alignment (bits) |
-|-|-|-|-|
-| signed/unsigned char | byte | 8 | 8 | 
-| signed/unsigned short | word | 16 | 8 |
-| signed/unsigned int | long | 32 | 8 |
-| signed/unsigned long long | - | 64 | 8 | 
-| float | - | 32 | 8 | 
-| double | - | 64 | 8 |
+| Type | Size (bytes) | C/C++ alignment (bytes) |
+|---|---:|---:|
+| signed/unsigned char | 1 | 1 |
+| signed/unsigned short | 2 | 2 |
+| signed/unsigned int, long | 4 | 4 |
+| signed/unsigned long long | 8 | 8 |
+| float | 4 | 4 |
+| double, long double | 8 | 8 |
+| object/function pointer | 4 | 4 |
+
+`float` uses IEEE binary32; `double` and `long double` use IEEE binary64.
+`size_t` is unsigned long; `ptrdiff_t` is signed long, both 32 bits. `wchar_t`
+is signed int. Struct members follow these alignments unless explicitly packed.
+
+The LLVM data layout is `e-p:32:32-i32:32-i64:32`. Its default i64 alignment
+is four bytes; Clang supplies the stronger C/C++ object alignment explicitly.
+Incoming ABI stack slots are byte aligned regardless of natural type alignment.
+The backend reserves alignment slack for local objects and rounds their addresses
+up at access time; it does not assume the caller's PTRA is naturally aligned.
 
 ### Register Data Storage
 
@@ -86,7 +98,7 @@ Any of the 8, 16, or 32 bit types can be stored in any cog register. The 64 bit 
 
 Hub RAM ranges from `0x00000` to `0x7ffff`. The top 16KB (`0x7c000`-`0x7ffff`) is reserved for the debugger code, if used, and is mapped to via address range `0xfc000`-`0xfffff`. If debugging is not used, `0x7c000`-`0x7ffff` is normal addressable RAM space. 
 
-The following table describes how a typical program will be laid out.
+The supplied `libp2/p2.ld` and `p2_debug.ld` scripts define this layout.
 
 | Address     | Description | 
 |-------------|-------------|
@@ -94,9 +106,15 @@ The following table describes how a typical program will be laid out.
 | `0x00040`   | Re-usable cog startup code |
 | `0x00200`   | Runtime library code | 
 | `0x00a00`   | Start of generic program space |
-| `0x70000`   | 2KB Cog 0 Stack Space |
-| `0x7cfff`   | Start of debugger reserved space |
+| `0x70000`   | Start of 48 KiB Cog 0 stack reservation |
+| `0x7c000`   | End of stack; start of debugger reserved space |
 | `0x7ffff`   | End of memory (on Rev B silicon) |
+
+The scripts reserve `0xc000 - 4` bytes for the heap after BSS, aligned to four
+bytes. Other cogs need separately allocated stacks. The scripts enforce a 2 KiB
+LUT image limit; this is not a runtime stack overflow check or a measured stack
+high-water bound. Stock startup loads LUT from HUB `0x200`, so relocating the
+LUT image requires corresponding startup changes.
 
 ## Program Execution
 
