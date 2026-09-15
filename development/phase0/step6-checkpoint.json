@@ -1,0 +1,44 @@
+{
+  "date": "2026-09-14",
+  "root_source": "fcccdff9de472163a22a3135572225da00561cca",
+  "llvm_source": "a78b9edd6c2967070caec52e3453cd43d69bb62b",
+  "production_root": "bdcefcce7860b2232c06f35726fea679a3a7309c",
+  "production_llvm": "72a9bb1ef2656d9953d1f41a8196d425ff2ab0b1",
+  "compiler_sha256": "0c5ffeb470d8c2fd6ed9e8549c2a137db7edc42116f461fc2c2fc38b15ca0e41",
+  "comparison_runtime_sha256": "44b93dc332b3060393ba479249abff2c99f5fbdd9cafb2e83c85360cc6f8a8e4",
+  "sdk_archive_sha256": {
+    "libc/lib/libc.a": "c3eda279348b73e22fffb059d9abc2b2116c37dd9a993d410d217ee96fae9cf3",
+    "libp2/lib/libp2.a": "1e0f5b225d0f63d53edc99137549ad551fedb3cfd01a896dd31ea4e0c20f7ea2",
+    "libp2/lib/libp2db.a": "15f327f75934cdd5b8ab109cad8c762a49d237b2a3e7d104a5e76f56e6f15a81"
+  },
+  "software": {
+    "instruction_checks_pass": 368,
+    "llvm_tests_pass": 142,
+    "integration_tests_pass": 28,
+    "runner_oracle_unit_tests_pass": 14,
+    "host": {
+      "NOT_APPLICABLE": 60,
+      "PASS": 42
+    },
+    "identical_loaded_firmware_images": 507,
+    "fresh_sdk_benchmark_images_built": 3,
+    "fresh_sdk_normal_debug_links_pass": 2,
+    "runtime_lut_bytes": 1784,
+    "lut_capacity_bytes": 2048,
+    "instruction_records_with_executable_fixtures": 294,
+    "instruction_inventory": 368
+  },
+  "hardware_run_this_step": false,
+  "archive": {
+    "path": "build/phase0-checkpoints/step6-2026-09-14/evidence.zip",
+    "sha256": "d6c0b963e97b4bb506a533eebcf9125df40e57f25a9d0016d8cefc44d7eacc65",
+    "bytes": 4354485,
+    "entries": 2078
+  },
+  "limits": [
+    "Firmware comparison uses the same runtime archive and fixed run IDs before and after backend cleanup.",
+    "No new hardware execution, cycle measurement or stack high-water measurement.",
+    "Remaining 74 instruction fixtures deferred until after cleanup merge.",
+    "Archive is local; no remote archive backup claimed."
+  ]
+}

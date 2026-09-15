@@ -134,9 +134,10 @@ Use small reviewable commits and stop for human review between these steps.
    [Step 5](step5.md) records passing public C/C++ hardware comparisons, runtime link
    repairs, frame growth and kernel timings. Peak stack high-water measurements
    and performance optimization remain open. See the [full tables](step5-basics.md).
-6. **Finish backend contracts and cleanup.** Document ABI and supported features,
-   check driver/library selection, consolidate duplicate operand metadata and
-   remove ineffective COG/pass scaffolding.
+6. **Finish backend contracts and cleanup (ready for review).**
+   [Step 6](step6.md) records SDK-selection repairs, shared operand metadata,
+   unused scaffolding removal and ABI/support guides. All 507 loaded fixture
+   images remain byte-identical; software regressions and fresh SDK links pass.
 
 LLVM migration remains separate later work. Multi-function COG residency is
 tracked in the [future improvements list](../future-improvements.md), including

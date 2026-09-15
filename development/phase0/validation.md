@@ -4,8 +4,9 @@ Recorded September 7, 2026, from the September 6 hardware run and retained rerun
 **Existing hardware semantic suite: PASS under the USB/loader assumption below.**
 Broader coverage and performance acceptance remain open. Production
 `master`, `production_baseline`, and the baseline tag remain unchanged. All work
-is local on `phase0_cleanup`; nothing has been pushed or installed over the
-production compiler. The LLVM version decision retains the pinned LLVM 14 fork
+was local on `phase0_cleanup` at that checkpoint. The branch has since been
+published; the installed production compiler remains unchanged. Current cleanup
+status is in [step 6](step6.md). The LLVM version decision retains the pinned LLVM 14 fork
 for this repair series and separates the subsequent stable-release migration.
 
 ## Recorded checks
@@ -28,7 +29,8 @@ for this documentation commit:
 | Combined semantic checkpoint | 468/468 PASS; two original timeouts treated as assumed USB/loader interruptions |
 
 `coverage.py --require-complete` correctly exits 1 because 74 records lack an
-executable fixture. That is an unmet acceptance condition, not a passing test.
+executable fixture. The strict check is not passing; completion is now deferred until after the
+cleanup merge rather than required for that merge.
 The CSV identifies every missing record. Existing fixtures are not exhaustive
 for all operands, predicates, timing, or revision-specific corner cases.
 
@@ -154,3 +156,9 @@ The step-5 report establishes bounded production performance measurements;
 no flight acceptance is established by these checkpoints.
 The multi-function COG residency feature remains a later series, as designed in
 the original backend review; it is not implemented by these repairs.
+
+The [step-6 checkpoint](step6.md) adds SDK driver regression tests, removes unused
+backend scaffolding and updates ABI/support documentation. Final software checks
+pass and all 507 pre/post-cleanup loaded firmware images are byte-identical.
+No new hardware run is claimed. The remaining instruction fixtures are deferred
+until after the cleanup merge; step 6 is ready for human review.

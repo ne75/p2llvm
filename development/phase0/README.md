@@ -56,6 +56,11 @@ tradeoffs. Review its [tables](step5-basics.md) and
 [evidence index](step5-checkpoint.json); peak-stack and loaded network/peripheral
 validation remain follow-up work.
 
+[Step 6](step6.md) is ready for review: SDK selection, operand metadata, unused
+backend scaffolding and ABI/support documentation are complete. All 507 existing
+loaded fixture images are unchanged, and fresh SDK links pass. The remaining
+74 instruction fixtures are deferred until after the cleanup merge.
+
 Each compiler fix is committed in the LLVM submodule; corresponding root commits
 advance its gitlink. Test/build output is kept under `build/`, not checked in as
 source. Passing compiler tests does not constitute hardware or flight validation.
