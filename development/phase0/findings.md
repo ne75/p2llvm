@@ -49,7 +49,7 @@ also requires changing the existing startup loader, which still loads from 0x200
 | A5 | cogmain/cogtext/cogcache are target string attributes rather than incomplete global enum extensions | Clang bitcode -> llvm-dis -> llc; cog-attributes firmware uses the bitcode path |
 | A6 | Preserve expanded MMOs and transferred registers; describe actual C/Z, QX/QY, FIFO, and CALLA/RETA PTRA effects; bundle SETQ/AUG prefixes with consumers | MIR assertions, verifier, roundtrip, arithmetic and memory fixtures |
 | A7 | Correct call chains, return extension and live-in handling; reject invalid named registers; avoid unsafe expression casts | machine-contracts, varargs, invalid-register.ll, linked expressions |
-| A8 | Expose i64 inline-ASM register pairs and low/high word modifiers; reject scalar/pair mismatches | inline-asm-pairs.ll, inline-asm-pair-errors.ll; inline-register-pairs hardware run pending |
+| A8 | Expose i64 inline-ASM register pairs and low/high word modifiers; reject scalar/pair mismatches | inline-asm-pairs.ll, inline-asm-pair-errors.ll; inline-register-pairs hardware passes in the step-3 checkpoint |
 
 The state changes protect the current pipeline. Adding new target intrinsics,
 post-emission transformations, interrupt scheduling, or COG overlays still needs
@@ -57,8 +57,10 @@ an explicit state/ABI review; instruction encodings alone are insufficient.
 
 ## Additional issues found during replacement testing
 
-- Fresh runtime builds needed repository libc headers and the missing fixdfdi /
-  floatdidf helpers. Float conversion fixtures now link from the local build.
+- Fresh runtime builds needed repository libc headers and conversion helpers.
+  The production omission of floatdidf was intentional to expose accidental
+  double use. Its inclusion makes fixtures link but does not implement that
+  source-language policy; see the toolchain guide and future improvements.
 - Fixed TESTB/TESTBN/TESTP/TESTPN C/Z opcode selection and rejected invalid effects.
 - Removed ADDX patterns that described an ordinary add despite consuming carry.
 - Corrected FIFO writes that were described as register definitions.
@@ -122,10 +124,12 @@ Use small reviewable commits and stop for human review between these steps.
    return-contract repair. The [hardware report](step3-hardware.md) verifies all
    27 images and records division timing, including slower exact-result paths.
    The user advanced step 5 before step 4 for public production-baseline comparisons.
-4. **Close instruction coverage gaps.** Add independent executable fixtures for
+4. **Close instruction coverage gaps (deferred until after cleanup merge).**
+   Add independent executable fixtures for
    the 74 missing records, including SEUSSF/SEUSSR, attention/pattern events,
    GPIO/smart pins, streamer, interrupts and debugging. Define board/wiring needs.
-   `coverage.py --require-complete` remains a failing acceptance gate until then.
+   `coverage.py --require-complete` remains an optional strict inventory check,
+   not a cleanup merge gate. Existing coverage claims remain bounded.
 5. **Compare against production (basic benchmark checkpoint ready for review).**
    [Step 5](step5.md) records passing public C/C++ hardware comparisons, runtime link
    repairs, frame growth and kernel timings. Peak stack high-water measurements

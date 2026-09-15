@@ -104,7 +104,12 @@ C reference against Python integers and needs a native `cc` (override with
 `HOST_CC`); the helper/ABI suites themselves require P2 hardware. Their integration
 checks reject accidental helper calls in the reference and input/output handling.
 
-## Instruction semantics and coverage gate
+## Instruction semantics and coverage inventory
+
+The strict completeness check is optional during cleanup. The remaining 74
+instruction-record fixtures and their peripheral wiring profiles are deferred
+until after the cleanup merge; existing semantic and encoding regressions still
+need to pass. See [future improvements](../../development/future-improvements.md).
 
 `python3 tests/hardware/run.py --mode build --isa` includes generated instruction
 scenarios. Use the same `--isa` flag in hardware mode. TableGen supplies the
