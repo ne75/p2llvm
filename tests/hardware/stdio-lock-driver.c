@@ -107,14 +107,16 @@ void test_body(void) {
     unsigned baseline = free_mask(), lifecycle_bad = 0, failure_bad = 0;
     unsigned invalid_bad = 0, no_lock_bad = 0, rounds = 0;
     FILE *streams[] = {stdin, stdout, stderr};
+    const char *modes[] = {"r", "w", "w"};
     observe("stream.baseline", count_bits(baseline));
     for (unsigned i = 0; i < 3; ++i)
-        lifecycle_bad += __fopen_driver(streams[i], &driver, "ok", "w") == NULL;
+        lifecycle_bad += __fopen_driver(streams[i], &driver, "ok", modes[i]) == NULL;
     observe("stream.open", count_bits(free_mask()));
     for (unsigned round = 0; round < 32; ++round) {
         for (unsigned i = 0; i < 3; ++i) {
-            if (streams[i]->_drv) buffer_byte(streams[i]);
-            lifecycle_bad += freopen("LOCK:ok", "w", streams[i]) != streams[i];
+            if (streams[i]->_drv && (streams[i]->_flag & _IOWRT))
+                buffer_byte(streams[i]);
+            lifecycle_bad += freopen("LOCK:ok", modes[i], streams[i]) != streams[i];
         }
         lifecycle_bad += count_bits(free_mask()) != count_bits(baseline) - 3;
         ++rounds;

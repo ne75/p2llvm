@@ -54,10 +54,11 @@ static unsigned pool_count(void) {
 static unsigned shared_rounds, cog_bad;
 static void shared_device(unsigned id, unsigned baseline) {
     FILE *fp[3];
+    const char *modes[] = {"r", "w", "w"};
     unsigned starts = cog_calls, stops = stop_calls, frees = free_calls;
     next_cog = id;
     for (unsigned i = 0; i < 3; ++i) {
-        fp[i] = fopen("FDS:", "w");
+        fp[i] = fopen("FDS:", modes[i]);
         if (!fp[i]) {
             ++cog_bad;
             while (i) fclose(fp[--i]);
@@ -67,7 +68,7 @@ static void shared_device(unsigned id, unsigned baseline) {
     cog_bad += cog_calls != starts + 1 || storage.cogId != (int)id + 1;
     for (unsigned i = 0; i < 8; ++i) {
         for (unsigned j = 0; j < 3; ++j)
-            cog_bad += freopen("FDS:", "w", fp[j]) != fp[j];
+            cog_bad += freopen("FDS:", modes[j], fp[j]) != fp[j];
         cog_bad += storage.users != 3 || pool_count() != baseline - 3;
         cog_bad += stop_calls != stops || cog_calls != starts + 1;
         ++shared_rounds;

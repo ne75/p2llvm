@@ -1,0 +1,168 @@
+{
+  "date": "2026-09-25",
+  "base": "55b0ce2d21832b8dc4e2e4fc2d142d497d378823",
+  "implementation_commits": [
+    "380ac50",
+    "34339eb",
+    "d655a7f"
+  ],
+  "llvm_revision": "a78b9edd6c2967070caec52e3453cd43d69bb62b",
+  "compiler_sha256": "0c5ffeb470d8c2fd6ed9e8549c2a137db7edc42116f461fc2c2fc38b15ca0e41",
+  "runtime_sha256": "abfc2d866082b003f4f036e697ac49c867f296429250bfdccaed7fe21888652f",
+  "libc_sha256": "0844adae391830f9453e8ab87c4028d32726793b66bc1d2029b138a3c86dc916",
+  "software": {
+    "integration_pass": 29,
+    "runner_oracle_unit_pass": 14,
+    "native_lifecycle_optimizations_pass": [
+      "O0",
+      "O2",
+      "Os"
+    ],
+    "fresh_libc_build": "PASS",
+    "fresh_libp2_build": "PASS"
+  },
+  "hardware": {
+    "passed": 12,
+    "failed": 0,
+    "optimizations": [
+      "O0",
+      "O2",
+      "Os"
+    ],
+    "silicon_version": "G",
+    "suites": [
+      "cog-and-locks",
+      "lock-pool",
+      "runtime-serial-locks",
+      "runtime-stdio-locks"
+    ],
+    "timeouts": 0,
+    "automatic_retries": 0
+  },
+  "regression_proofs": {
+    "old_stdio_native_free_locks_after_reopening": 0,
+    "fixed_free_locks_with_three_open_streams": 11,
+    "fixed_free_locks_after_close": 14,
+    "old_fdserial_mocked_cog_errors": 5,
+    "fixed_fdserial_mocked_cog_errors": 0
+  },
+  "loaded_cases": [
+    {
+      "id": "runtime-stdio-locks",
+      "optimization": "O0",
+      "run_id": "c1b1c3e10d92449182e95bb849614568",
+      "status": "PASS",
+      "firmware_sha256": "5b3685afe0ce89612b107198fc098cae501da6a93a205e001bfb681510059d7e"
+    },
+    {
+      "id": "runtime-stdio-locks",
+      "optimization": "O2",
+      "run_id": "21a9b88211db440d92105376f13cb572",
+      "status": "PASS",
+      "firmware_sha256": "0ba55bf91f5d46c0ed3384b0aa0a08f989e4df9bc5cadc243be9d224c29317bc"
+    },
+    {
+      "id": "runtime-stdio-locks",
+      "optimization": "Os",
+      "run_id": "4647ab41a10b4c7d85aecc72d6025346",
+      "status": "PASS",
+      "firmware_sha256": "9e232dff82b0f4b4b3309a33570724a4ef932eeae373d739979c15376342916d"
+    },
+    {
+      "id": "runtime-serial-locks",
+      "optimization": "O0",
+      "run_id": "019a661b2d094f6291a35ed7bf6f465a",
+      "status": "PASS",
+      "firmware_sha256": "4dfedceb769c22f8ac733b67c6ed27d9e4a3b28fc6d71b3ade33e5f54dc73140"
+    },
+    {
+      "id": "runtime-serial-locks",
+      "optimization": "O2",
+      "run_id": "9ca72e0cd714485bbae310541976b6da",
+      "status": "PASS",
+      "firmware_sha256": "3da84bd817929d7a7007e099cd2f966994a1cd2ecbf05b227214f0015e0b4cb5"
+    },
+    {
+      "id": "runtime-serial-locks",
+      "optimization": "Os",
+      "run_id": "2a453825f47744ada4c255b43e4e8334",
+      "status": "PASS",
+      "firmware_sha256": "c3b0cd0e6c37610c91400c5df9e7cd47f25a5c802f3272a8d69d99426ab0c597"
+    },
+    {
+      "id": "cog-and-locks",
+      "optimization": "O0",
+      "run_id": "f626b2efc7184146b0aae496997320a1",
+      "status": "PASS",
+      "firmware_sha256": "e6197c3b29a1ca1aeff482632ce6ff929acf2f235c94f461064fcfc48916f50b"
+    },
+    {
+      "id": "cog-and-locks",
+      "optimization": "O2",
+      "run_id": "f6fd098d4948442dad632ad8705876a9",
+      "status": "PASS",
+      "firmware_sha256": "fe713eae6caf3293f0fb12445324d47a1eca6045981971824c0a1e1d92bf6e1c"
+    },
+    {
+      "id": "cog-and-locks",
+      "optimization": "Os",
+      "run_id": "1ff9765e76c14413abdb7d3769233efc",
+      "status": "PASS",
+      "firmware_sha256": "cf12cfe9d9e164d7ab9d4b9557b58612b660a5356c6b450627d7ea9c0fc2cd94"
+    },
+    {
+      "id": "lock-pool",
+      "optimization": "O0",
+      "run_id": "c7ea0fc8098a4e2f94052d2ce86282f4",
+      "status": "PASS",
+      "firmware_sha256": "51e5f27a319c92943071e186cf281917b14408d1b136dfbd344bdcd845c69405"
+    },
+    {
+      "id": "lock-pool",
+      "optimization": "O2",
+      "run_id": "4f42839a4ff745278a2a81edeb68c2d1",
+      "status": "PASS",
+      "firmware_sha256": "97516a346179fa687e1d0b8395aeacb212aa5d17e96ae62168e06c44c1ad3e8d"
+    },
+    {
+      "id": "lock-pool",
+      "optimization": "Os",
+      "run_id": "06e6b4a668a240318d723a1a334243c6",
+      "status": "PASS",
+      "firmware_sha256": "b5246b5e589420e8297d6e64c63865170b0bfff7baeae0ec1a02a3af38b7056d"
+    }
+  ],
+  "archive": {
+    "path": "build/stdio-lock-checkpoint/evidence.zip",
+    "sha256": "b7f45f2a54fc847178e911a38d0345cf39fff2320112e73f293bb87c86d6df83",
+    "bytes": 398441
+  },
+  "limits": [
+    "Serial-driver UART configuration, cog operations and allocation are mocked in runtime-serial-locks; its hardware locks and stdio/driver lifecycle are real.",
+    "The lifecycle contention check and existing cog-and-locks fixture use a real second cog.",
+    "SD and legacy null/serial-exit drivers were audited by source inspection; no SD media or FdSerial UART throughput testing is claimed.",
+    "The installed SDK was not modified."
+  ],
+  "source_sha256": {
+    "libc/drivers/FdSerial.c": "5795a41e2b90b43015ee992131a8113f96f3899b5446afbdae5ccc2b427eb003",
+    "libc/drivers/FdSerial.h": "91a509306d28538d914ded970992f65cc1cb5aa07134fc9a769274560912060c",
+    "libc/drivers/SimpleSerial.c": "c38c68ff79e1e8756c5ac8cbf4071d81a9e248ad088f7932140a986e22cd9446",
+    "libc/drivers/memory.c": "299c70abc4440378992a48dd5bc9de04ba8f126811556888f9ec089c562372f5",
+    "libc/stdio/fflush.c": "87f5372e0b62e487ea37510df89f8af19cd595cc208918a974cf991538bbad1a",
+    "libc/stdio/fmemopen.c": "aa37c46580b5551b9e12a1153c679c8256d208827f07d4f328ae16f1dd953fe7",
+    "libc/stdio/fopen.c": "86f0257a9e7e96e74ebbc662507dd7c50c113203138bc6716cce1d7e14e11670",
+    "libc/stdio/fopen_intern.c": "1dc31d8e018924fb3f943fba83a72fbe20076e3d36fbea8fcc9b045dbcc5beec",
+    "libc/stdio/freopen.c": "16d8d7a68cb6198425f9e63db95c0c94bd0d6b529f2894cee0cb39684c7469c2",
+    "libc/stdio/stringio.c": "0d298927b94576a2498c390b237c941eb290bea4739624cc7bfa06b15cc27464",
+    "libc/string/strlen.c": "a435e8a745272d1b18e724187f44939482b825a15d185d44a886335edc8617dc",
+    "libc/string/strncmp.c": "90b95dc8f1e44e62768c761cd6106b6e8c3d2901e52c9763c8fdbd2dcb9b44d7",
+    "tests/codegen/cog-worker.c": "2d65dbcbd8f90391548738560f016b5732ecd9065bcb57fc0619543cb70207b3",
+    "tests/hardware/cog-driver.c": "4741dd8e8dc25cd41d233c66ff8c0cc9895f75b48919782e05df39b7c8162d2a",
+    "tests/hardware/lock-pool-driver.c": "bbedc0db747f3930dc62866148e61b334ce8b8b8743ad22f1de3418ba1212ca7",
+    "tests/hardware/stdio-full-serial.c": "be7d1790bfe9b50612396cc5d6bb85063be84e3519eeb8e3b91970948a3da156",
+    "tests/hardware/stdio-lock-driver.c": "9b03705369d5a2d63d97448cb29bbd42510e0b30a2294f09f667364883325b1d",
+    "tests/hardware/stdio-serial-driver.c": "0cd2164e46573c4566a75d4fc0d5affd8bb6e0ca22307a79aafb0b4482ab44e9",
+    "tests/hardware/stdio-simple-serial.c": "70745a33fb5051d69c0f658dd31a533c2f0ad9925b172c11b74fd729704d4f71",
+    "tests/hardware/transport.c": "0dea74b474e8e2832ae3712d380adc0e621a5dd7c160e036b02af2589f3030ca"
+  }
+}

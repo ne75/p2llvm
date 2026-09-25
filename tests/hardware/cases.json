@@ -35,7 +35,7 @@
         "stream.reopened": "0xb",
         "stream.closed": "0xe",
         "stream.rounds": "0x20",
-        "stream.writes": "0x60",
+        "stream.writes": "0x40",
         "stream.closes": "0x63",
         "stream.exhausted": "0xffffffff",
         "stream.lifecycle_bad": "0x0",
