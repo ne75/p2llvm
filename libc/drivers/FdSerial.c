@@ -67,7 +67,7 @@ __attribute__ ((cogmain)) static void _Fdserial_driver(void *p) {
  * @param txpin is pin number for transmit output
  * @param mode is interface mode. see header FDSERIAL_MODE_...
  * @param baudrate is frequency of bits ... 115200, 57600, etc...
- * @returns non-zero on success
+ * @returns hardware cog ID + 1 on success, zero on failure
  */
 int _FdSerial_start(FdSerial_t *data, int rxpin, int txpin, int mode, int baudrate)
 {
@@ -78,7 +78,9 @@ int _FdSerial_start(FdSerial_t *data, int rxpin, int txpin, int mode, int baudra
     data->mode    = mode;                   // interface mode
     data->baud   =  baudrate;    // baud
     data->buffptr = (int)&data->rxbuff[0];
-    data->cogId = _coginit(COGINIT_MODE_COG, _Fdserial_driver, (void*)data->stack);
+    int cog = _coginit(COGINIT_MODE_COG, _Fdserial_driver, (void*)data->stack);
+    /* The public FdSerial handle uses zero for stopped and cog ID + 1. */
+    data->cogId = cog < 0 ? 0 : cog + 1;
     data->users = 1;
 
     return data->cogId;

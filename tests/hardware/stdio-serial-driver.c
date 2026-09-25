@@ -51,6 +51,34 @@ static unsigned pool_count(void) {
     for (unsigned i = 0; i < count; ++i) _lockret(ids[i]);
     return count;
 }
+static unsigned shared_rounds, cog_bad;
+static void shared_device(unsigned id, unsigned baseline) {
+    FILE *fp[3];
+    unsigned starts = cog_calls, stops = stop_calls, frees = free_calls;
+    next_cog = id;
+    for (unsigned i = 0; i < 3; ++i) {
+        fp[i] = fopen("FDS:", "w");
+        if (!fp[i]) {
+            ++cog_bad;
+            while (i) fclose(fp[--i]);
+            return;
+        }
+    }
+    cog_bad += cog_calls != starts + 1 || storage.cogId != (int)id + 1;
+    for (unsigned i = 0; i < 8; ++i) {
+        for (unsigned j = 0; j < 3; ++j)
+            cog_bad += freopen("FDS:", "w", fp[j]) != fp[j];
+        cog_bad += storage.users != 3 || pool_count() != baseline - 3;
+        cog_bad += stop_calls != stops || cog_calls != starts + 1;
+        ++shared_rounds;
+    }
+    for (unsigned i = 0; i < 3; ++i) {
+        cog_bad += fclose(fp[i]) != 0;
+        if (i < 2) cog_bad += stop_calls != stops || !allocated;
+    }
+    cog_bad += stop_calls != stops + 1 || last_stop != id;
+    cog_bad += allocated || free_calls != frees + 1 || pool_count() != baseline;
+}
 void test_body(void) {
     unsigned baseline = pool_count(), ids[16], count = 0;
     observe("serial.baseline", baseline);
@@ -85,6 +113,12 @@ void test_body(void) {
         }
         bad += fclose(fp) != 0 || fp->_lock != -1;
     }
+    shared_device(0, baseline);
+    shared_device(3, baseline);
+    shared_device(7, baseline);
+    observe("serial.shared_rounds", shared_rounds);
+    observe("serial.shared_stops", stop_calls);
+    observe("serial.cog_bad", cog_bad);
     observe("serial.final", pool_count());
     observe("serial.bad", bad);
 }

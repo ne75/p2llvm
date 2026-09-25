@@ -83,7 +83,10 @@
         "serial.failed_open_frees": "0x14",
         "serial.unexpected_stops": "0x0",
         "serial.final": "0xe",
-        "serial.bad": "0x0"
+        "serial.bad": "0x0",
+        "serial.shared_rounds": "0x18",
+        "serial.shared_stops": "0x3",
+        "serial.cog_bad": "0x0"
       }
     },
     {

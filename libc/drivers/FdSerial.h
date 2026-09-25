@@ -44,7 +44,7 @@ typedef struct FdSerial_struct
     int buffptr;   // pointer to rx buffer
     volatile unsigned char rxbuff[FDSERIAL_BUFF_MASK+1];  // receive buffer
     volatile unsigned char txbuff[FDSERIAL_BUFF_MASK+1];  // transmit buffer
-    int cogId;     // cog flag/id
+    int cogId;     // hardware cog ID + 1, or zero when stopped
 
     // make a linked list so we can find which pins are in use by other cogs
     struct FdSerial_struct *next;
@@ -59,7 +59,7 @@ typedef struct FdSerial_struct
  * @param txpin is pin number for transmit output
  * @param mode is interface mode
  * @param baudrate is frequency of bits ... 115200, 57600, etc...
- * @returns non-zero on success
+ * @returns hardware cog ID + 1 on success, zero on failure
  */
 int _FdSerial_start(FdSerial_t *data, int rxpin, int txpin, int mode, int baudrate);
 /**
