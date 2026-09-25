@@ -48,6 +48,45 @@
       }
     },
     {
+      "id": "runtime-serial-locks",
+      "host_portable": false,
+      "sources": [
+        "libc/stdio/fopen_intern.c",
+        "libc/stdio/fopen.c",
+        "libc/stdio/freopen.c",
+        "libc/stdio/fflush.c",
+        "libc/stdio/stringio.c",
+        "libc/stdio/fmemopen.c",
+        "libc/drivers/memory.c",
+        "libc/string/strlen.c",
+        "libc/string/strncmp.c",
+        "tests/hardware/stdio-simple-serial.c",
+        "tests/hardware/stdio-full-serial.c"
+      ],
+      "source_dependencies": [
+        "libc/drivers/SimpleSerial.c",
+        "libc/drivers/FdSerial.c",
+        "libc/drivers/FdSerial.h"
+      ],
+      "driver": "stdio-serial-driver.c",
+      "include_dirs": [
+        "libc/include",
+        "libp2/include"
+      ],
+      "cflags": [
+        "-fno-builtin"
+      ],
+      "expected": {
+        "serial.baseline": "0xe",
+        "serial.exhaustion_side_effects": "0x0",
+        "serial.failed_cog_starts": "0x14",
+        "serial.failed_open_frees": "0x14",
+        "serial.unexpected_stops": "0x0",
+        "serial.final": "0xe",
+        "serial.bad": "0x0"
+      }
+    },
+    {
       "id": "runtime-wide-negation",
       "host_portable": false,
       "sources": [

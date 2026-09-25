@@ -8,6 +8,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
+#include <errno.h>
 #include <string.h>
 #include <sys/driver.h>
 #include <propeller.h>
@@ -193,6 +194,13 @@ static int fdserial_fopen(FILE *fp, const char *name, const char *mode) {
         }
     }
 
+    /* Fail before acquiring a cog, allocating memory or sharing a device. */
+    fp->_lock = _locknew();
+    if ((unsigned)fp->_lock >= 16) {
+        errno = ENOLCK;
+        return -1;
+    }
+
     /* look for an existing cog that handles these pins */
     for (data = coglist; data; data = data->next) {
         if (data->tx_pin == txpin || data->rx_pin == rxpin) {
@@ -207,13 +215,16 @@ static int fdserial_fopen(FILE *fp, const char *name, const char *mode) {
 
     if (!data) {
         data = malloc(sizeof(FdSerial_t));
-        if (!data)
-	        return -1;
+        if (!data) {
+            errno = ENOMEM;
+            return -1;
+        }
 
         _uart_init(rxpin, txpin, baud, mode_i);
         r = _FdSerial_start(data, rxpin, txpin, mode_i, baud);
         if (r <= 0) {
 	        free(data);
+            errno = EAGAIN;
 	        return -1;
 	    }
 
@@ -223,7 +234,6 @@ static int fdserial_fopen(FILE *fp, const char *name, const char *mode) {
   
     fp->drvarg[0] = (unsigned long)data;
     fp->_flag |= _IODEV;
-    fp->_lock = _locknew();
     return 0;
 }
 

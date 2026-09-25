@@ -124,7 +124,8 @@ def main():
                     continue
                 source_names = suite['sources'] + (suite.get('p2_sources', []) if args.mode != 'host' else [])
                 sources = [ROOT / s for s in source_names] + [HERE / suite['driver'], HERE / 'transport.c']
-                record['source_sha256'] = {str(p.relative_to(ROOT)): digest(p) for p in sources}
+                dependencies = [ROOT / s for s in suite.get('source_dependencies', [])]
+                record['source_sha256'] = {str(p.relative_to(ROOT)): digest(p) for p in sources + dependencies}
                 record['manifest_sha256'] = hashlib.sha256(json.dumps(manifest, sort_keys=True).encode()).hexdigest()
                 objects = []
                 for index, source in enumerate(sources):

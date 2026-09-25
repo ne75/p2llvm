@@ -156,6 +156,12 @@ static int _serial_fopen(FILE *fp, const char *name, const char *mode)
 		}
 	}
 
+	fp->_lock = _locknew();
+	if ((unsigned)fp->_lock >= 16) {
+		errno = ENOLCK;
+		return -1;
+	}
+
 	#if defined(__propeller2__)
 		fp->drvarg[0] = (rxpin);
 		fp->drvarg[1] = (txpin);
@@ -171,7 +177,6 @@ static int _serial_fopen(FILE *fp, const char *name, const char *mode)
 
 	/* mark it as being a terminal */
 	fp->_flag |= _IODEV;
-	fp->_lock = _locknew();
 
 	/* all OK */
 	return 0;
