@@ -74,6 +74,7 @@ int _locktry(unsigned int l) {
 }
 
 void _unlock(unsigned int l) {
+    if (l > 15) return;
     asm volatile("lockrel %0" : : "r"(l) : "memory");
 }
 

@@ -20,6 +20,21 @@ long __dummy = (long)&_InitIO;
 /* these must go in HUB RAM so they can be shared amongst threads */
 FILE __files[FOPEN_MAX];
 
+/* Stdio owns a driver's per-stream lock, including on a failed open. */
+static void
+clear_stream(FILE *fp)
+{
+  if ((unsigned)fp->_lock < 16)
+    _lockret(fp->_lock);
+  fp->_lock = -1;
+  fp->_base = NULL;
+  fp->_ptr = NULL;
+  fp->_cnt = 0;
+  fp->_bsiz = 0;
+  fp->_flag = 0;
+  fp->_drv = NULL;
+}
+
 /*
  * the fopen worker routine
  * this one takes a FILE * and sets it up for I/O
@@ -31,9 +46,16 @@ __fopen_driver(FILE *fp, _Driver *d, const char *name, const char *mode)
   int i;
   int flag = 0;
 
+  /* Drivers without a lock must never inherit lock zero or a stale ID. */
+  fp->_lock = -1;
+
   /* force a reference to _driverlist */
   if (_driverlist[0] == 0)
-    return NULL;
+    {
+      errno = ENODEV;
+      clear_stream(fp);
+      return NULL;
+    }
 
   flag = 0;
 
@@ -54,6 +76,13 @@ __fopen_driver(FILE *fp, _Driver *d, const char *name, const char *mode)
 	}
     }
 
+  if (flag == 0)
+    {
+      errno = EINVAL;
+      clear_stream(fp);
+      return NULL;
+    }
+
   fp->_flag = flag;
   fp->_base = NULL;  /* assume null buffer */
 
@@ -64,11 +93,7 @@ __fopen_driver(FILE *fp, _Driver *d, const char *name, const char *mode)
       if (i < 0)
 	{
 	  /* driver unhappy, it should have set errno */
-	  fp->_base = NULL;
-	  fp->_ptr = NULL;
-	  fp->_bsiz = 0;
-	  fp->_flag = 0;
-	  fp->_drv = 0;
+	  clear_stream(fp);
 	  return NULL;
 	}
     }
@@ -105,14 +130,11 @@ fclose(FILE *fp)
       return EOF;
     }
   if (fp->_flag & _IOWRT)
-    fflush(fp);
+    error = fflush(fp);
   if (fp->_drv->fclose)
     error |= (*fp->_drv->fclose)(fp);
-  fp->_base = NULL;
-  fp->_ptr = NULL;
-  fp->_bsiz = 0;
-  fp->_flag = 0;
-  fp->_drv = 0;
+  /* Flush and driver teardown may still need the stream's lock. */
+  clear_stream(fp);
   return error ? EOF : 0;
 }
 

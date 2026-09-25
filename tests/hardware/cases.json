@@ -8,6 +8,46 @@
   },
   "suites": [
     {
+      "id": "runtime-stdio-locks",
+      "host_portable": false,
+      "sources": [
+        "libc/stdio/fopen_intern.c",
+        "libc/stdio/fopen.c",
+        "libc/stdio/freopen.c",
+        "libc/stdio/fflush.c",
+        "libc/stdio/stringio.c",
+        "libc/stdio/fmemopen.c",
+        "libc/drivers/memory.c",
+        "libc/string/strlen.c",
+        "libc/string/strncmp.c"
+      ],
+      "driver": "stdio-lock-driver.c",
+      "include_dirs": [
+        "libc/include",
+        "libp2/include"
+      ],
+      "cflags": [
+        "-fno-builtin"
+      ],
+      "expected": {
+        "stream.baseline": "0xe",
+        "stream.open": "0xb",
+        "stream.reopened": "0xb",
+        "stream.closed": "0xe",
+        "stream.rounds": "0x20",
+        "stream.writes": "0x60",
+        "stream.closes": "0x63",
+        "stream.exhausted": "0xffffffff",
+        "stream.lifecycle_bad": "0x0",
+        "stream.failure_bad": "0x0",
+        "stream.invalid_bad": "0x0",
+        "stream.no_lock_bad": "0x0",
+        "stream.callback_bad": "0x0",
+        "stream.pool_bad": "0x0",
+        "stream.final": "0xe"
+      }
+    },
+    {
       "id": "runtime-wide-negation",
       "host_portable": false,
       "sources": [

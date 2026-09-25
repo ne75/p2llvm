@@ -85,7 +85,9 @@ extern "C" {
     unsigned int	_flag;		/* file status flags */
     long		_bsiz;		/* buffer size */
 
-    /* lock for multi-threaded access to FILE struct */
+    /* Per-stream hardware lock, or -1 for no lock. A driver may allocate
+       one in fopen; stdio returns it on open failure or after fclose.
+       Drivers must not share this ID or return it themselves. */
     _atomic_t           _lock;
 
     /* driver for this file */

@@ -1,0 +1,3 @@
+# RUN: %python %tools/check_stdio_locks.py
+# RUN: %clang -O0 -Wall -Werror -I%root/libc/include -I%root/libp2/include -mllvm -verify-machineinstrs -c %root/libc/drivers/SimpleSerial.c -o %t.simple.O0.o
+# RUN: %clang -Os -Wall -Werror -I%root/libc/include -I%root/libp2/include -mllvm -verify-machineinstrs -c %root/libc/drivers/FdSerial.c -o %t.full.Os.o
